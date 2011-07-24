@@ -7,10 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */; };
+		1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */; };
+		1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8313DCDFB200E8CC7C /* KKGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A32AD8613DCDFB200E8CC7C /* KKGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8413DCDFB200E8CC7C /* KKGridView.m */; };
+		1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */; };
 		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1A32AD8313DCDFB200E8CC7C /* KKGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridView.h; sourceTree = "<group>"; };
+		1A32AD8413DCDFB200E8CC7C /* KKGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridView.m; sourceTree = "<group>"; };
+		1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewCell.h; sourceTree = "<group>"; };
+		1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewCell.m; sourceTree = "<group>"; };
 		1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKKGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A61BE1213DCAF1F00AB4243 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KKGridView-Prefix.pch"; sourceTree = "<group>"; };
@@ -21,7 +33,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */,
 				1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */,
+				1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -48,7 +62,9 @@
 		1A61BE1113DCAF1F00AB4243 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */,
 				1A61BE1213DCAF1F00AB4243 /* Foundation.framework */,
+				1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -56,6 +72,10 @@
 		1A61BE1413DCAF1F00AB4243 /* KKGridView */ = {
 			isa = PBXGroup;
 			children = (
+				1A32AD8313DCDFB200E8CC7C /* KKGridView.h */,
+				1A32AD8413DCDFB200E8CC7C /* KKGridView.m */,
+				1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */,
+				1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */,
 				1A61BE1513DCAF1F00AB4243 /* Supporting Files */,
 			);
 			path = KKGridView;
@@ -76,6 +96,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */,
+				1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +127,7 @@
 		1A61BE0613DCAF1F00AB4243 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "kxk design";
 			};
 			buildConfigurationList = 1A61BE0913DCAF1F00AB4243 /* Build configuration list for PBXProject "KKGridView" */;
@@ -129,6 +152,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A32AD8613DCDFB200E8CC7C /* KKGridView.m in Sources */,
+				1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,6 +248,7 @@
 				1A61BE1E13DCAF1F00AB4243 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
