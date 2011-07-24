@@ -8,15 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
-		1A61BE1913DCAF1F00AB4243 /* KKGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61BE1813DCAF1F00AB4243 /* KKGridView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKKGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A61BE1213DCAF1F00AB4243 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */ = {isa = PBXFileReference; path = "KKGridView-Prefix.pch"; sourceTree = "<group>"; };
-		1A61BE1713DCAF1F00AB4243 /* KKGridView.h */ = {isa = PBXFileReference; path = KKGridView.h; sourceTree = "<group>"; };
-		1A61BE1813DCAF1F00AB4243 /* KKGridView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KKGridView.m; sourceTree = "<group>"; };
+		1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KKGridView-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,8 +56,6 @@
 		1A61BE1413DCAF1F00AB4243 /* KKGridView */ = {
 			isa = PBXGroup;
 			children = (
-				1A61BE1713DCAF1F00AB4243 /* KKGridView.h */,
-				1A61BE1813DCAF1F00AB4243 /* KKGridView.m */,
 				1A61BE1513DCAF1F00AB4243 /* Supporting Files */,
 			);
 			path = KKGridView;
@@ -134,7 +129,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A61BE1913DCAF1F00AB4243 /* KKGridView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,8 +181,11 @@
 				DSTROOT = /tmp/KKGridView.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -199,6 +196,8 @@
 				DSTROOT = /tmp/KKGridView.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
