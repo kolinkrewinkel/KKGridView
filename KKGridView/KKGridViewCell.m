@@ -10,22 +10,25 @@
 
 @implementation KKGridViewCell
 
-- (id)initWithFrame:(CGRect)frame
+@synthesize reuseIdentifier = _reuseIdentifier;
+
+#pragma mark - Designated Initializer
+
+- (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
+    if ((self = [super initWithFrame:frame])) {
+        self.reuseIdentifier = reuseIdentifier;
     }
+    
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+#pragma mark - NSObject
+
+- (void)dealloc
 {
-    // Drawing code
+    [_reuseIdentifier release];
+    [super dealloc];
 }
-*/
 
 @end
