@@ -1,0 +1,231 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
+		1A61BE1913DCAF1F00AB4243 /* KKGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A61BE1813DCAF1F00AB4243 /* KKGridView.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKKGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A61BE1213DCAF1F00AB4243 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */ = {isa = PBXFileReference; path = "KKGridView-Prefix.pch"; sourceTree = "<group>"; };
+		1A61BE1713DCAF1F00AB4243 /* KKGridView.h */ = {isa = PBXFileReference; path = KKGridView.h; sourceTree = "<group>"; };
+		1A61BE1813DCAF1F00AB4243 /* KKGridView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KKGridView.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1A61BE0C13DCAF1F00AB4243 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1A61BE0413DCAF1F00AB4243 = {
+			isa = PBXGroup;
+			children = (
+				1A61BE1413DCAF1F00AB4243 /* KKGridView */,
+				1A61BE1113DCAF1F00AB4243 /* Frameworks */,
+				1A61BE1013DCAF1F00AB4243 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1A61BE1013DCAF1F00AB4243 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A61BE1113DCAF1F00AB4243 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A61BE1213DCAF1F00AB4243 /* Foundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1A61BE1413DCAF1F00AB4243 /* KKGridView */ = {
+			isa = PBXGroup;
+			children = (
+				1A61BE1713DCAF1F00AB4243 /* KKGridView.h */,
+				1A61BE1813DCAF1F00AB4243 /* KKGridView.m */,
+				1A61BE1513DCAF1F00AB4243 /* Supporting Files */,
+			);
+			path = KKGridView;
+			sourceTree = "<group>";
+		};
+		1A61BE1513DCAF1F00AB4243 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1A61BE0D13DCAF1F00AB4243 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1A61BE0E13DCAF1F00AB4243 /* KKGridView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A61BE1C13DCAF1F00AB4243 /* Build configuration list for PBXNativeTarget "KKGridView" */;
+			buildPhases = (
+				1A61BE0B13DCAF1F00AB4243 /* Sources */,
+				1A61BE0C13DCAF1F00AB4243 /* Frameworks */,
+				1A61BE0D13DCAF1F00AB4243 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KKGridView;
+			productName = KKGridView;
+			productReference = 1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1A61BE0613DCAF1F00AB4243 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "kxk design";
+			};
+			buildConfigurationList = 1A61BE0913DCAF1F00AB4243 /* Build configuration list for PBXProject "KKGridView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 1A61BE0413DCAF1F00AB4243;
+			productRefGroup = 1A61BE1013DCAF1F00AB4243 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1A61BE0E13DCAF1F00AB4243 /* KKGridView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1A61BE0B13DCAF1F00AB4243 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A61BE1913DCAF1F00AB4243 /* KKGridView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1A61BE1A13DCAF1F00AB4243 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		1A61BE1B13DCAF1F00AB4243 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1A61BE1D13DCAF1F00AB4243 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/KKGridView.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		1A61BE1E13DCAF1F00AB4243 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/KKGridView.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A61BE0913DCAF1F00AB4243 /* Build configuration list for PBXProject "KKGridView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A61BE1A13DCAF1F00AB4243 /* Debug */,
+				1A61BE1B13DCAF1F00AB4243 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A61BE1C13DCAF1F00AB4243 /* Build configuration list for PBXNativeTarget "KKGridView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A61BE1D13DCAF1F00AB4243 /* Debug */,
+				1A61BE1E13DCAF1F00AB4243 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1A61BE0613DCAF1F00AB4243 /* Project object */;
+}
