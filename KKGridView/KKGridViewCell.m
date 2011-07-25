@@ -3,7 +3,7 @@
 //  KKGridView
 //
 //  Created by Kolin Krewinkel on 7.24.11.
-//  Copyright 2011 contributors. All rights reserved.
+//  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
 #import "KKGridViewCell.h"
@@ -21,6 +21,13 @@
     }
     
     return self;
+}
+
+#pragma mark - Subclassers
+
+- (void)prepareForReuse
+{
+    
 }
 
 #pragma mark - NSObject

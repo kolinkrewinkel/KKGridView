@@ -3,7 +3,7 @@
 //  KKGridView
 //
 //  Created by Kolin Krewinkel on 7.24.11.
-//  Copyright 2011 contributors. All rights reserved.
+//  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
 #import "KKGridViewCell.h"
@@ -12,18 +12,44 @@
 
 @interface KKGridView : UIScrollView {
     @private
+    CGSize _cellPadding;
+    CGSize _cellSize;
     id <KKGridViewDataSource> _dataSource;
     id <KKGridViewDelegate> _gridDelegate;
+    UIView *_gridFooterView;
+    UIView *_gridHeaderView;
+    NSUInteger _numberOfColumns;
+    NSUInteger _numberOfSections;
+    NSMutableSet * _reusableCells;
+    NSMutableSet * _visibleCells;
 }
 
+#pragma mark - Properties
+
+@property (nonatomic) CGSize cellPadding;
+@property (nonatomic) CGSize cellSize;
 @property (nonatomic, assign) id <KKGridViewDataSource> dataSource;
 @property (nonatomic, assign) id <KKGridViewDelegate> gridDelegate;
-
-#pragma mark - Properties
+@property (nonatomic, retain) UIView *gridFooterView;
+@property (nonatomic, retain) UIView *gridHeaderView;
+@property (nonatomic) NSUInteger numberOfColumns;
+@property (nonatomic, readonly) NSUInteger numberOfSections;
 
 #pragma mark - Initializers
 
 - (id)initWithFrame:(CGRect)frame dataSource:(id <KKGridViewDataSource>)dataSource delegate:(id <KKGridViewDelegate>)delegate;
+
+#pragma mark - Getters
+
+- (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
+
+- (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSIndexSet *)visibleIndices;
+
+#pragma mark - Methods
+
+- (void)reloadContentSize;
+- (void)reloadData;
 
 @end
 
@@ -39,6 +65,8 @@
 @optional
 
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
+- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
 
 @end
 

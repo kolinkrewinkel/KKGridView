@@ -13,6 +13,7 @@
 		1A32AD8613DCDFB200E8CC7C /* KKGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8413DCDFB200E8CC7C /* KKGridView.m */; };
 		1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */; };
+		1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5F356613DD02CD00A38A3E /* Definitions.h */; };
 		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		1A32AD8413DCDFB200E8CC7C /* KKGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridView.m; sourceTree = "<group>"; };
 		1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewCell.h; sourceTree = "<group>"; };
 		1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewCell.m; sourceTree = "<group>"; };
+		1A5F356613DD02CD00A38A3E /* Definitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Definitions.h; sourceTree = "<group>"; };
 		1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKKGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A61BE1213DCAF1F00AB4243 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KKGridView-Prefix.pch"; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 		1A61BE1513DCAF1F00AB4243 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1A5F356613DD02CD00A38A3E /* Definitions.h */,
 				1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */,
 			);
 			name = "Supporting Files";
@@ -98,6 +101,7 @@
 			files = (
 				1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */,
 				1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */,
+				1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
