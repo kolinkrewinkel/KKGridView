@@ -14,6 +14,8 @@
 - (void)_layoutGridView;
 - (void)_reloadIntegers;
 
+@property (nonatomic) BOOL _alreadyAddedViews;
+
 @end
 
 @implementation KKGridView
@@ -26,6 +28,7 @@
 @synthesize gridHeaderView = _gridHeaderView;
 @synthesize numberOfColumns = _numberOfColumns;
 @synthesize numberOfSections = _numberOfSections;
+@synthesize _alreadyAddedViews;
 
 #pragma mark - Initialization Methods
 
@@ -82,12 +85,15 @@
 
 - (void)_layoutGridView
 {
-    for (NSUInteger i = 0; i < _numberOfItems; i++) {
-//        Comment this out to avoid roasting your lap
-        UIView *view = [[[UIView alloc] initWithFrame:[self rectForCellAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]]] autorelease];
-        view.backgroundColor = [UIColor redColor];
-        [self addSubview:view];
+    if (!_alreadyAddedViews) {
+        for (NSUInteger i = 0; i < _numberOfItems; i++) {
+    //        Comment this out to avoid roasting your lap
+            UIView *view = [[[UIView alloc] initWithFrame:[self rectForCellAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]]] autorelease];
+            view.backgroundColor = [UIColor redColor];
+            [self addSubview:view];
+        }
     }
+    _alreadyAddedViews = YES;
 }
 
 - (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath
@@ -136,6 +142,7 @@
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
         newNumberOfItems += [_dataSource gridView:self numberOfItemsInSection:section];
     }
+    _numberOfItems = 0;
     _numberOfItems = newNumberOfItems;
 }
             
