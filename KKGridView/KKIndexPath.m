@@ -28,4 +28,20 @@
     return [[[[self class] alloc] initWithIndex:index section:section] autorelease];
 }
 
+- (id)initWithNSIndexPath:(NSIndexPath *)indexPath 
+{
+    if ((self = [super init])) {
+        _index = indexPath.row;
+        _section = indexPath.section;
+    }
+    
+    return self;
+}
+
++ (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath 
+{
+    return [[[[self class] alloc] initWithNSIndexPath:indexPath] autorelease];
+}
+
+
 @end

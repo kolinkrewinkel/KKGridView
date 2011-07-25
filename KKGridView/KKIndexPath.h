@@ -8,13 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface KKIndexPath : NSObject {
-    NSUInteger _section;
-    NSUInteger _index;
-}
+@interface KKIndexPath : NSObject
 
 - (id)initWithIndex:(NSUInteger)index section:(NSUInteger)section;
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section;
+
+- (id)initWithNSIndexPath:(NSIndexPath *)indexPath;
++ (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath;
 
 @property (nonatomic, readwrite) NSUInteger section;
 @property (nonatomic, readwrite) NSUInteger index;
