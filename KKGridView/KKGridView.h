@@ -7,6 +7,7 @@
 //
 
 #import "KKGridViewCell.h"
+#import "KKIndexPath.h"
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
@@ -49,7 +50,7 @@
 #pragma mark - Getters
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
-- (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath;
 - (NSIndexSet *)visibleIndices;
 
 #pragma mark - Methods

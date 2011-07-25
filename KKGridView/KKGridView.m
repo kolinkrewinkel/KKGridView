@@ -85,29 +85,87 @@
 
 - (void)_layoutGridView
 {
+    NSMutableArray *colors = [NSMutableArray array];
+    for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
+        CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
+        CGFloat green = (CGFloat)random()/(CGFloat)RAND_MAX;
+        [colors addObject:[UIColor colorWithRed:red green:green blue:blue alpha:1.0]];
+    }
+    
     if (!_alreadyAddedViews) {
-        for (NSUInteger i = 0; i < _numberOfItems; i++) {
-    //        Comment this out to avoid roasting your lap
-            UIView *view = [[[UIView alloc] initWithFrame:[self rectForCellAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]]] autorelease];
-            view.backgroundColor = [UIColor redColor];
+        
+        for (KKIndexPath *indexPath in [self visibleIndexPaths]) {
+            UIView *view = [[[UIView alloc] initWithFrame:[self rectForCellAtIndexPath:indexPath]] autorelease];
+            view.backgroundColor = [colors objectAtIndex:indexPath.section];
             [self addSubview:view];
         }
+        NSLog(@"%@", [self visibleIndexPaths]);
     }
     _alreadyAddedViews = YES;
 }
 
-- (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)heightForSection:(NSUInteger)section
 {
-    NSUInteger index = (indexPath.row + 1) * (indexPath.section + 1);
-    index -= 1;
-    if (index < _numberOfItems) {
-        NSUInteger numberOfColumns = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
-        NSInteger row = floor(index / numberOfColumns);
-        NSInteger column = index - (row * numberOfColumns);
-        return CGRectMake((column * (_cellSize.width + _cellPadding.width)) + _cellPadding.width, (row * (_cellSize.height + _cellPadding.height)) + _cellPadding.height, _cellSize.width, _cellSize.height);
+    CGFloat height = 0.f;
+    
+    if (_flags.dataSourceRespondsToHeightForHeaderInSection) {
+        height += [_dataSource gridView:self heightForHeaderInSection:section];
+    } else {
+        height += 27.f;
     }
     
-    return CGRectZero;
+    if (_flags.dataSourceRespondsToHeightForFooterInSection)
+        height += [_dataSource gridView:self heightForFooterInSection:section];
+    
+    NSLog(@"%f", ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns));
+    height += (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns)) * (_cellSize.height + _cellPadding.height);
+    return height;
+}
+
+- (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
+{
+    CGRect rect = CGRectZero;
+    CGFloat yPosition = _cellPadding.height;
+    CGFloat xPosition = _cellPadding.width;
+    for (NSUInteger section = 0; section < indexPath.section; section++) {
+        yPosition += [self heightForSection:section];
+    }
+
+    NSUInteger numberOfColumns = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
+    NSInteger row = floor(indexPath.index / numberOfColumns);
+    NSInteger column = indexPath.index - (row * numberOfColumns);
+    
+    yPosition += (row * (_cellSize.height + _cellPadding.height));
+    xPosition += (column * (_cellSize.width + _cellPadding.width));
+
+    rect.size = _cellSize;
+    rect.origin.y = yPosition;
+    rect.origin.x = xPosition;
+    
+    return rect;
+}
+
+- (NSArray *)visibleIndexPaths
+{
+    NSMutableArray *visiblePaths = [[NSMutableArray alloc] init];
+    CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+    
+    
+    for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        
+        for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
+            KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:index inSection:section];
+            CGRect rect = [self rectForCellAtIndexPath:indexPath];
+            if (CGRectIntersectsRect(visibleBounds, rect)) {
+                [visiblePaths addObject:indexPath];
+
+            }
+        }
+        
+    }
+    
+    return [visiblePaths autorelease];
 }
 
 - (void)reloadContentSize
@@ -116,6 +174,7 @@
 
 	NSUInteger rows = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
 	NSUInteger cols = _numberOfItems / rows;
+    _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] unsignedIntValue];
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, (cols * (_cellSize.height + _cellPadding.height)) + (2.f * _cellPadding.height));
         
