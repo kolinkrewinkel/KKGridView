@@ -15,10 +15,17 @@
     CGSize _cellPadding;
     CGSize _cellSize;
     id <KKGridViewDataSource> _dataSource;
+    struct {
+        unsigned  dataSourceRespondsToHeightForFooterInSection:1;
+        unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
+        unsigned  dataSourceRespondsToNumberOfSections:1;
+        unsigned  delegateRespondsToDidSelectItem:1;
+    } _flags;
     id <KKGridViewDelegate> _gridDelegate;
     UIView *_gridFooterView;
     UIView *_gridHeaderView;
     NSUInteger _numberOfColumns;
+    NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
     NSMutableSet * _reusableCells;
     NSMutableSet * _visibleCells;
@@ -42,7 +49,6 @@
 #pragma mark - Getters
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
-
 - (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexSet *)visibleIndices;
 
@@ -59,7 +65,8 @@
 
 @required
 
-- (NSUInteger)gridView:(KKGridView *)gridView numberOfRowsInSection:(NSUInteger)section;
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
+//- (NSUInteger)numberOfColumnsInGridView:(KKGridView *)gridView;
 - (KKGridViewCell *)gridView:(UITableView *)gridView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @optional
@@ -74,6 +81,6 @@
 
 @protocol KKGridViewDelegate <NSObject>
 
-- (void)gridView:(KKGridView *)gridView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(NSIndexPath *)indexPath;
 
 @end

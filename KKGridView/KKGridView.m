@@ -12,6 +12,7 @@
 
 - (void)_sharedInitialization;
 - (void)_layoutGridView;
+- (void)_reloadIntegers;
 
 @end
 
@@ -64,8 +65,8 @@
 - (id)initWithFrame:(CGRect)frame dataSource:(id<KKGridViewDataSource>)dataSource delegate:(id<KKGridViewDelegate>)delegate
 {
     if ((self = [self initWithFrame:frame])) {
-        _dataSource = dataSource;
-        _gridDelegate = delegate;
+        self.dataSource = dataSource;
+        self.gridDelegate = delegate;
     }
     
     return self;
@@ -91,17 +92,39 @@
 
 - (void)reloadContentSize
 {
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, (_cellSize.height + _cellPadding.height) + (2.f * _cellPadding.height));
+    [self _reloadIntegers];
+
+	NSUInteger rows = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
+	NSUInteger cols = _numberOfItems / rows;
     
+    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, (cols * (_cellSize.height + _cellPadding.height)) + (2.f * _cellPadding.height));
+        
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        newContentSize.height += [_dataSource gridView:self heightForHeaderInSection:idx];
-        newContentSize.height += [_dataSource gridView:self heightForHeaderInSection:idx];
+        if (_flags.dataSourceRespondsToHeightForFooterInSection)
+            newContentSize.height += [_dataSource gridView:self heightForFooterInSection:idx];
+        if (_flags.dataSourceRespondsToHeightForHeaderInSection)
+            newContentSize.height += [_dataSource gridView:self heightForHeaderInSection:idx];
         newContentSize.height += _gridHeaderView.bounds.size.height + _gridFooterView.bounds.size.height;
     }];
     
     [super setContentSize:newContentSize];
 }
 
+- (void)_reloadIntegers
+{
+    if (_flags.dataSourceRespondsToNumberOfSections) {
+        _numberOfSections = [_dataSource numberOfSectionsInGridView:self];
+    } else {
+        _numberOfSections = 1;
+    }
+    
+    NSUInteger newNumberOfItems = 0;
+    for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        newNumberOfItems += [_dataSource gridView:self numberOfItemsInSection:section];
+    }
+    _numberOfItems = newNumberOfItems;
+}
+            
 #pragma mark - Getters
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier
@@ -136,11 +159,25 @@
     [self reloadContentSize];
 }
 
+- (void)setDataSource:(id<KKGridViewDataSource>)dataSource
+{
+    _dataSource = dataSource;
+    _flags.dataSourceRespondsToHeightForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
+    _flags.dataSourceRespondsToHeightForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
+    _flags.dataSourceRespondsToNumberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
+}
+
+- (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
+{
+    _gridDelegate = gridDelegate;
+    _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
+}
+
 #pragma mark - General
 
 - (void)reloadData
 {
-    
+    [self _reloadIntegers];
 }
 
 @end
