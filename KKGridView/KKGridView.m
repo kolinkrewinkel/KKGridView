@@ -82,11 +82,25 @@
 
 - (void)_layoutGridView
 {
-    
+    for (NSUInteger i = 0; i < _numberOfItems; i++) {
+//        Comment this out to avoid roasting your lap
+        UIView *view = [[[UIView alloc] initWithFrame:[self rectForCellAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0]]] autorelease];
+        view.backgroundColor = [UIColor redColor];
+        [self addSubview:view];
+    }
 }
 
 - (CGRect)rectForCellAtIndexPath:(NSIndexPath *)indexPath
 {
+    NSUInteger index = (indexPath.row + 1) * (indexPath.section + 1);
+    index -= 1;
+    if (index < _numberOfItems) {
+        NSUInteger numberOfColumns = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
+        NSInteger row = floor(index / numberOfColumns);
+        NSInteger column = index - (row * numberOfColumns);
+        return CGRectMake((column * (_cellSize.width + _cellPadding.width)) + _cellPadding.width, (row * (_cellSize.height + _cellPadding.height)) + _cellPadding.height, _cellSize.width, _cellSize.height);
+    }
+    
     return CGRectZero;
 }
 
@@ -165,6 +179,7 @@
     _flags.dataSourceRespondsToHeightForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
     _flags.dataSourceRespondsToHeightForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
     _flags.dataSourceRespondsToNumberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
+    [self reloadData];
 }
 
 - (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
