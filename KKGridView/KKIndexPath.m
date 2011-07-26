@@ -3,7 +3,7 @@
 //  KKGridView
 //
 //  Created by Kolin Krewinkel on 7.25.11.
-//  Copyright 2011 kxk design. All rights reserved.
+//  Copyright 2011. All rights reserved.
 //
 
 #import "KKIndexPath.h"
@@ -31,8 +31,8 @@
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath 
 {
     if ((self = [super init])) {
-        _index = indexPath.row;
-        _section = indexPath.section;
+        self.index = indexPath.row;
+        self.section = indexPath.section;
     }
     
     return self;
@@ -43,5 +43,16 @@
     return [[[[self class] alloc] initWithNSIndexPath:indexPath] autorelease];
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone {
+    id new = [[[self class] alloc] initWithIndex:_index section:_section];
+    return new;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Index: %i; Section: %i", _index, _section];
+}
 
 @end

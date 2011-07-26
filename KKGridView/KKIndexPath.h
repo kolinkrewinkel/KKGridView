@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface KKIndexPath : NSObject
+@interface KKIndexPath : NSObject <NSCopying>
 
 - (id)initWithIndex:(NSUInteger)index section:(NSUInteger)section;
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section;

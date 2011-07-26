@@ -28,8 +28,8 @@
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
-    NSMutableSet * _reusableCells;
-    NSMutableSet * _visibleCells;
+    NSMutableDictionary * _reusableCells;
+    NSMutableDictionary * _visibleCells;
 }
 
 #pragma mark - Properties
@@ -68,7 +68,7 @@
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
 //- (NSUInteger)numberOfColumnsInGridView:(KKGridView *)gridView;
-- (KKGridViewCell *)gridView:(UITableView *)gridView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath;
 
 @optional
 
