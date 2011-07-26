@@ -18,6 +18,7 @@
 {
     if ((self = [super initWithFrame:frame])) {
         self.reuseIdentifier = reuseIdentifier;
+        self.opaque = YES;
     }
     
     return self;

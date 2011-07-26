@@ -27,16 +27,23 @@
 @synthesize numberOfColumns = _numberOfColumns;
 @synthesize numberOfSections = _numberOfSections;
 
+#pragma mark - NSObject
+
+- (void)dealloc
+{
+    [_reusableCells release];
+    [_visibleCells release];
+    _dataSource = nil;
+    _gridDelegate = nil;
+    [super dealloc];
+}
+
 #pragma mark - Initialization Methods
 
 - (void)_sharedInitialization
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
-    
-    _renderQueue = dispatch_queue_create("com.kolinkrewinkel.gridview", NULL);
-    dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    dispatch_set_target_queue(_renderQueue, high);
 }
 
 - (id)init
@@ -107,10 +114,8 @@
                 [_visibleCells setObject:cell forKey:indexPath];
                 if (!cell.superview) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
-                    dispatch_async(dispatch_get_main_queue(), ^(void) {
-                        [self addSubview:cell];
-                        [self sendSubviewToBack:cell];
-                    });
+                    [self addSubview:cell];
+                    [self sendSubviewToBack:cell];
                 }
             }
         }
@@ -120,9 +125,7 @@
         
         for (KKGridViewCell *cell in visible) {
             if (!CGRectIntersectsRect(visibleBounds, cell.frame)) {
-                dispatch_async(dispatch_get_main_queue(), ^(void) {
-                    [cell removeFromSuperview];
-                });
+                [cell removeFromSuperview];
                 [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
                 [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
             }

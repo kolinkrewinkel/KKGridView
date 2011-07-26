@@ -28,7 +28,6 @@
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
-    dispatch_queue_t _renderQueue;
     NSMutableDictionary * _reusableCells;
     NSMutableDictionary * _visibleCells;
 }
