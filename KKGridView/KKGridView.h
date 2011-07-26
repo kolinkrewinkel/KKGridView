@@ -19,6 +19,7 @@
     struct {
         unsigned  dataSourceRespondsToHeightForFooterInSection:1;
         unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
+        unsigned  dataSourceRespondsToViewForHeaderInSection;
         unsigned  dataSourceRespondsToNumberOfSections:1;
         unsigned  delegateRespondsToDidSelectItem:1;
     } _flags;
@@ -75,6 +76,7 @@
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 
 @end
 
