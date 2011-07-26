@@ -15,7 +15,6 @@
     @private
     CGSize _cellPadding;
     CGSize _cellSize;
-    id <KKGridViewDataSource> _dataSource;
     struct {
         unsigned  dataSourceRespondsToHeightForFooterInSection:1;
         unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
@@ -23,14 +22,19 @@
         unsigned  dataSourceRespondsToNumberOfSections:1;
         unsigned  delegateRespondsToDidSelectItem:1;
     } _flags;
-    id <KKGridViewDelegate> _gridDelegate;
+    NSMutableArray *_footerHeights;
+    NSMutableArray *_footerViews;
     UIView *_gridFooterView;
     UIView *_gridHeaderView;
+    NSMutableArray *_headerHeights;
+    NSMutableArray *_headerViews;
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
-    NSMutableDictionary * _reusableCells;
-    NSMutableDictionary * _visibleCells;
+    NSMutableDictionary *_reusableCells;
+    NSMutableArray * _sectionHeights;
+    NSMutableArray * _sectionItemCount;
+    NSMutableDictionary *_visibleCells;
 }
 
 #pragma mark - Properties
@@ -83,6 +87,8 @@
 #pragma mark - KKGridViewDelegate
 
 @protocol KKGridViewDelegate <NSObject>
+
+@optional
 
 - (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(NSIndexPath *)indexPath;
 

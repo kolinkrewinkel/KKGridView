@@ -6,6 +6,7 @@
     #import <CoreFoundation/CoreFoundation.h>
     #import <CoreGraphics/CoreGraphics.h>
     #import <Foundation/Foundation.h>
+    #import <QuartzCore/QuartzCore.h>
     #import <UIKit/UIKit.h>
     #import "Definitions.h"
 #endif

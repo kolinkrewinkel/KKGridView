@@ -13,6 +13,7 @@
 - (void)_sharedInitialization;
 - (void)_layoutGridView;
 - (void)_reloadIntegers;
+- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
 
 @end
 
@@ -44,6 +45,7 @@
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
+    self.alwaysBounceVertical = YES;
 }
 
 - (id)init
@@ -103,38 +105,33 @@
 
 - (void)_layoutGridView
 {
-//    dispatch_sync(_renderQueue, ^(void) {
-        
-        const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-        
-        for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-            if (!cell) {
-                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                [_visibleCells setObject:cell forKey:indexPath];
-                if (!cell.superview) {
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                    [self addSubview:cell];
-                    [self sendSubviewToBack:cell];
-                }
-            }
-        }
-        
-        NSArray *visible = [_visibleCells allValues];
-        NSArray *keys = [_visibleCells allKeys];
-        
-        for (KKGridViewCell *cell in visible) {
-            if (!(CGRectGetMinY(cell.frame) < CGRectGetMaxY(visibleBounds) && CGRectGetMaxY(cell.frame) > CGRectGetMinY(visibleBounds))) {
-                [cell removeFromSuperview];
-                [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
-                [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-            }
-        }
-//    });
+    //    dispatch_sync(_renderQueue, ^(void) {
+    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     
+    for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
+        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+        if (!cell) {
+            cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+            [_visibleCells setObject:cell forKey:indexPath];
+            cell.frame = [self rectForCellAtIndexPath:indexPath];
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+        }
+    }
+    
+    NSArray *visible = [_visibleCells allValues];
+    NSArray *keys = [_visibleCells allKeys];
+    for (KKGridViewCell *cell in visible) {
+        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
+            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+        }
+    }
+    //    });
 }
 
-- (void)enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
+- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
 {
     NSMutableSet *set = [_reusableCells objectForKey:identifier];
     if (!set) {
@@ -149,17 +146,25 @@
 {
     CGFloat height = 0.f;
     
-    if (_flags.dataSourceRespondsToHeightForHeaderInSection) {
-        height += [_dataSource gridView:self heightForHeaderInSection:section];
+    if (_headerHeights && [_headerHeights count] > 0) {
+        height += [(id)CFArrayGetValueAtIndex((CFArrayRef)_headerHeights, section) floatValue];
+
     } else {
-        height += 27.f;
+        height += KKGridViewDefaultHeaderHeight;
     }
     
-    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
-        height += [_dataSource gridView:self heightForFooterInSection:section];
+    if (_footerHeights && [_footerHeights count] > 0) {
+        height += [(id)CFArrayGetValueAtIndex((CFArrayRef)_footerHeights, section) floatValue];
+    }    
+    
+    CGFloat numberOfRows = 0.f;
+    
+    if (_sectionItemCount) {
+        numberOfRows = (ceilf([(id)CFArrayGetValueAtIndex((CFArrayRef)_sectionItemCount, section) unsignedIntValue] / (CGFloat)_numberOfColumns));
+    } else {
+        numberOfRows = (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns));
     }
-
-    CGFloat numberOfRows = (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns));
+    
     height += numberOfRows * (_cellSize.height + _cellPadding.height);
     return height;
 }
@@ -170,7 +175,12 @@
     CGFloat yPosition = _cellPadding.height;
     CGFloat xPosition = _cellPadding.width;
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        yPosition += [self heightForSection:section];
+        if (_sectionHeights && [_sectionHeights count] > 0) {
+            id number = (id) CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, section);
+            yPosition += [number floatValue];
+        } else {
+            yPosition += [self heightForSection:section];
+        }
     }
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
@@ -190,17 +200,17 @@
 {
     const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
+
+    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
+
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        
-        KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
-        
         for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
             
             indexPath.section = section;
             indexPath.index = index;
             
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
-            if (CGRectGetMinY(rect) < CGRectGetMaxY(visibleBounds) && CGRectGetMaxY(rect) > CGRectGetMinY(visibleBounds)) {
+            if (KKCGRectIntersectsRectVertically(rect, visibleBounds)) {
                 [indexPaths addObject:[[indexPath copy] autorelease]];
             } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
                 break;
@@ -219,8 +229,15 @@
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);
     
+    if (!_sectionHeights) {
+        _sectionHeights = [[NSMutableArray alloc] init];
+    }
+    [_sectionHeights removeAllObjects];
+    
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        newContentSize.height += [self heightForSection:idx];
+        CGFloat heightForSection = [self heightForSection:idx];
+        [_sectionHeights addObject:[NSNumber numberWithFloat:heightForSection]];
+        newContentSize.height += heightForSection;
     }];
     
     [super setContentSize:newContentSize];
@@ -234,12 +251,25 @@
         _numberOfSections = 1;
     }
     
-    NSUInteger newNumberOfItems = 0;
-    for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        newNumberOfItems += [_dataSource gridView:self numberOfItemsInSection:section];
+    [_headerHeights removeAllObjects];
+    if (_flags.dataSourceRespondsToHeightForHeaderInSection) {
+        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            if (!_headerHeights) {
+                _headerHeights = [[NSMutableArray alloc] init];
+            }
+            [_headerHeights addObject:[NSNumber numberWithFloat:[_dataSource gridView:self heightForHeaderInSection:section]]];
+        }
     }
-    _numberOfItems = 0;
-    _numberOfItems = newNumberOfItems;
+    
+    [_sectionItemCount removeAllObjects];
+    for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        if (!_sectionItemCount) {
+            _sectionItemCount = [[NSMutableArray alloc] init];
+        }
+        [_sectionItemCount addObject:[NSNumber numberWithUnsignedInt:[_dataSource gridView:self numberOfItemsInSection:section]]];
+    }
+    
+    
 }
 
 #pragma mark - Getters
@@ -285,6 +315,8 @@
     _flags.dataSourceRespondsToHeightForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
     _flags.dataSourceRespondsToNumberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
     _flags.dataSourceRespondsToViewForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
+    
+    
     [self reloadData];
 }
 
@@ -299,6 +331,14 @@
 - (void)reloadData
 {
     [self _reloadIntegers];
+    if (_flags.dataSourceRespondsToViewForHeaderInSection) {
+        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            if (!_headerViews) {
+                _headerViews = [[NSMutableArray alloc] init];
+            }
+            [_headerViews addObject:[_dataSource gridView:self viewForHeaderInSection:section]];
+        }
+    }
 }
 
 @end

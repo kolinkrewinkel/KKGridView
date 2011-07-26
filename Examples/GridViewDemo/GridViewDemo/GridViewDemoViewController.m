@@ -3,20 +3,12 @@
 //  GridViewDemo
 //
 //  Created by Kolin Krewinkel on 7.25.11.
-//  Copyright 2011 kxk design. All rights reserved.
+//  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
 #import "GridViewDemoViewController.h"
 
 @implementation GridViewDemoViewController
-
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
 
 - (void)dealloc
 {
@@ -32,6 +24,7 @@
     
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(100.f, 100.f);
+    _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _gridView.cellPadding = CGSizeMake(5.f, 5.f);
     self.view = _gridView;

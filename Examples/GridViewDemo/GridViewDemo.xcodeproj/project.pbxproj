@@ -72,9 +72,9 @@
 		1A530A1E13DE962700E6C60B = {
 			isa = PBXGroup;
 			children = (
-				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,
 				1A530A3313DE962700E6C60B /* GridViewDemo */,
 				1A530A2C13DE962700E6C60B /* Frameworks */,
+				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,
 				1A530A2A13DE962700E6C60B /* Products */,
 			);
 			sourceTree = "<group>";
