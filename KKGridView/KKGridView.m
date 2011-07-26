@@ -33,6 +33,10 @@
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
+    
+    _renderQueue = dispatch_queue_create("com.kolinkrewinkel.gridview", NULL);
+    dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    dispatch_set_target_queue(_renderQueue, high);
 }
 
 - (id)init
@@ -92,31 +96,40 @@
 
 - (void)_layoutGridView
 {
-    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-    
-    for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
-        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        if (!cell) {
-            cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-            [cell retain];
-            [_visibleCells setObject:cell forKey:indexPath];
-            
-            if (!cell.superview) {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
+    dispatch_sync(_renderQueue, ^(void) {
+        
+        const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+        
+        for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            if (!cell) {
+                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                [_visibleCells setObject:cell forKey:indexPath];
+                
+                if (!cell.superview) {
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    dispatch_async(dispatch_get_main_queue(), ^(void) {
+                        [self addSubview:cell];
+                        [self sendSubviewToBack:cell];
+                    });
+                }
             }
         }
-    }
-
-    for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        if (!CGRectIntersectsRect(visibleBounds, cell.frame)) {
-            KKIndexPath *indexPath = [self indexPathForCell:cell];
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:indexPath];
-            [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+        
+        NSArray *visible = [_visibleCells allValues];
+        NSArray *keys = [_visibleCells allKeys];
+        
+        for (KKGridViewCell *cell in visible) {
+            if (!CGRectIntersectsRect(visibleBounds, cell.frame)) {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [cell removeFromSuperview];
+                });
+                [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
+                [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+            }
         }
-    }
+    });
+    
 }
 
 - (void)enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
@@ -172,15 +185,22 @@
 
 - (NSArray *)visibleIndexPaths
 {
-    CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-
+    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        
+        KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
+        
         for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
-            KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:index inSection:section];
+            
+            indexPath.section = section;
+            indexPath.index = index;
+            
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
-            if (CGRectIntersectsRect(visibleBounds, rect)) {
-                [indexPaths addObject:indexPath];
+            if (CGRectIntersectsRect(rect, visibleBounds)) {
+                [indexPaths addObject:[[indexPath copy] autorelease]];
+            } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
+                break;
             }
         }
     }
@@ -196,7 +216,7 @@
 	NSUInteger cols = _numberOfItems / rows;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
     
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, (cols * (_cellSize.height + _cellPadding.height)) + (2.f * _cellPadding.height));
+    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);
     
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         newContentSize.height += [self heightForSection:idx];
@@ -223,36 +243,24 @@
 
 #pragma mark - Getters
 
-- (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier {
-    
+- (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier 
+{
     if (!identifier) return nil;
     
-    // Get possible reuseable cells for the identifier
     NSMutableSet *reuseableCellsForIdentifier = [_reusableCells objectForKey:identifier]; 
     
-    
-    // None available, return nil and let the user create a new one.
     if ([reuseableCellsForIdentifier count] == 0) {
         [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
         return nil;
     }
-    // Get any reuseable cell.
+    
     KKGridViewCell *reusableCell = [reuseableCellsForIdentifier anyObject];
-    
-    
-    // Remove it.
+    [[reusableCell retain] autorelease]; // HOLD IT
     [reuseableCellsForIdentifier removeObject:reusableCell];
     
-    // If someone wants to handle some stuff.
     [reusableCell prepareForReuse];
     
-    // Return the reused cell.
     return reusableCell;
-}
-
-- (NSIndexSet *)visibleIndices
-{
-    return [NSIndexSet indexSet];
 }
 
 #pragma mark - Setters

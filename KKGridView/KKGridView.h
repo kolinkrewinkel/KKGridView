@@ -28,6 +28,7 @@
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
+    dispatch_queue_t _renderQueue;
     NSMutableDictionary * _reusableCells;
     NSMutableDictionary * _visibleCells;
 }
@@ -51,7 +52,7 @@
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath;
-- (NSIndexSet *)visibleIndices;
+- (NSArray *)visibleIndexPaths;
 
 #pragma mark - Methods
 

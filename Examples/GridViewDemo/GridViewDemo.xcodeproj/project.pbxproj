@@ -301,6 +301,7 @@
 		1A530A4B13DE962700E6C60B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
 				HEADER_SEARCH_PATHS = ../../KKGridView/;
@@ -312,6 +313,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -319,6 +321,7 @@
 		1A530A4C13DE962700E6C60B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
 				HEADER_SEARCH_PATHS = ../../KKGridView/;
@@ -330,6 +333,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
