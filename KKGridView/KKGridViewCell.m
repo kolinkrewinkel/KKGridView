@@ -23,6 +23,10 @@
     return self;
 }
 
+#pragma mark - Drawing
+
+// For future use
+
 #pragma mark - Subclassers
 
 - (void)prepareForReuse

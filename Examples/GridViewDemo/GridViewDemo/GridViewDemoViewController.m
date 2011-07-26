@@ -71,7 +71,7 @@
     
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
-        cell.backgroundColor = [UIColor blackColor];
+        cell.backgroundColor = [UIColor grayColor];
     }
     
     return cell;

@@ -96,7 +96,7 @@
 
 - (void)_layoutGridView
 {
-    dispatch_sync(_renderQueue, ^(void) {
+//    dispatch_sync(_renderQueue, ^(void) {
         
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         
@@ -105,7 +105,6 @@
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
                 [_visibleCells setObject:cell forKey:indexPath];
-                
                 if (!cell.superview) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                     dispatch_async(dispatch_get_main_queue(), ^(void) {
@@ -128,7 +127,7 @@
                 [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
             }
         }
-    });
+//    });
     
 }
 
@@ -153,10 +152,12 @@
         height += 27.f;
     }
     
-    if (_flags.dataSourceRespondsToHeightForFooterInSection)
+    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
         height += [_dataSource gridView:self heightForFooterInSection:section];
-    
-    height += (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns)) * (_cellSize.height + _cellPadding.height);
+    }
+
+    CGFloat numberOfRows = (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns));
+    height += numberOfRows * (_cellSize.height + _cellPadding.height);
     return height;
 }
 
@@ -169,9 +170,8 @@
         yPosition += [self heightForSection:section];
     }
     
-    NSUInteger numberOfColumns = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
-    NSInteger row = floor(indexPath.index / numberOfColumns);
-    NSInteger column = indexPath.index - (row * numberOfColumns);
+    NSInteger row = floor(indexPath.index / _numberOfColumns);
+    NSInteger column = indexPath.index - (row * _numberOfColumns);
     
     yPosition += (row * (_cellSize.height + _cellPadding.height));
     xPosition += (column * (_cellSize.width + _cellPadding.width));
@@ -212,8 +212,6 @@
 {
     [self _reloadIntegers];
     
-	NSUInteger rows = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
-	NSUInteger cols = _numberOfItems / rows;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);

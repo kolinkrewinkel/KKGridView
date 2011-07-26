@@ -6,18 +6,20 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
+#import "KKIndexPath.h"
+
 @interface KKGridViewCell : UIView {
     @private
     NSString *_reuseIdentifier;
 }
 
-#pragma mark - Properties
-
-@property (nonatomic, copy) NSString *reuseIdentifier;
-
 #pragma mark - Designated Initializer
 
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier;
+
+#pragma mark - Properties
+
+@property (nonatomic, copy) NSString *reuseIdentifier;
 
 #pragma mark - Subclassers
 

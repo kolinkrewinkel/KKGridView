@@ -304,6 +304,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = ../../KKGridView/;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
@@ -324,6 +325,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = ../../KKGridView/;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
