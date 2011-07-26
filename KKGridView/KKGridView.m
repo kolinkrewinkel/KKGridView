@@ -32,8 +32,9 @@
 
 - (void)dealloc
 {
-    [_reusableCells release];
-    [_visibleCells release];
+    [_reusableCells release], _reusableCells = nil;
+    [_visibleCells release], _visibleCells = nil;
+    dispatch_release(_renderQueue), _renderQueue = nil;
     _dataSource = nil;
     _gridDelegate = nil;
     [super dealloc];
@@ -45,6 +46,10 @@
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
+    _renderQueue = dispatch_queue_create("com.kolinkrewinkel.gridview", NULL);
+    dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+    dispatch_set_target_queue(_renderQueue, high);
+    
     self.alwaysBounceVertical = YES;
 }
 
@@ -105,30 +110,30 @@
 
 - (void)_layoutGridView
 {
-    //    dispatch_sync(_renderQueue, ^(void) {
-    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-    
-    for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
-        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        if (!cell) {
-            cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-            [_visibleCells setObject:cell forKey:indexPath];
-            cell.frame = [self rectForCellAtIndexPath:indexPath];
-            [self addSubview:cell];
-            [self sendSubviewToBack:cell];
+    dispatch_sync(_renderQueue, ^(void) {
+        const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+        
+        for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            if (!cell) {
+                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                [_visibleCells setObject:cell forKey:indexPath];
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+            }
         }
-    }
-    
-    NSArray *visible = [_visibleCells allValues];
-    NSArray *keys = [_visibleCells allKeys];
-    for (KKGridViewCell *cell in visible) {
-        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
-            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+        
+        NSArray *visible = [_visibleCells allValues];
+        NSArray *keys = [_visibleCells allKeys];
+        for (KKGridViewCell *cell in visible) {
+            if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
+                [cell removeFromSuperview];
+                [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
+                [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+            }
         }
-    }
-    //    });
+    });
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
@@ -148,7 +153,7 @@
     
     if (_headerHeights && [_headerHeights count] > 0) {
         height += [(id)CFArrayGetValueAtIndex((CFArrayRef)_headerHeights, section) floatValue];
-
+        
     } else {
         height += KKGridViewDefaultHeaderHeight;
     }
@@ -200,9 +205,9 @@
 {
     const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
-
+    
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
-
+    
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
         for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
             
