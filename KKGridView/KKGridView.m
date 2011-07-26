@@ -94,27 +94,24 @@
 {
     const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     
-    for (KKIndexPath *indexPath in [self visibleIndexPaths]) {
-        
+    for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        if (cell) {
-            cell.frame = [self rectForCellAtIndexPath:indexPath];
-        } else {
+        if (!cell) {
             cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
             [cell retain];
             [_visibleCells setObject:cell forKey:indexPath];
-//            [cell autorelease];
-            cell.frame = [self rectForCellAtIndexPath:indexPath];
-
-            if (cell.superview == nil && ![self.subviews containsObject:cell]) {
+            
+            if (!cell.superview) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
                 [self addSubview:cell];
+                [self sendSubviewToBack:cell];
             }
         }
-        
     }
+
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        KKIndexPath *indexPath = [self indexPathForCell:cell];
         if (!CGRectIntersectsRect(visibleBounds, cell.frame)) {
+            KKIndexPath *indexPath = [self indexPathForCell:cell];
             [cell removeFromSuperview];
             [_visibleCells removeObjectForKey:indexPath];
             [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
@@ -158,14 +155,14 @@
     for (NSUInteger section = 0; section < indexPath.section; section++) {
         yPosition += [self heightForSection:section];
     }
-
+    
     NSUInteger numberOfColumns = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
     NSInteger row = floor(indexPath.index / numberOfColumns);
     NSInteger column = indexPath.index - (row * numberOfColumns);
     
     yPosition += (row * (_cellSize.height + _cellPadding.height));
     xPosition += (column * (_cellSize.width + _cellPadding.width));
-
+    
     rect.size = _cellSize;
     rect.origin.y = yPosition;
     rect.origin.x = xPosition;
@@ -175,34 +172,32 @@
 
 - (NSArray *)visibleIndexPaths
 {
-    NSMutableArray *visiblePaths = [[[NSMutableArray alloc] init] autorelease];
     CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-    
+
+    NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        
         for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
             KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:index inSection:section];
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
-            if (CGRectIntersectsRect(visibleBounds, rect))
-                [visiblePaths addObject:indexPath];
-        
+            if (CGRectIntersectsRect(visibleBounds, rect)) {
+                [indexPaths addObject:indexPath];
+            }
         }
-        
     }
     
-    return visiblePaths;
+    return indexPaths;
 }
 
 - (void)reloadContentSize
 {
     [self _reloadIntegers];
-
+    
 	NSUInteger rows = floor(self.bounds.size.height / ((_cellSize.width + _cellPadding.width) + (2.f * _cellPadding.width)));
 	NSUInteger cols = _numberOfItems / rows;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, (cols * (_cellSize.height + _cellPadding.height)) + (2.f * _cellPadding.height));
-        
+    
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         newContentSize.height += [self heightForSection:idx];
     }];
@@ -225,7 +220,7 @@
     _numberOfItems = 0;
     _numberOfItems = newNumberOfItems;
 }
-            
+
 #pragma mark - Getters
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier {
@@ -243,7 +238,7 @@
     }
     // Get any reuseable cell.
     KKGridViewCell *reusableCell = [reuseableCellsForIdentifier anyObject];
-
+    
     
     // Remove it.
     [reuseableCellsForIdentifier removeObject:reusableCell];
