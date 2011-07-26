@@ -124,7 +124,7 @@
         NSArray *keys = [_visibleCells allKeys];
         
         for (KKGridViewCell *cell in visible) {
-            if (!CGRectIntersectsRect(visibleBounds, cell.frame)) {
+            if (!(CGRectGetMinY(cell.frame) < CGRectGetMaxY(visibleBounds) && CGRectGetMaxY(cell.frame) > CGRectGetMinY(visibleBounds))) {
                 [cell removeFromSuperview];
                 [_visibleCells removeObjectForKey:[keys objectAtIndex:[visible indexOfObject:cell]]];
                 [self enqueueCell:cell withIdentifier:cell.reuseIdentifier];
@@ -200,7 +200,7 @@
             indexPath.index = index;
             
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
-            if (CGRectIntersectsRect(rect, visibleBounds)) {
+            if (CGRectGetMinY(rect) < CGRectGetMaxY(visibleBounds) && CGRectGetMaxY(rect) > CGRectGetMinY(visibleBounds)) {
                 [indexPaths addObject:[[indexPath copy] autorelease]];
             } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
                 break;
