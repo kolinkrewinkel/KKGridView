@@ -43,6 +43,31 @@
     return [[[[self class] alloc] initWithNSIndexPath:indexPath] autorelease];
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if ([object isKindOfClass:[KKIndexPath class]]) {
+        KKIndexPath *indexPath = (KKIndexPath *)object;
+        if (indexPath.index == _index && indexPath.section == _section) {
+            return YES;
+        } else {
+            return NO;
+        }
+        
+    } else if ([object isKindOfClass:[NSIndexPath class]]) {
+        NSIndexPath *indexPath = (NSIndexPath *)object;
+        if (indexPath.row == _index && indexPath.section == _section) {
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+    return NO;
+}
+
+- (NSUInteger)hash {
+    return _section + 7 * _index;
+}
+
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {

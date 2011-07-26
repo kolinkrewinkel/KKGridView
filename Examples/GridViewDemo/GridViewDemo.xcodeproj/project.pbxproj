@@ -1,0 +1,361 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A530A2D13DE962700E6C60B /* UIKit.framework */; };
+		1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A530A2F13DE962700E6C60B /* Foundation.framework */; };
+		1A530A3213DE962700E6C60B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A530A3113DE962700E6C60B /* CoreGraphics.framework */; };
+		1A530A3813DE962700E6C60B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A3613DE962700E6C60B /* InfoPlist.strings */; };
+		1A530A3A13DE962700E6C60B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A3913DE962700E6C60B /* main.m */; };
+		1A530A3E13DE962700E6C60B /* GridViewDemoAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A3D13DE962700E6C60B /* GridViewDemoAppDelegate.m */; };
+		1A530A4113DE962700E6C60B /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A3F13DE962700E6C60B /* MainWindow.xib */; };
+		1A530A4413DE962700E6C60B /* GridViewDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */; };
+		1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */; };
+		1A530A5813DE965900E6C60B /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A530A5513DE964D00E6C60B /* libKKGridView.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1A530A5413DE964D00E6C60B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1A61BE0F13DCAF1F00AB4243;
+			remoteInfo = KKGridView;
+		};
+		1A530A5613DE965400E6C60B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A61BE0E13DCAF1F00AB4243;
+			remoteInfo = KKGridView;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1A530A2913DE962700E6C60B /* GridViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GridViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A530A2D13DE962700E6C60B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		1A530A2F13DE962700E6C60B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		1A530A3113DE962700E6C60B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		1A530A3513DE962700E6C60B /* GridViewDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GridViewDemo-Info.plist"; sourceTree = "<group>"; };
+		1A530A3713DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A530A3913DE962700E6C60B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		1A530A3B13DE962700E6C60B /* GridViewDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GridViewDemo-Prefix.pch"; sourceTree = "<group>"; };
+		1A530A3C13DE962700E6C60B /* GridViewDemoAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridViewDemoAppDelegate.h; sourceTree = "<group>"; };
+		1A530A3D13DE962700E6C60B /* GridViewDemoAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoAppDelegate.m; sourceTree = "<group>"; };
+		1A530A4013DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridViewDemoViewController.h; sourceTree = "<group>"; };
+		1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoViewController.m; sourceTree = "<group>"; };
+		1A530A4613DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GridViewDemoViewController.xib; sourceTree = "<group>"; };
+		1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KKGridView.xcodeproj; path = ../../KKGridView.xcodeproj; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1A530A2613DE962700E6C60B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A530A5813DE965900E6C60B /* libKKGridView.a in Frameworks */,
+				1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */,
+				1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */,
+				1A530A3213DE962700E6C60B /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1A530A1E13DE962700E6C60B = {
+			isa = PBXGroup;
+			children = (
+				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,
+				1A530A3313DE962700E6C60B /* GridViewDemo */,
+				1A530A2C13DE962700E6C60B /* Frameworks */,
+				1A530A2A13DE962700E6C60B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1A530A2A13DE962700E6C60B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A530A2913DE962700E6C60B /* GridViewDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1A530A2C13DE962700E6C60B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A530A2D13DE962700E6C60B /* UIKit.framework */,
+				1A530A2F13DE962700E6C60B /* Foundation.framework */,
+				1A530A3113DE962700E6C60B /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1A530A3313DE962700E6C60B /* GridViewDemo */ = {
+			isa = PBXGroup;
+			children = (
+				1A530A3C13DE962700E6C60B /* GridViewDemoAppDelegate.h */,
+				1A530A3D13DE962700E6C60B /* GridViewDemoAppDelegate.m */,
+				1A530A3F13DE962700E6C60B /* MainWindow.xib */,
+				1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */,
+				1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */,
+				1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */,
+				1A530A3413DE962700E6C60B /* Supporting Files */,
+			);
+			path = GridViewDemo;
+			sourceTree = "<group>";
+		};
+		1A530A3413DE962700E6C60B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A530A3513DE962700E6C60B /* GridViewDemo-Info.plist */,
+				1A530A3613DE962700E6C60B /* InfoPlist.strings */,
+				1A530A3913DE962700E6C60B /* main.m */,
+				1A530A3B13DE962700E6C60B /* GridViewDemo-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1A530A4E13DE964D00E6C60B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A530A5513DE964D00E6C60B /* libKKGridView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1A530A2813DE962700E6C60B /* GridViewDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A530A4A13DE962700E6C60B /* Build configuration list for PBXNativeTarget "GridViewDemo" */;
+			buildPhases = (
+				1A530A2513DE962700E6C60B /* Sources */,
+				1A530A2613DE962700E6C60B /* Frameworks */,
+				1A530A2713DE962700E6C60B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A530A5713DE965400E6C60B /* PBXTargetDependency */,
+			);
+			name = GridViewDemo;
+			productName = GridViewDemo;
+			productReference = 1A530A2913DE962700E6C60B /* GridViewDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1A530A2013DE962700E6C60B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "kxk design";
+			};
+			buildConfigurationList = 1A530A2313DE962700E6C60B /* Build configuration list for PBXProject "GridViewDemo" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 1A530A1E13DE962700E6C60B;
+			productRefGroup = 1A530A2A13DE962700E6C60B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 1A530A4E13DE964D00E6C60B /* Products */;
+					ProjectRef = 1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				1A530A2813DE962700E6C60B /* GridViewDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		1A530A5513DE964D00E6C60B /* libKKGridView.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libKKGridView.a;
+			remoteRef = 1A530A5413DE964D00E6C60B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1A530A2713DE962700E6C60B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A530A3813DE962700E6C60B /* InfoPlist.strings in Resources */,
+				1A530A4113DE962700E6C60B /* MainWindow.xib in Resources */,
+				1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1A530A2513DE962700E6C60B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A530A3A13DE962700E6C60B /* main.m in Sources */,
+				1A530A3E13DE962700E6C60B /* GridViewDemoAppDelegate.m in Sources */,
+				1A530A4413DE962700E6C60B /* GridViewDemoViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1A530A5713DE965400E6C60B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = KKGridView;
+			targetProxy = 1A530A5613DE965400E6C60B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1A530A3613DE962700E6C60B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A530A3713DE962700E6C60B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		1A530A3F13DE962700E6C60B /* MainWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A530A4013DE962700E6C60B /* en */,
+			);
+			name = MainWindow.xib;
+			sourceTree = "<group>";
+		};
+		1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A530A4613DE962700E6C60B /* en */,
+			);
+			name = GridViewDemoViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1A530A4813DE962700E6C60B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		1A530A4913DE962700E6C60B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1A530A4B13DE962700E6C60B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				HEADER_SEARCH_PATHS = ../../KKGridView/;
+				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = "../../build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		1A530A4C13DE962700E6C60B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				HEADER_SEARCH_PATHS = ../../KKGridView/;
+				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = "../../build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				OTHER_LDFLAGS = (
+					"-all_load",
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A530A2313DE962700E6C60B /* Build configuration list for PBXProject "GridViewDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A530A4813DE962700E6C60B /* Debug */,
+				1A530A4913DE962700E6C60B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1A530A4A13DE962700E6C60B /* Build configuration list for PBXNativeTarget "GridViewDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A530A4B13DE962700E6C60B /* Debug */,
+				1A530A4C13DE962700E6C60B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1A530A2013DE962700E6C60B /* Project object */;
+}

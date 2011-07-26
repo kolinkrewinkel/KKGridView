@@ -1,43 +1,25 @@
 //
-//  GridViewExampleAppDelegate.m
-//  GridViewExample
+//  GridViewDemoAppDelegate.m
+//  GridViewDemo
 //
 //  Created by Kolin Krewinkel on 7.25.11.
 //  Copyright 2011 kxk design. All rights reserved.
 //
 
-#import "GridViewExampleAppDelegate.h"
+#import "GridViewDemoAppDelegate.h"
 
-#import "MasterViewController.h"
+#import "GridViewDemoViewController.h"
 
-#import "DetailViewController.h"
-
-@implementation GridViewExampleAppDelegate
+@implementation GridViewDemoAppDelegate
 
 @synthesize window = _window;
-@synthesize navigationController = _navigationController;
-@synthesize splitViewController = _splitViewController;
+@synthesize viewController = _viewController;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        MasterViewController *controller = [[MasterViewController alloc] initWithNibName:@"MasterViewController_iPhone" bundle:nil];
-        self.navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
-        self.window.rootViewController = self.navigationController;
-    } else {
-        MasterViewController *controller = [[MasterViewController alloc] initWithNibName:@"MasterViewController_iPad" bundle:nil];
-        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
-        
-        DetailViewController *detailViewController = [[DetailViewController alloc] initWithNibName:@"DetailViewController_iPad" bundle:nil];
-        
-        self.splitViewController = [[UISplitViewController alloc] init];
-        self.splitViewController.delegate = detailViewController;
-        self.splitViewController.viewControllers = [NSArray arrayWithObjects:navigationController, detailViewController, nil];
-        
-        self.window.rootViewController = self.splitViewController;
-    }
+     
+    self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -79,6 +61,13 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+}
+
+- (void)dealloc
+{
+    [_window release];
+    [_viewController release];
+    [super dealloc];
 }
 
 @end
