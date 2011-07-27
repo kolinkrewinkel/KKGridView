@@ -8,9 +8,5 @@
 
 // Place ARC macro here.
 
-inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
-{
-    return (CGRectGetMinY(rect2) < CGRectGetMaxY(rect1)) && (CGRectGetMaxY(rect2) > CGRectGetMinY(rect1));
-}
 
 #define KKGridViewDefaultHeaderHeight 27.f

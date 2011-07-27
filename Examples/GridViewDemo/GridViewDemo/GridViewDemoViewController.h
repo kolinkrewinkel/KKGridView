@@ -10,6 +10,7 @@
 
 @interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate> {
     KKGridView *_gridView;
+    NSMutableArray *_headerViews;
 }
 
 @end

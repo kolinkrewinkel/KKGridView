@@ -7,12 +7,14 @@
 //
 
 #import "GridViewDemoViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation GridViewDemoViewController
 
 - (void)dealloc
 {
     [_gridView release];
+    [_headerViews release];
     [super dealloc];
 }
 
@@ -22,12 +24,24 @@
 {
     [super loadView];
     
+    _headerViews = [[NSMutableArray alloc] init];
+    for (NSUInteger section = 0; section < 4; section++) {
+        UILabel *view = [[[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
+        view.textAlignment = UITextAlignmentCenter;
+        view.textColor = [UIColor blackColor];
+        view.text = [NSString stringWithFormat:@"%i", section];
+        view.layer.borderColor = [UIColor blackColor].CGColor;
+        view.layer.borderWidth = 1.f;
+        [_headerViews addObject:view];
+    }
+
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(100.f, 100.f);
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _gridView.cellPadding = CGSizeMake(5.f, 5.f);
     self.view = _gridView;
+    
 }
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
@@ -49,6 +63,16 @@
             return 0;
             break;
     }
+}
+
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
+{
+    return 25.f;
+}
+
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+{
+    return [_headerViews objectAtIndex:section];
 }
 
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
