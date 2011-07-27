@@ -28,6 +28,7 @@
     UIView *_gridHeaderView;
     NSMutableArray *_headerHeights;
     NSMutableArray *_headerViews;
+    NSArray *_lastVisibleIndexPaths;
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;
@@ -36,6 +37,7 @@
     NSMutableArray * _sectionHeights;
     NSMutableArray * _sectionItemCount;
     NSMutableDictionary *_visibleCells;
+    NSRange _visibleSections;    
 }
 
 #pragma mark - Properties

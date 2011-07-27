@@ -111,9 +111,21 @@
 - (void)_layoutGridView
 {
     dispatch_sync(_renderQueue, ^(void) {
+        if (self.contentOffset.y < 0.f || self.contentOffset.y > self.contentSize.height) {
+            return;
+        }
+        
+        NSArray *visiblePaths = [self visibleIndexPaths];
+        if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
+            _lastVisibleIndexPaths = [visiblePaths retain];
+            return;
+        }
+        _lastVisibleIndexPaths = [visiblePaths retain];
+
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         
-        for (KKIndexPath *indexPath in  [self visibleIndexPaths]) {
+        
+        for (KKIndexPath *indexPath in visiblePaths) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
@@ -222,6 +234,11 @@
             }
         }
     }
+    
+//    if ([indexPaths count] > 0) {
+//        _visibleSections.location = [[indexPaths objectAtIndex:0] section];
+//        _visibleSections.length = [[indexPaths lastObject] section] - MAX(_visibleSections.location - 1, 0);
+//    }
     
     return indexPaths;
 }
