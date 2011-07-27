@@ -115,21 +115,11 @@
     for (NSUInteger index = 0; index < section; index++) {
         NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
         height += [number floatValue];
-        height += _cellPadding.height;
+//        height += _cellPadding.height*2.f;
 
     }
-    height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
+//    height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
     return height;
-}
-
-- (CGRect)_CGRectFromVerticalOffset:(CGFloat)offset height:(CGFloat)height
-{
-    return CGRectMake(0,offset,self.bounds.size.width,height);
-}
-
-- (CGRect)rectForHeaderInSection:(NSInteger)section
-{
-    return [self _CGRectFromVerticalOffset:[self sectionHeightsCombinedUpToSection:section] height:[(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue]];
 }
 
 - (void)_layoutGridView
@@ -157,16 +147,8 @@
                 [self addSubview:header];
             }
             
-            
-            
-            
-//            NSUInteger interim = CGRectGetMaxY(lastCellRect) - self.contentOffset.y;
-            
-            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= (CGRectGetMaxY(lastCellRect)) - headerHeight)) {
+            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
-//            } else if (interim <= headerHeight && interim > 0) {
-//                header.backgroundColor = [UIColor redColor];
-            } else {
             }
 
         }
@@ -177,12 +159,7 @@
         }
         _lastVisibleIndexPaths = [visiblePaths retain];
         
-        
-        
         for (KKIndexPath *indexPath in visiblePaths) {
-
-            
-            
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
@@ -191,7 +168,6 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
             }
-            
         }
         
         NSArray *visible = [_visibleCells allValues];
@@ -245,7 +221,7 @@
     }
     
     if (_footerHeights && [_footerHeights count] > 0) {
-//        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_footerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
+        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_footerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
     }    
     
     CGFloat numberOfRows = 0.f;
@@ -257,6 +233,8 @@
     }
     
     height += numberOfRows * (_cellSize.height + _cellPadding.height);
+    height += _cellPadding.height;
+    
     return height;
 }
 
@@ -269,10 +247,13 @@
         if (_sectionHeights && [_sectionHeights count] > 0) {
             id number = (id) CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, section);
             yPosition += [number floatValue];
+            
         } else {
             yPosition += [self heightForSection:section];
         }
     }
+    
+    yPosition += [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:indexPath.section]) floatValue];
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
     NSInteger column = indexPath.index - (row * _numberOfColumns);
@@ -302,7 +283,7 @@
             
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
             if (KKCGRectIntersectsRectVertically(rect, visibleBounds)) {
-                [indexPaths addObject:[[indexPath copy] autorelease]];
+                CFArrayAppendValue((CFMutableArrayRef)indexPaths, [[indexPath copy] autorelease]);
             } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
                 break;
             }
@@ -419,15 +400,6 @@
 {
     _gridDelegate = gridDelegate;
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
-}
-
-- (BOOL)_headerViewForSectionShouldBeFixed:(NSUInteger)section
-{
-    
-    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-    
-    CGRect acceptableSectionBoundaries = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:section], self.bounds.size.width, [(NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, section) floatValue]);
-    return (KKCGRectIntersectsRectVertically(acceptableSectionBoundaries, visibleBounds));
 }
 
 #pragma mark - General
