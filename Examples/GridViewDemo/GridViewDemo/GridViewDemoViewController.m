@@ -30,8 +30,6 @@
         view.textAlignment = UITextAlignmentCenter;
         view.textColor = [UIColor blackColor];
         view.text = [NSString stringWithFormat:@"%i", section];
-        view.layer.borderColor = [UIColor blackColor].CGColor;
-        view.layer.borderWidth = 1.f;
         [_headerViews addObject:view];
     }
 

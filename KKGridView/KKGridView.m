@@ -115,6 +115,8 @@
     for (NSUInteger index = 0; index < section; index++) {
         NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
         height += [number floatValue];
+        height += _cellPadding.height;
+
     }
     height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
     return height;
@@ -146,44 +148,27 @@
                 
         for (KKIndexPath *indexPath in visiblePaths) {
             UIView * header = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section]);
+            CGFloat headerHeight = [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:indexPath.section]) floatValue];
+            
+            CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntValue] - 1) inSection:indexPath.section]];
+            
             if (!header.superview) {
-                header.backgroundColor = [UIColor blueColor];
+                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
                 [self addSubview:header];
             }
             
             
             
-            CGFloat headerHeight = [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:indexPath.section]) floatValue];
-        
-            CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntValue] - 1) inSection:indexPath.section]];
             
-            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= CGRectGetMaxY(lastCellRect))) {
+//            NSUInteger interim = CGRectGetMaxY(lastCellRect) - self.contentOffset.y;
+            
+            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= (CGRectGetMaxY(lastCellRect)) - headerHeight)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
-//            } else if ([self sectionHeightsCombinedUpToSection:indexPath.section] - self.contentOffset.y <= headerHeight) {
-//                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-//                if (indexPath.section > 0) {
-//                UIView * previousHeader = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section - 1]);
-//                    previousHeader.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-//                }
-//
+//            } else if (interim <= headerHeight && interim > 0) {
+//                header.backgroundColor = [UIColor redColor];
             } else {
-                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
             }
-            
-        
-            
-            
-            
-//            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (CGRectGetMaxY(visibleBounds) - (CGRectGetMaxY([self rectForCellAtIndexPath:indexPath]) ) > headerHeight)) {
-//                header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
-//            } else {
-//                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-//            }
-//
-//            
-//            if (!KKCGRectIntersectsRectVertically(visibleBounds, header.frame)) {
-//                [header removeFromSuperview];
-//            }
+
         }
 
         if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
