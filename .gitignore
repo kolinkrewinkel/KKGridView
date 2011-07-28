@@ -1,7 +1,8 @@
 *.xcodeproj/*.pbxuser
 *.xcodeproj/*.perspectivev3
-*.xcodeproj/xcuserdata/xcuserdatad
+*.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
 *.xcuserstate
+Examples/*/*.xcodeproj/xcuserdata
 build/
 .DS_Store
