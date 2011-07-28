@@ -8,7 +8,28 @@
 
 #import "KKGridView.h"
 
-@interface KKGridView ()
+@interface KKGridView () {
+@private
+    struct {
+        unsigned  dataSourceRespondsToHeightForFooterInSection:1;
+        unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
+        unsigned  dataSourceRespondsToViewForHeaderInSection;
+        unsigned  dataSourceRespondsToNumberOfSections:1;
+        unsigned  delegateRespondsToDidSelectItem:1;
+    } _flags;
+    NSMutableArray *_footerHeights;
+    NSMutableArray *_footerViews;
+    NSMutableDictionary *_headerHeights;
+    NSMutableDictionary *_headerViews;
+    NSArray *_lastVisibleIndexPaths;
+    NSUInteger _numberOfItems;
+    dispatch_queue_t _renderQueue;
+    NSMutableDictionary *_reusableCells;
+    NSMutableArray * _sectionHeights;
+    NSMutableArray * _sectionItemCount;
+    NSMutableDictionary *_visibleCells;
+    NSRange _visibleSections;    
+}
 
 - (void)_sharedInitialization;
 - (void)_layoutGridView;
@@ -115,10 +136,10 @@
     for (NSUInteger index = 0; index < section; index++) {
         NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
         height += [number floatValue];
-//        height += _cellPadding.height*2.f;
-
+        //        height += _cellPadding.height*2.f;
+        
     }
-//    height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
+    //    height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
     return height;
 }
 
@@ -127,7 +148,7 @@
     // add an update method so cells can be updated by datasource
     dispatch_sync(_renderQueue, ^(void) {
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-
+        
         NSArray *visiblePaths = [self visibleIndexPaths];
         
         NSMutableSet *sections = [NSMutableSet set];
@@ -135,7 +156,7 @@
         for (KKIndexPath *indexPath in visiblePaths) {
             [sections addObject:[NSNumber numberWithUnsignedInt:indexPath.section]];
         }
-                
+        
         for (KKIndexPath *indexPath in visiblePaths) {
             UIView * header = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section]);
             CGFloat headerHeight = [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:indexPath.section]) floatValue];
@@ -150,9 +171,9 @@
             if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
             }
-
+            
         }
-
+        
         if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
             _lastVisibleIndexPaths = [visiblePaths retain];
             return;
@@ -183,16 +204,16 @@
         }
         
         NSArray *headerKeys = [_headerViews allKeys];
- 
+        
         NSUInteger indexl = 0;
         for (UIView *view in [_headerViews allValues]) {
-
+            
             if (![sections containsObject:[headerKeys objectAtIndex:indexl]]) {
                 [view removeFromSuperview];
             }
             
             indexl++;
-
+            
         }
         
     });

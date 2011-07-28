@@ -16,34 +16,7 @@ static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
-@interface KKGridView : UIScrollView {
-@private
-    CGSize _cellPadding;
-    CGSize _cellSize;
-    struct {
-        unsigned  dataSourceRespondsToHeightForFooterInSection:1;
-        unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
-        unsigned  dataSourceRespondsToViewForHeaderInSection;
-        unsigned  dataSourceRespondsToNumberOfSections:1;
-        unsigned  delegateRespondsToDidSelectItem:1;
-    } _flags;
-    NSMutableArray *_footerHeights;
-    NSMutableArray *_footerViews;
-    UIView *_gridFooterView;
-    UIView *_gridHeaderView;
-    NSMutableDictionary *_headerHeights;
-    NSMutableDictionary *_headerViews;
-    NSArray *_lastVisibleIndexPaths;
-    NSUInteger _numberOfColumns;
-    NSUInteger _numberOfItems;
-    NSUInteger _numberOfSections;
-    dispatch_queue_t _renderQueue;
-    NSMutableDictionary *_reusableCells;
-    NSMutableArray * _sectionHeights;
-    NSMutableArray * _sectionItemCount;
-    NSMutableDictionary *_visibleCells;
-    NSRange _visibleSections;    
-}
+@interface KKGridView : UIScrollView
 
 #pragma mark - Properties
 
