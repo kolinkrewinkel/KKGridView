@@ -36,8 +36,7 @@
 - (void)_layoutGridView;
 - (void)_reloadIntegers;
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
-- (BOOL)_headerViewForSectionShouldBeFixed:(NSUInteger)section;
-- (void)_respondToBoundChange;
+- (void)_respondToBoundsChange;
 
 @end
 
@@ -122,7 +121,7 @@
     [super layoutSubviews];
 }
 
-- (void)_respondToBoundChange
+- (void)_respondToBoundsChange
 {
     [self reloadContentSize];
     [self _layoutGridView];
@@ -131,7 +130,7 @@
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
-    [self _respondToBoundChange];
+    [self _respondToBoundsChange];
 }
 
 - (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
@@ -190,9 +189,7 @@
         
         for (KKIndexPath *indexPath in visiblePaths) {
             [sections addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
-        }
-        
-        for (KKIndexPath *indexPath in visiblePaths) {
+
             UIView * header = [_headerViews objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]];
             CGFloat headerHeight = [(NSNumber *)[_headerHeights objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]] floatValue];
             
