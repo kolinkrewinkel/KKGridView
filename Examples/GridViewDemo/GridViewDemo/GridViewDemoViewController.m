@@ -87,6 +87,11 @@
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
         cell.backgroundColor = [UIColor grayColor];
+//        cell.layer.shadowRadius = 2.f;
+//        cell.layer.shadowColor = [UIColor blackColor].CGColor;
+//        cell.layer.shadowOffset = CGSizeZero;
+//        cell.layer.shadowOpacity = 0.8f;
+//        cell.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectInset(cell.bounds, 1.f, 1.f)].CGPath;
     }
     
     return cell;

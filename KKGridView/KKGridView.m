@@ -184,7 +184,7 @@
     dispatch_sync(_renderQueue, ^(void) {
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         
-        NSArray *visiblePaths = [self _allPotentiallyVisibleIndexPaths];
+        NSArray *visiblePaths = [self visibleIndexPaths];
         NSMutableSet *sections = [NSMutableSet set];
         
         for (KKIndexPath *indexPath in visiblePaths) {
@@ -199,13 +199,22 @@
                 header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
                 [self insertSubview:header atIndex:2];
             }
-            
             if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
             } else if (_markedForDisplay) {
                 header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
             }
-            
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            if (!cell) {
+                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                [_visibleCells setObject:cell forKey:indexPath];
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+            } else if (_markedForDisplay) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+            }
         }
         
 //        Not sure on this
@@ -215,20 +224,6 @@
 //            return;
 //        }
 //        _lastVisibleIndexPaths = [visiblePaths retain];
-        
-        for (KKIndexPath *indexPath in visiblePaths) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-            if (!cell) {
-                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                [_visibleCells setObject:cell forKey:indexPath];
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-            } else if (_markedForDisplay) {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-            }
-        }
         
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
