@@ -155,10 +155,8 @@
         
         for (KKIndexPath *indexPath in visiblePaths) {
             [sections addObject:[NSNumber numberWithUnsignedInt:indexPath.section]];
-        }
-        
-        for (KKIndexPath *indexPath in visiblePaths) {
-            UIView * header = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section]);
+            
+            UIView *header = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section]);
             CGFloat headerHeight = [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:indexPath.section]) floatValue];
             
             CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntValue] - 1) inSection:indexPath.section]];
