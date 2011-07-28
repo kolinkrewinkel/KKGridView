@@ -189,25 +189,34 @@
         
         NSArray *visiblePaths = [self visibleIndexPaths];
         
-//        for (NSUInteger section = [[visiblePaths objectAtIndex:0] section]; section < _numberOfSections; section++) {
-//            KKGridViewHeader *header = [_headerViews objectAtIndex:section];
-//            
-//            CGFloat headerHeight = _headerHeights[section];
-//            
-//            KKIndexPath *lastCellIndexPath = [KKIndexPath indexPathForIndex:(_sectionItemCount[section] - 1) inSection:section];
-//            CGRect lastCellRect = [self rectForCellAtIndexPath:lastCellIndexPath];
-//            
-//            CGFloat sectionHeights = [self sectionHeightsCombinedUpToSection:section];
-//            
-//            if ([[visiblePaths objectAtIndex:0] section] == section && fabsf(header.stickPoint) <= self.contentOffset.y) {
-//                header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
-//            } else if (_markedForDisplay) {
-//                header.frame = CGRectMake(0.f, sectionHeights, self.bounds.size.width, headerHeight);
-//            }
-//            section++;
-//        }
+//        From CHGridView
+        float offset = self.contentOffset.y;
         
-        [self calculateSectionTitleOffset];
+        for (KKGridViewHeader *header in _headerViews) {
+            CGRect f = [header frame];
+            float sectionY = [header stickPoint];
+            
+            if(sectionY <= offset && offset > 0.0f){
+                f.origin.y = offset;
+                if(offset <= 0.0f) f.origin.y = sectionY;
+                
+                KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header.section + 1];
+                if(sectionTwo != nil){
+                    CGFloat sectionTwoHeight = sectionTwo.frame.size.height;
+                    CGFloat	sectionTwoY = sectionTwo.stickPoint;
+                    if((offset + sectionTwoHeight) >= sectionTwoY){
+                        f.origin.y = sectionTwoY - sectionTwoHeight;
+                    }
+                }
+            } else {
+                f.origin.y = sectionY;
+            }
+            
+            if(f.origin.y <= offset) [header setOpaque:NO];
+            else [header setOpaque:YES];
+            
+            [header setFrame:f];
+        }
         
         for (KKIndexPath *indexPath in visiblePaths) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -448,9 +457,7 @@
 - (void)reloadData
 {
     [self reloadContentSize];
-    
-    
-    
+
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
         if (_headerViews) {
             [_headerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -472,37 +479,6 @@
             [self addSubview:header];
         }
     }
-}
-
-
-- (void)calculateSectionTitleOffset{
-	float offset = self.contentOffset.y;
-    
-	for (KKGridViewHeader *header in _headerViews) {
-		CGRect f = [header frame];
-		float sectionY = [header stickPoint];
-        
-		if(sectionY <= offset && offset > 0.0f){
-			f.origin.y = offset;
-			if(offset <= 0.0f) f.origin.y = sectionY;
-            
-			KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header.section + 1];
-			if(sectionTwo != nil){
-				CGFloat sectionTwoHeight = sectionTwo.frame.size.height;
-				CGFloat	sectionTwoY = sectionTwo.stickPoint;
-				if((offset + sectionTwoHeight) >= sectionTwoY){
-					f.origin.y = sectionTwoY - sectionTwoHeight;
-				}
-			}
-		}else{
-			f.origin.y = sectionY;
-		}
-        
-		if(f.origin.y <= offset) [header setOpaque:NO];
-		else [header setOpaque:YES];
-        
-		[header setFrame:f];
-	}
 }
 
 @end
