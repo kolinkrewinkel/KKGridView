@@ -9,7 +9,7 @@
 #import "KKIndexPath.h"
 
 @interface KKGridViewCell : UIView {
-    @private
+@private
     NSString *_reuseIdentifier;
 }
 

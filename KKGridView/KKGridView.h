@@ -17,7 +17,7 @@ static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
 @interface KKGridView : UIScrollView {
-    @private
+@private
     CGSize _cellPadding;
     CGSize _cellSize;
     struct {

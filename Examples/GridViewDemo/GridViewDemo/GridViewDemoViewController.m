@@ -32,7 +32,7 @@
         view.text = [NSString stringWithFormat:@"%i", section];
         [_headerViews addObject:view];
     }
-
+    
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(100.f, 100.f);
     _gridView.backgroundColor = [UIColor darkGrayColor];
