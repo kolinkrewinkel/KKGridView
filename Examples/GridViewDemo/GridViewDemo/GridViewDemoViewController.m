@@ -25,6 +25,14 @@ static const NSUInteger kNumSection = 40;
 
 #pragma mark - View lifecycle
 
+- (UIColor *)randomColor
+{
+    CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
+    CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
+    CGFloat green = (CGFloat)random()/(CGFloat)RAND_MAX;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.f];
+}
+
 - (void)loadView
 {
     [super loadView];
@@ -32,15 +40,14 @@ static const NSUInteger kNumSection = 40;
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
         KKGridViewHeader *view = [[[KKGridViewHeader alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
-        view.backgroundColor = section % 2 ? [[UIColor blueColor] colorWithAlphaComponent:0.7f] : [[UIColor redColor] colorWithAlphaComponent:0.7f];
+        view.backgroundColor = [self randomColor];
         view.opaque = YES;
-        view.debugText = [NSString stringWithFormat:@"%i", section];
         [_headerViews addObject:view];
     }
     
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
-    _gridView.cellSize = CGSizeMake(100.f, 100.f);
-    _gridView.cellPadding = CGSizeMake(5.f, 5.f);
+    _gridView.cellSize = CGSizeMake(75.f, 75.f);
+    _gridView.cellPadding = CGSizeMake(4.f, 4.f);
 
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -64,7 +71,7 @@ static const NSUInteger kNumSection = 40;
             return 5;
             break;
         default:
-            return 4;
+            return (section % 2) ? 4 : 7;
             break;
     }
 }

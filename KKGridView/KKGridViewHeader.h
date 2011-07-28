@@ -13,6 +13,5 @@
 @property (nonatomic, assign) CGFloat stickPoint;
 @property (nonatomic, assign) NSUInteger section;
 @property (nonatomic, assign) BOOL sticking;
-@property (nonatomic, copy) NSString *debugText;
 
 @end

@@ -127,14 +127,17 @@
 
 - (void)_respondToBoundsChange
 {
-    [self reloadContentSize];
+    [self reloadData];
     [self _layoutGridView];
 }
 
 - (void)setBounds:(CGRect)bounds
 {
+    CGRect oldBounds = self.bounds;
     [super setBounds:bounds];
-    [self _respondToBoundsChange];
+    if (_renderQueue != NULL && !CGSizeEqualToSize(bounds.size, oldBounds.size)) {
+        [self _respondToBoundsChange];
+    }
 }
 
 - (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
@@ -189,12 +192,13 @@
         
         NSArray *visiblePaths = [self visibleIndexPaths];
         
-//        From CHGridView
-        float offset = self.contentOffset.y;
+//        From CHGridView; thanks Cameron (even though I didn't ask you)
+        CGFloat offset = self.contentOffset.y;
         
         for (KKGridViewHeader *header in _headerViews) {
             CGRect f = [header frame];
-            float sectionY = [header stickPoint];
+            f.size.width = visibleBounds.size.width;
+            CGFloat sectionY = header.stickPoint;
             
             if(sectionY <= offset && offset > 0.0f){
                 f.origin.y = offset;
@@ -209,13 +213,10 @@
                     }
                 }
             } else {
-                f.origin.y = sectionY;
+                f.origin.y = header.stickPoint;
             }
-            
-            if(f.origin.y <= offset) [header setOpaque:NO];
-            else [header setOpaque:YES];
-            
-            [header setFrame:f];
+                        
+            header.frame = f;
         }
         
         for (KKIndexPath *indexPath in visiblePaths) {
@@ -479,6 +480,14 @@
             [self addSubview:header];
         }
     }
+    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+
+    for (KKGridViewCell *cell in [_visibleCells allValues]) {
+        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
+        [set addObject:cell];
+    }
+
+    [_visibleCells removeAllObjects];
 }
 
 @end
