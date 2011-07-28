@@ -8,6 +8,7 @@
 
 #import "KKGridViewCell.h"
 #import "KKIndexPath.h"
+#import "KKGridViewHeader.h"
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
@@ -56,7 +57,7 @@
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 
 @end
 

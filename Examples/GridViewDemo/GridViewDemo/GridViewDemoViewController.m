@@ -31,18 +31,19 @@ static const NSUInteger kNumSection = 40;
     
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
-        UILabel *view = [[[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
-        view.textAlignment = UITextAlignmentCenter;
-        view.textColor = [UIColor blackColor];
-        view.text = [NSString stringWithFormat:@"%i", section];
+        KKGridViewHeader *view = [[[KKGridViewHeader alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
+        view.backgroundColor = section % 2 ? [[UIColor blueColor] colorWithAlphaComponent:0.7f] : [[UIColor redColor] colorWithAlphaComponent:0.7f];
+        view.opaque = YES;
+        view.debugText = [NSString stringWithFormat:@"%i", section];
         [_headerViews addObject:view];
     }
     
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(100.f, 100.f);
+    _gridView.cellPadding = CGSizeMake(5.f, 5.f);
+
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _gridView.cellPadding = CGSizeMake(5.f, 5.f);
     self.view = _gridView;
     
 }
@@ -73,7 +74,7 @@ static const NSUInteger kNumSection = 40;
     return 25.f;
 }
 
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
 }
@@ -92,21 +93,9 @@ static const NSUInteger kNumSection = 40;
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
         cell.backgroundColor = [UIColor grayColor];
-//        cell.layer.shadowRadius = 2.f;
-//        cell.layer.shadowColor = [UIColor blackColor].CGColor;
-//        cell.layer.shadowOffset = CGSizeZero;
-//        cell.layer.shadowOpacity = 0.8f;
-//        cell.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectInset(cell.bounds, 1.f, 1.f)].CGPath;
     }
     
     return cell;
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

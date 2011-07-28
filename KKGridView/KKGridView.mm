@@ -23,7 +23,7 @@
     std::vector<CGFloat> _headerHeights;
     
     NSMutableArray *_footerViews;
-    NSMutableDictionary *_headerViews;
+    NSMutableArray *_headerViews;
     NSArray *_lastVisibleIndexPaths;
     BOOL _markedForDisplay;
     NSUInteger _numberOfItems;
@@ -189,21 +189,27 @@
         
         NSArray *visiblePaths = [self visibleIndexPaths];
         
+//        for (NSUInteger section = [[visiblePaths objectAtIndex:0] section]; section < _numberOfSections; section++) {
+//            KKGridViewHeader *header = [_headerViews objectAtIndex:section];
+//            
+//            CGFloat headerHeight = _headerHeights[section];
+//            
+//            KKIndexPath *lastCellIndexPath = [KKIndexPath indexPathForIndex:(_sectionItemCount[section] - 1) inSection:section];
+//            CGRect lastCellRect = [self rectForCellAtIndexPath:lastCellIndexPath];
+//            
+//            CGFloat sectionHeights = [self sectionHeightsCombinedUpToSection:section];
+//            
+//            if ([[visiblePaths objectAtIndex:0] section] == section && fabsf(header.stickPoint) <= self.contentOffset.y) {
+//                header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
+//            } else if (_markedForDisplay) {
+//                header.frame = CGRectMake(0.f, sectionHeights, self.bounds.size.width, headerHeight);
+//            }
+//            section++;
+//        }
+        
+        [self calculateSectionTitleOffset];
+        
         for (KKIndexPath *indexPath in visiblePaths) {
-
-            UIView * header = [_headerViews objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]];
-            CGFloat headerHeight = _headerHeights[indexPath.section];
-            
-            KKIndexPath *lastCellIndexPath = [KKIndexPath indexPathForIndex:(_sectionItemCount[indexPath.section] - 1)
-                                                                  inSection:indexPath.section];
-            CGRect lastCellRect = [self rectForCellAtIndexPath:lastCellIndexPath];
-            
-            if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
-                header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
-            } else if (_markedForDisplay) {
-                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-            }
-            
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
@@ -447,23 +453,56 @@
     
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
         if (_headerViews) {
-            [[_headerViews allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [_headerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
          if (!_headerViews) {
-                _headerViews = [[NSMutableDictionary alloc] init];
+                _headerViews = [[NSMutableArray alloc] init];
             }
-            UIView *header = [_dataSource gridView:self viewForHeaderInSection:section];
-            CFDictionarySetValue((CFMutableDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInteger:section], header);
-
-            CGFloat headerHeight = _headerHeights[section];
+            KKGridViewHeader *header = [_dataSource gridView:self viewForHeaderInSection:section];
+            [_headerViews addObject:header];
             
-            header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:section], self.bounds.size.width, headerHeight);
+            CGFloat headerHeight = _headerHeights[section];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section];
+            header.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
+            header.stickPoint = position;
+            header.section = section;
             [self addSubview:header];
         }
     }
+}
+
+
+- (void)calculateSectionTitleOffset{
+	float offset = self.contentOffset.y;
+    
+	for (KKGridViewHeader *header in _headerViews) {
+		CGRect f = [header frame];
+		float sectionY = [header stickPoint];
+        
+		if(sectionY <= offset && offset > 0.0f){
+			f.origin.y = offset;
+			if(offset <= 0.0f) f.origin.y = sectionY;
+            
+			KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header.section + 1];
+			if(sectionTwo != nil){
+				CGFloat sectionTwoHeight = sectionTwo.frame.size.height;
+				CGFloat	sectionTwoY = sectionTwo.stickPoint;
+				if((offset + sectionTwoHeight) >= sectionTwoY){
+					f.origin.y = sectionTwoY - sectionTwoHeight;
+				}
+			}
+		}else{
+			f.origin.y = sectionY;
+		}
+        
+		if(f.origin.y <= offset) [header setOpaque:NO];
+		else [header setOpaque:YES];
+        
+		[header setFrame:f];
+	}
 }
 
 @end
