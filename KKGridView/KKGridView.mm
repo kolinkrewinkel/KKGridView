@@ -274,7 +274,7 @@
     CGFloat numberOfRows = 0.f;
     
     if (_sectionItemCount.size() > 0) {
-                numberOfRows = ceilf(_sectionItemCount[section] / (CGFloat)_numberOfColumns);
+                numberOfRows = ceilf(_sectionItemCount[section] / [[NSNumber numberWithUnsignedInt:_numberOfColumns] floatValue]);
     } else {
         numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns);
     }
@@ -344,7 +344,7 @@
     
     NSUInteger oldColumns = _numberOfColumns;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
-    
+
     if (oldColumns != _numberOfColumns) {
         _markedForDisplay = YES;
     }
@@ -409,13 +409,17 @@
 - (void)setCellSize:(CGSize)cellSize
 {
     _cellSize = cellSize;
-    [self reloadContentSize];
+    if (_cellPadding.width != 0.f && _cellPadding.height != 0.f) {
+        [self reloadData];
+    }
 }
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
     _cellPadding = cellPadding;
-    [self reloadContentSize];
+    if (_cellSize.width != 0.f && _cellSize.height != 0.f) {
+        [self reloadData];
+    }
 }
 
 - (void)setDataSource:(id<KKGridViewDataSource>)dataSource
@@ -425,8 +429,6 @@
     _flags.dataSourceRespondsToHeightForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
     _flags.dataSourceRespondsToNumberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
     _flags.dataSourceRespondsToViewForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
-    
-    [self reloadData];
 }
 
 - (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
@@ -444,12 +446,13 @@
     
     
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
+        if (_headerViews) {
+            [[_headerViews allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [_headerViews removeAllObjects];
+        }
+        
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            if (_headerViews) {
-                [[_headerViews allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-                [_headerViews removeAllObjects];
-            }
-            if (!_headerViews) {
+         if (!_headerViews) {
                 _headerViews = [[NSMutableDictionary alloc] init];
             }
             UIView *header = [_dataSource gridView:self viewForHeaderInSection:section];
@@ -458,9 +461,7 @@
             CGFloat headerHeight = _headerHeights[section];
             
             header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:section], self.bounds.size.width, headerHeight);
-            NSLog(@"%@", NSStringFromCGRect(header.frame));
             [self addSubview:header];
-            [self sendSubviewToBack:header];
         }
     }
 }
