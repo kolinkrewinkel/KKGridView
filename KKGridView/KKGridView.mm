@@ -19,8 +19,8 @@
         unsigned delegateRespondsToDidSelectItem:1;
     } _flags;
     
-    std::map<NSUInteger,CGFloat> _footerHeights;
-    std::map<NSUInteger,CGFloat> _headerHeights;
+    std::vector<CGFloat> _footerHeights;
+    std::vector<CGFloat> _headerHeights;
     
     NSMutableArray *_footerViews;
     NSMutableDictionary *_headerViews;
@@ -33,7 +33,7 @@
     std::vector<CGFloat> _sectionHeights;
     std::vector<NSUInteger> _sectionItemCount;
     NSMutableDictionary *_visibleCells;
-    NSRange _visibleSections;    
+    NSRange _visibleSections;
 }
 
 - (void)_sharedInitialization;
@@ -277,14 +277,14 @@
 {
     CGFloat height = 0.f;
     
-    if (_headerHeights.size() > 0) {
+    if (_headerHeights.size() > section) {
         height += _headerHeights[section];
         
     } else {
         height += KKGridViewDefaultHeaderHeight;
     }
     
-    if (_footerHeights.size() > 0) {
+    if (_footerHeights.size() > section) {
         height += _footerHeights[section];
     }    
     
@@ -390,7 +390,7 @@
     
     if (_flags.dataSourceRespondsToHeightForHeaderInSection) {
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            _headerHeights[section] = [_dataSource gridView:self heightForHeaderInSection:section];
+            _headerHeights.push_back([_dataSource gridView:self heightForHeaderInSection:section]);
         }
     }
     
