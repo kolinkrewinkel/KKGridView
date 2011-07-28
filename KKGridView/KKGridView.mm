@@ -188,10 +188,8 @@
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         
         NSArray *visiblePaths = [self visibleIndexPaths];
-        NSMutableSet *sections = [NSMutableSet set];
         
         for (KKIndexPath *indexPath in visiblePaths) {
-            [sections addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
 
             UIView * header = [_headerViews objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]];
             CGFloat headerHeight = _headerHeights[indexPath.section];
@@ -200,15 +198,12 @@
                                                                   inSection:indexPath.section];
             CGRect lastCellRect = [self rectForCellAtIndexPath:lastCellIndexPath];
             
-            if (!header.superview) {
-                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-                [self insertSubview:header atIndex:2];
-            }
             if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
             } else if (_markedForDisplay) {
                 header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
             }
+            
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
@@ -232,7 +227,6 @@
         
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
-        NSArray *headerKeys = [_headerViews allKeys];
 
         NSUInteger loopCount = 0;
         for (KKGridViewCell *cell in visible) {
@@ -244,18 +238,7 @@
             }
             loopCount++;
         }
-        
-        
-        NSUInteger indexl = 0;
-        for (UIView *view in [_headerViews allValues]) {
-            
-            if (![sections containsObject:[headerKeys objectAtIndex:indexl]]) {
-                [view removeFromSuperview];
-            }
-            
-            indexl++;
-            
-        }
+
         _markedForDisplay = NO;
 
     });
@@ -456,13 +439,28 @@
 
 - (void)reloadData
 {
-    [self _reloadIntegers];
+    [self reloadContentSize];
+    
+    
+    
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            if (_headerViews) {
+                [[_headerViews allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+                [_headerViews removeAllObjects];
+            }
             if (!_headerViews) {
                 _headerViews = [[NSMutableDictionary alloc] init];
             }
-            CFDictionarySetValue((CFMutableDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInteger:section], [_dataSource gridView:self viewForHeaderInSection:section]);
+            UIView *header = [_dataSource gridView:self viewForHeaderInSection:section];
+            CFDictionarySetValue((CFMutableDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInteger:section], header);
+
+            CGFloat headerHeight = _headerHeights[section];
+            
+            header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:section], self.bounds.size.width, headerHeight);
+            NSLog(@"%@", NSStringFromCGRect(header.frame));
+            [self addSubview:header];
+            [self sendSubviewToBack:header];
         }
     }
 }
