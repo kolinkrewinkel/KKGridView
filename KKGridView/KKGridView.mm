@@ -7,27 +7,31 @@
 //
 
 #import "KKGridView.h"
+#import <map>
+#import <vector>
 
 @interface KKGridView () {
-@private
     struct {
-        unsigned  dataSourceRespondsToHeightForFooterInSection:1;
-        unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
-        unsigned  dataSourceRespondsToViewForHeaderInSection;
-        unsigned  dataSourceRespondsToNumberOfSections:1;
-        unsigned  delegateRespondsToDidSelectItem:1;
+        unsigned dataSourceRespondsToHeightForFooterInSection:1;
+        unsigned dataSourceRespondsToHeightForHeaderInSection:1;
+        unsigned dataSourceRespondsToViewForHeaderInSection;
+        unsigned dataSourceRespondsToNumberOfSections:1;
+        unsigned delegateRespondsToDidSelectItem:1;
     } _flags;
-    NSMutableArray *_footerHeights;
+    
+    std::map<NSUInteger,CGFloat> _footerHeights;
+    std::map<NSUInteger,CGFloat> _headerHeights;
+    
     NSMutableArray *_footerViews;
-    NSMutableDictionary *_headerHeights;
     NSMutableDictionary *_headerViews;
     NSArray *_lastVisibleIndexPaths;
     BOOL _markedForDisplay;
     NSUInteger _numberOfItems;
     dispatch_queue_t _renderQueue;
     NSMutableDictionary *_reusableCells;
-    NSMutableArray * _sectionHeights;
-    NSMutableArray * _sectionItemCount;
+    
+    std::vector<CGFloat> _sectionHeights;
+    std::vector<NSUInteger> _sectionItemCount;
     NSMutableDictionary *_visibleCells;
     NSRange _visibleSections;    
 }
@@ -146,8 +150,7 @@
 {
     CGFloat height = 0.f;
     for (NSUInteger index = 0; index < section; index++) {
-//        NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
-        height += [(NSNumber *)[_sectionHeights objectAtIndex:index] floatValue];
+        height += _sectionHeights[index];
     }
     return height;
 }
@@ -160,7 +163,7 @@
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        CGFloat headerHeight = [[_sectionHeights objectAtIndex:section] floatValue];
+        CGFloat headerHeight = _sectionHeights[section];
         for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
             
             indexPath.section = section;
@@ -191,9 +194,11 @@
             [sections addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
 
             UIView * header = [_headerViews objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]];
-            CGFloat headerHeight = [(NSNumber *)[_headerHeights objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]] floatValue];
+            CGFloat headerHeight = _headerHeights[indexPath.section];
             
-            CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntegerValue] - 1) inSection:indexPath.section]];
+            KKIndexPath *lastCellIndexPath = [KKIndexPath indexPathForIndex:(_sectionItemCount[indexPath.section] - 1)
+                                                                  inSection:indexPath.section];
+            CGRect lastCellRect = [self rectForCellAtIndexPath:lastCellIndexPath];
             
             if (!header.superview) {
                 header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
@@ -272,23 +277,23 @@
 {
     CGFloat height = 0.f;
     
-    if (_headerHeights && [_headerHeights count] > 0) {
-        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:section]) floatValue];
+    if (_headerHeights.size() > 0) {
+        height += _headerHeights[section];
         
     } else {
         height += KKGridViewDefaultHeaderHeight;
     }
     
-    if (_footerHeights && [_footerHeights count] > 0) {
-        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_footerHeights, [NSNumber numberWithUnsignedInteger:section]) floatValue];
+    if (_footerHeights.size() > 0) {
+        height += _footerHeights[section];
     }    
     
     CGFloat numberOfRows = 0.f;
     
-    if (_sectionItemCount) {
-        numberOfRows = (ceilf([(id)CFArrayGetValueAtIndex((CFArrayRef)_sectionItemCount, section) unsignedIntValue] / (CGFloat)_numberOfColumns));
+    if (_sectionItemCount.size() > 0) {
+                numberOfRows = ceilf(_sectionItemCount[section] / (CGFloat)_numberOfColumns);
     } else {
-        numberOfRows = (ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns));
+        numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns);
     }
     
     height += numberOfRows * (_cellSize.height + _cellPadding.height);
@@ -303,14 +308,14 @@
     CGFloat yPosition = _cellPadding.height;
     CGFloat xPosition = _cellPadding.width;
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_sectionHeights) {
-            yPosition += [[_sectionHeights objectAtIndex:section] floatValue];
+        if (_sectionHeights.size() > 0) {
+            yPosition += _sectionHeights[section];
         } else {
             yPosition += [self heightForSection:section];
         }
     }
     
-    yPosition += [(NSNumber *)[_headerHeights objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]] floatValue];
+    yPosition += _headerHeights[indexPath.section];
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
     NSInteger column = indexPath.index - (row * _numberOfColumns);
@@ -363,14 +368,10 @@
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);
     
-    if (!_sectionHeights) {
-        _sectionHeights = [[NSMutableArray alloc] init];
-    }
-    [_sectionHeights removeAllObjects];
-    
+    _sectionHeights.clear();
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         CGFloat heightForSection = [self heightForSection:idx];
-        CFArrayAppendValue((CFMutableArrayRef)_sectionHeights, [NSNumber numberWithFloat:heightForSection]);
+        _sectionHeights.push_back(heightForSection);
         newContentSize.height += heightForSection;
     }];
     
@@ -385,22 +386,18 @@
         _numberOfSections = 1;
     }
     
-    [_headerHeights removeAllObjects];
+    _headerHeights.clear();
+    
     if (_flags.dataSourceRespondsToHeightForHeaderInSection) {
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            if (!_headerHeights) {
-                _headerHeights = [[NSMutableDictionary alloc] init];
-            }
-            CFDictionarySetValue((CFMutableDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:section], [NSNumber numberWithFloat:[_dataSource gridView:self heightForHeaderInSection:section]]);
+            _headerHeights[section] = [_dataSource gridView:self heightForHeaderInSection:section];
         }
     }
     
-    [_sectionItemCount removeAllObjects];
+    _sectionItemCount.clear();
+    
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        if (!_sectionItemCount) {
-            _sectionItemCount = [[NSMutableArray alloc] init];
-        }
-        CFArrayAppendValue((CFMutableArrayRef)_sectionItemCount, [NSNumber numberWithUnsignedInteger:[_dataSource gridView:self numberOfItemsInSection:section]]);
+        _sectionItemCount.push_back([_dataSource gridView:self numberOfItemsInSection:section]);
     }
 }
 
