@@ -77,7 +77,9 @@
 				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,
 				1A530A2A13DE962700E6C60B /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		1A530A2A13DE962700E6C60B /* Products */ = {
 			isa = PBXGroup;

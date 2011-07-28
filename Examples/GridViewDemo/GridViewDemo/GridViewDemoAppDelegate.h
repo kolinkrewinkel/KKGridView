@@ -11,9 +11,6 @@
 @class GridViewDemoViewController;
 
 @interface GridViewDemoAppDelegate : NSObject <UIApplicationDelegate>
-
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-
 @property (nonatomic, retain) IBOutlet GridViewDemoViewController *viewController;
-
 @end

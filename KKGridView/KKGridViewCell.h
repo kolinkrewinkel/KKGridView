@@ -8,10 +8,7 @@
 
 #import "KKIndexPath.h"
 
-@interface KKGridViewCell : UIView {
-    @private
-    NSString *_reuseIdentifier;
-}
+@interface KKGridViewCell : UIView
 
 #pragma mark - Designated Initializer
 

@@ -61,7 +61,9 @@
 				1A61BE1113DCAF1F00AB4243 /* Frameworks */,
 				1A61BE1013DCAF1F00AB4243 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		1A61BE1013DCAF1F00AB4243 /* Products */ = {
 			isa = PBXGroup;

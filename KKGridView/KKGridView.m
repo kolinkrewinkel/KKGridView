@@ -8,7 +8,29 @@
 
 #import "KKGridView.h"
 
-@interface KKGridView ()
+@interface KKGridView () {
+@private
+    struct {
+        unsigned  dataSourceRespondsToHeightForFooterInSection:1;
+        unsigned  dataSourceRespondsToHeightForHeaderInSection:1;
+        unsigned  dataSourceRespondsToViewForHeaderInSection;
+        unsigned  dataSourceRespondsToNumberOfSections:1;
+        unsigned  delegateRespondsToDidSelectItem:1;
+    } _flags;
+    NSMutableArray *_footerHeights;
+    NSMutableArray *_footerViews;
+    NSMutableDictionary *_headerHeights;
+    NSMutableDictionary *_headerViews;
+    NSArray *_lastVisibleIndexPaths;
+    BOOL _markedForDisplay;
+    NSUInteger _numberOfItems;
+    dispatch_queue_t _renderQueue;
+    NSMutableDictionary *_reusableCells;
+    NSMutableArray * _sectionHeights;
+    NSMutableArray * _sectionItemCount;
+    NSMutableDictionary *_visibleCells;
+    NSRange _visibleSections;    
+}
 
 - (void)_sharedInitialization;
 - (void)_layoutGridView;
