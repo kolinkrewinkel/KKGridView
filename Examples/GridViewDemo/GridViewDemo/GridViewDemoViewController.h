@@ -8,9 +8,5 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate> {
-    KKGridView *_gridView;
-    NSMutableArray *_headerViews;
-}
-
+@interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate>
 @end

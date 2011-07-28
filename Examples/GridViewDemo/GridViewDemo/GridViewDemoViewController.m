@@ -9,7 +9,10 @@
 #import "GridViewDemoViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-@implementation GridViewDemoViewController
+@implementation GridViewDemoViewController {
+    KKGridView *_gridView;
+    NSMutableArray *_headerViews;
+}
 
 - (void)dealloc
 {
