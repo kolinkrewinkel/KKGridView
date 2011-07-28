@@ -12,7 +12,7 @@
 		1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */; };
 		1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */; };
 		1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8313DCDFB200E8CC7C /* KKGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A32AD8613DCDFB200E8CC7C /* KKGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8413DCDFB200E8CC7C /* KKGridView.m */; };
+		1A32AD8613DCDFB200E8CC7C /* KKGridView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8413DCDFB200E8CC7C /* KKGridView.mm */; };
 		1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */; };
 		1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5F356613DD02CD00A38A3E /* Definitions.h */; };
@@ -27,7 +27,7 @@
 		1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A32AD8313DCDFB200E8CC7C /* KKGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridView.h; sourceTree = "<group>"; };
-		1A32AD8413DCDFB200E8CC7C /* KKGridView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridView.m; sourceTree = "<group>"; };
+		1A32AD8413DCDFB200E8CC7C /* KKGridView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KKGridView.mm; sourceTree = "<group>"; };
 		1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewCell.h; sourceTree = "<group>"; };
 		1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewCell.m; sourceTree = "<group>"; };
 		1A5F356613DD02CD00A38A3E /* Definitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Definitions.h; sourceTree = "<group>"; };
@@ -89,7 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				1A32AD8313DCDFB200E8CC7C /* KKGridView.h */,
-				1A32AD8413DCDFB200E8CC7C /* KKGridView.m */,
+				1A32AD8413DCDFB200E8CC7C /* KKGridView.mm */,
 				1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */,
 				1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */,
 				1A0BEC7413DDF862003C2632 /* KKIndexPath.h */,
@@ -173,7 +173,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A32AD8613DCDFB200E8CC7C /* KKGridView.m in Sources */,
+				1A32AD8613DCDFB200E8CC7C /* KKGridView.mm in Sources */,
 				1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */,
 				1A0BEC7713DDF862003C2632 /* KKIndexPath.m in Sources */,
 			);

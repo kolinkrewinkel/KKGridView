@@ -312,6 +312,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = "../../build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				OTHER_LDFLAGS = (
+					"-lstdc++",
 					"-all_load",
 					"-ObjC",
 				);
@@ -334,6 +335,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				LIBRARY_SEARCH_PATHS = "../../build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				OTHER_LDFLAGS = (
+					"-lstdc++",
 					"-all_load",
 					"-ObjC",
 				);

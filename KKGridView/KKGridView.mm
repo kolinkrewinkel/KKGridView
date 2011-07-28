@@ -410,7 +410,7 @@
 {
     if (!identifier) return nil;
     
-    NSMutableSet *reusableCellsForIdentifier = CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
+    NSMutableSet *reusableCellsForIdentifier = (id)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     
     if ([reusableCellsForIdentifier count] == 0)
         return nil;
