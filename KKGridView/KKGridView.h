@@ -9,11 +9,6 @@
 #import "KKGridViewCell.h"
 #import "KKIndexPath.h"
 
-static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
-{
-    return (CGRectGetMinY(rect2) < CGRectGetMaxY(rect1)) && (CGRectGetMaxY(rect2) > CGRectGetMinY(rect1));
-}
-
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
 @interface KKGridView : UIScrollView {
@@ -34,6 +29,7 @@ static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
     NSMutableDictionary *_headerHeights;
     NSMutableDictionary *_headerViews;
     NSArray *_lastVisibleIndexPaths;
+    BOOL _markedForDisplay;
     NSUInteger _numberOfColumns;
     NSUInteger _numberOfItems;
     NSUInteger _numberOfSections;

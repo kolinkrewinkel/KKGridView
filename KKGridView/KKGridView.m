@@ -15,6 +15,7 @@
 - (void)_reloadIntegers;
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
 - (BOOL)_headerViewForSectionShouldBeFixed:(NSUInteger)section;
+- (void)_respondToBoundChange;
 
 @end
 
@@ -99,12 +100,23 @@
     [super layoutSubviews];
 }
 
+- (void)_respondToBoundChange
+{
+    [self reloadContentSize];
+    [self _layoutGridView];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    [super setBounds:bounds];
+    [self _respondToBoundChange];
+}
+
 - (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
 {
     for (KKIndexPath *indexPath in [_visibleCells allKeys]) {
-        if ([_visibleCells objectForKey:indexPath] == cell) {
+        if (CFDictionaryGetValue((CFMutableDictionaryRef)_visibleCells, indexPath) == cell)
             return indexPath;
-        }
     }
     return [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
@@ -113,13 +125,36 @@
 {
     CGFloat height = 0.f;
     for (NSUInteger index = 0; index < section; index++) {
-        NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
-        height += [number floatValue];
-//        height += _cellPadding.height*2.f;
-
+//        NSNumber *number = (NSNumber *)CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, index);
+        height += [(NSNumber *)[_sectionHeights objectAtIndex:index] floatValue];
     }
-//    height -= [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
     return height;
+}
+
+- (NSArray *)_allPotentiallyVisibleIndexPaths
+{
+    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+    NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
+    
+    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
+    
+    for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        CGFloat headerHeight = [[_sectionHeights objectAtIndex:section] floatValue];
+        for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
+            
+            indexPath.section = section;
+            indexPath.index = index;
+            
+            CGRect rect = [self rectForCellAtIndexPath:indexPath];
+            if (KKCGRectIntersectsRectVerticallyWithPositiveNegativeMargin(rect, visibleBounds, headerHeight)) {
+                [indexPaths addObject:[[indexPath copy] autorelease]];
+            } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
+                break;
+            }
+        }
+    }
+    
+    return indexPaths;
 }
 
 - (void)_layoutGridView
@@ -127,37 +162,40 @@
     // add an update method so cells can be updated by datasource
     dispatch_sync(_renderQueue, ^(void) {
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
-
-        NSArray *visiblePaths = [self visibleIndexPaths];
         
+        NSArray *visiblePaths = [self _allPotentiallyVisibleIndexPaths];
         NSMutableSet *sections = [NSMutableSet set];
         
         for (KKIndexPath *indexPath in visiblePaths) {
-            [sections addObject:[NSNumber numberWithUnsignedInt:indexPath.section]];
+            [sections addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
         }
-                
+        
         for (KKIndexPath *indexPath in visiblePaths) {
-            UIView * header = (UIView *)CFDictionaryGetValue((CFDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInt:indexPath.section]);
-            CGFloat headerHeight = [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:indexPath.section]) floatValue];
+            UIView * header = [_headerViews objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]];
+            CGFloat headerHeight = [(NSNumber *)[_headerHeights objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]] floatValue];
             
-            CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntValue] - 1) inSection:indexPath.section]];
+            CGRect lastCellRect = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:([[_sectionItemCount objectAtIndex:indexPath.section] unsignedIntegerValue] - 1) inSection:indexPath.section]];
             
             if (!header.superview) {
                 header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
-                [self addSubview:header];
+                [self insertSubview:header atIndex:2];
             }
             
             if ([[visiblePaths objectAtIndex:0] section] == indexPath.section && (self.contentOffset.y <= ((CGRectGetMaxY(lastCellRect)) - headerHeight) + _cellPadding.height)) {
                 header.frame = CGRectMake(0.f, MAX(self.contentOffset.y, 0.f), self.bounds.size.width, headerHeight);
+            } else if (_markedForDisplay) {
+                header.frame = CGRectMake(0.f, [self sectionHeightsCombinedUpToSection:indexPath.section], self.bounds.size.width, headerHeight);
             }
-
+            
         }
-
-        if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
-            _lastVisibleIndexPaths = [visiblePaths retain];
-            return;
-        }
-        _lastVisibleIndexPaths = [visiblePaths retain];
+        
+//        Not sure on this
+        
+//        if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
+//            _lastVisibleIndexPaths = [visiblePaths retain];
+//            return;
+//        }
+//        _lastVisibleIndexPaths = [visiblePaths retain];
         
         for (KKIndexPath *indexPath in visiblePaths) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -165,48 +203,55 @@
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
                 [_visibleCells setObject:cell forKey:indexPath];
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
+
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
+            } else if (_markedForDisplay) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
         }
         
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
+        NSArray *headerKeys = [_headerViews allKeys];
+
         NSUInteger loopCount = 0;
         for (KKGridViewCell *cell in visible) {
             if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
                 [cell removeFromSuperview];
                 [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
+//                CFDictionaryRemoveValue((CFMutableDictionaryRef)_visibleCells, CFArrayGetValueAtIndex((CFArrayRef)keys, loopCount));
                 [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
             }
             loopCount++;
         }
         
-        NSArray *headerKeys = [_headerViews allKeys];
- 
+        
         NSUInteger indexl = 0;
         for (UIView *view in [_headerViews allValues]) {
-
+            
             if (![sections containsObject:[headerKeys objectAtIndex:indexl]]) {
                 [view removeFromSuperview];
             }
             
             indexl++;
-
+            
         }
-        
+        _markedForDisplay = NO;
+
     });
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
 {
-    NSMutableSet *set = [_reusableCells objectForKey:identifier];
+    [cell retain];
+    NSMutableSet *set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     if (!set) {
-        [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
-        set = [_reusableCells objectForKey:identifier];
+        CFDictionarySetValue((CFMutableDictionaryRef)_reusableCells, identifier, [NSMutableSet set]);
+    set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     }
-    
-    [set addObject:cell];
+    CFSetAddValue((CFMutableSetRef)set, cell);
+    [cell release];
 }
 
 - (CGFloat)heightForSection:(NSUInteger)section
@@ -214,14 +259,14 @@
     CGFloat height = 0.f;
     
     if (_headerHeights && [_headerHeights count] > 0) {
-        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
+        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:section]) floatValue];
         
     } else {
         height += KKGridViewDefaultHeaderHeight;
     }
     
     if (_footerHeights && [_footerHeights count] > 0) {
-        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_footerHeights, [NSNumber numberWithUnsignedInt:section]) floatValue];
+        height += [(id)CFDictionaryGetValue((CFDictionaryRef)_footerHeights, [NSNumber numberWithUnsignedInteger:section]) floatValue];
     }    
     
     CGFloat numberOfRows = 0.f;
@@ -244,16 +289,14 @@
     CGFloat yPosition = _cellPadding.height;
     CGFloat xPosition = _cellPadding.width;
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_sectionHeights && [_sectionHeights count] > 0) {
-            id number = (id) CFArrayGetValueAtIndex((CFArrayRef)_sectionHeights, section);
-            yPosition += [number floatValue];
-            
+        if (_sectionHeights) {
+            yPosition += [[_sectionHeights objectAtIndex:section] floatValue];
         } else {
             yPosition += [self heightForSection:section];
         }
     }
     
-    yPosition += [(NSNumber *)CFDictionaryGetValue((CFDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:indexPath.section]) floatValue];
+    yPosition += [(NSNumber *)[_headerHeights objectForKey:[NSNumber numberWithUnsignedInteger:indexPath.section]] floatValue];
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
     NSInteger column = indexPath.index - (row * _numberOfColumns);
@@ -283,17 +326,12 @@
             
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
             if (KKCGRectIntersectsRectVertically(rect, visibleBounds)) {
-                CFArrayAppendValue((CFMutableArrayRef)indexPaths, [[indexPath copy] autorelease]);
+                [indexPaths addObject:[[indexPath copy] autorelease]];
             } else if (CGRectGetMinY(rect) > CGRectGetMaxY(visibleBounds)) {
                 break;
             }
         }
     }
-    
-    //    if ([indexPaths count] > 0) {
-    //        _visibleSections.location = [[indexPaths objectAtIndex:0] section];
-    //        _visibleSections.length = [[indexPaths lastObject] section] - MAX(_visibleSections.location - 1, 0);
-    //    }
     
     return indexPaths;
 }
@@ -302,7 +340,12 @@
 {
     [self _reloadIntegers];
     
+    NSUInteger oldColumns = _numberOfColumns;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
+    
+    if (oldColumns != _numberOfColumns) {
+        _markedForDisplay = YES;
+    }
     
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);
     
@@ -313,7 +356,7 @@
     
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
         CGFloat heightForSection = [self heightForSection:idx];
-        [_sectionHeights addObject:[NSNumber numberWithFloat:heightForSection]];
+        CFArrayAppendValue((CFMutableArrayRef)_sectionHeights, [NSNumber numberWithFloat:heightForSection]);
         newContentSize.height += heightForSection;
     }];
     
@@ -334,7 +377,7 @@
             if (!_headerHeights) {
                 _headerHeights = [[NSMutableDictionary alloc] init];
             }
-            [_headerHeights setObject:[NSNumber numberWithFloat:[_dataSource gridView:self heightForHeaderInSection:section]] forKey:[NSNumber numberWithUnsignedInt:section]];
+            CFDictionarySetValue((CFMutableDictionaryRef)_headerHeights, [NSNumber numberWithUnsignedInteger:section], [NSNumber numberWithFloat:[_dataSource gridView:self heightForHeaderInSection:section]]);
         }
     }
     
@@ -343,10 +386,8 @@
         if (!_sectionItemCount) {
             _sectionItemCount = [[NSMutableArray alloc] init];
         }
-        [_sectionItemCount addObject:[NSNumber numberWithUnsignedInt:[_dataSource gridView:self numberOfItemsInSection:section]]];
+        CFArrayAppendValue((CFMutableArrayRef)_sectionItemCount, [NSNumber numberWithUnsignedInteger:[_dataSource gridView:self numberOfItemsInSection:section]]);
     }
-    
-    
 }
 
 #pragma mark - Getters
@@ -355,16 +396,14 @@
 {
     if (!identifier) return nil;
     
-    NSMutableSet *reuseableCellsForIdentifier = [_reusableCells objectForKey:identifier]; 
+    NSMutableSet *reusableCellsForIdentifier = CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     
-    if ([reuseableCellsForIdentifier count] == 0) {
-        [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
+    if ([reusableCellsForIdentifier count] == 0)
         return nil;
-    }
     
-    KKGridViewCell *reusableCell = [reuseableCellsForIdentifier anyObject];
+    KKGridViewCell *reusableCell = [reusableCellsForIdentifier anyObject];
     [[reusableCell retain] autorelease]; // HOLD IT
-    [reuseableCellsForIdentifier removeObject:reusableCell];
+    [reusableCellsForIdentifier removeObject:reusableCell];
     
     [reusableCell prepareForReuse];
     
@@ -412,8 +451,7 @@
             if (!_headerViews) {
                 _headerViews = [[NSMutableDictionary alloc] init];
             }
-            
-            [_headerViews setObject:[_dataSource gridView:self viewForHeaderInSection:section] forKey:[NSNumber numberWithUnsignedInt:section]];
+            CFDictionarySetValue((CFMutableDictionaryRef)_headerViews, [NSNumber numberWithUnsignedInteger:section], [_dataSource gridView:self viewForHeaderInSection:section]);
         }
     }
 }
