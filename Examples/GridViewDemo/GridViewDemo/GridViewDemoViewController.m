@@ -9,6 +9,8 @@
 #import "GridViewDemoViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+static const NSUInteger kNumSection = 40;
+
 @implementation GridViewDemoViewController {
     KKGridView *_gridView;
     NSMutableArray *_headerViews;
@@ -28,7 +30,7 @@
     [super loadView];
     
     _headerViews = [[NSMutableArray alloc] init];
-    for (NSUInteger section = 0; section < 4; section++) {
+    for (NSUInteger section = 0; section < kNumSection; section++) {
         UILabel *view = [[[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
         view.textAlignment = UITextAlignmentCenter;
         view.textColor = [UIColor blackColor];
@@ -61,7 +63,7 @@
             return 5;
             break;
         default:
-            return 0;
+            return 4;
             break;
     }
 }
@@ -78,7 +80,7 @@
 
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
-    return 4;
+    return kNumSection;
 }
 
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
