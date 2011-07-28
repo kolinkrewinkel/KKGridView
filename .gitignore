@@ -6,3 +6,4 @@
 Examples/*/*.xcodeproj/xcuserdata
 build/
 .DS_Store
+Examples/GridViewDemo/GridViewDemo.xcodeproj/project.xcworkspace/contents.xcworkspacedata
