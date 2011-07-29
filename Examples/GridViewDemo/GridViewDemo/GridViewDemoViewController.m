@@ -68,7 +68,7 @@ static const NSUInteger kNumSection = 40;
 - (void)addItems
 {
     kFirstSectionCount+= 2;
-    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], [KKIndexPath indexPathForIndex:1 inSection:0], nil] withAnimation:KKGridViewAnimationFade];
+    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], [KKIndexPath indexPathForIndex:1 inSection:0], nil] withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)toggleEditingStyle:(id)sender
@@ -125,6 +125,7 @@ static const NSUInteger kNumSection = 40;
     
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
+        cell.backgroundColor = [UIColor lightGrayColor];
     }
     
     return cell;

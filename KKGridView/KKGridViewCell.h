@@ -18,6 +18,7 @@
 
 @property (nonatomic, copy) NSString *reuseIdentifier;
 @property (nonatomic) BOOL selected;
+@property (nonatomic, retain) UIView *selectedBackgroundView;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 

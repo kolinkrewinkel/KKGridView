@@ -189,33 +189,52 @@
     NSUInteger cellPosition = 0;
     for (KKGridViewCell *cell in cellArray) {
         
-        cell.frame = [self rectForCellAtIndexPath:[indexPaths objectAtIndex:cellPosition]];
+        CGRect cellFrame = [self rectForCellAtIndexPath:[indexPaths objectAtIndex:cellPosition]];
+        cell.frame = cellFrame;
         cell.backgroundColor = [UIColor greenColor];
         
-//        Prepare
-        switch (animation) {
-            case KKGridViewAnimationFade: {
-                cell.alpha = 0.f;
-                break;
-            }                
-            default: {
-                break;
-            }
-        }
-        
-        [self addSubview:cell];
-        [self bringSubviewToFront:cell];
+//        [self addSubview:cell];
+//        [self bringSubviewToFront:cell];
         
 //        Perform ;)
         
         
         switch (animation) {
             case KKGridViewAnimationFade: {
+                cell.alpha = 0.f;
+
                 [UIView animateWithDuration:0.25 animations:^(void) {
-                    cell.alpha = 1.0f;
+                    cell.alpha = 1.f;
                 }];
                 break;
-            }                
+            }   case KKGridViewAnimationExplode: {
+                cell.alpha = 0.f;
+                cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.05f, 0.05f);
+
+                [UIView animateWithDuration:0.1 animations:^(void) {
+                    cell.alpha = 1.f;
+                    cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1f, 1.1f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.075 animations:^(void) {
+                        cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.9, 0.9);
+                    } completion:^(BOOL finished) {
+                        [UIView animateWithDuration:0.075 animations:^(void) {
+                            cell.transform = CGAffineTransformIdentity;
+                            cell.frame = cellFrame;
+                        }];
+                    }];
+                }];
+//                } completion:^(BOOL finished) {
+//                    [UIView animateWithDuration:0.1 animations:^(void) {
+//                        cell.transform = CGAffineTransformMakeScale(0.9, 0.9);
+//                    } completion:^(BOOL finished) {
+//                        [UIView animateWithDuration:0.1 animations:^(void) {
+//                            cell.transform = CGAffineTransformMakeScale(0.9, 0.9);
+//                        }];
+//                    }];
+//                }];
+                break;
+            }
             default: {
                 break;
             }
@@ -223,9 +242,6 @@
         
         cellPosition++;
     }
-    
-    
-    NSLog(@"%d", [_visibleCells count]);
 
 
     NSArray *keys = [_visibleCells allKeys];
@@ -241,20 +257,25 @@
     }
         
     NSUInteger index = 0;
+    NSLog(@"%@", [newDict objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
     for (KKGridViewCell *cell in cellArray) {
-        [newDict setObject:cell forKey:[indexPaths objectAtIndex:index]];
+        [newDict setObject:cell forKey:[[[indexPaths objectAtIndex:index] copy] autorelease]];
         index++;
     }
-    
+    NSLog(@"%@", [newDict objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
+
     [_visibleCells release], _visibleCells = nil;
     _visibleCells = [[NSMutableDictionary alloc] initWithDictionary:newDict];
     [self softReload];
 
     _markedForDisplay = YES;
     [UIView animateWithDuration:0.25 animations:^(void) {
-        [self _layoutGridView];
+//        [self _layoutGridView];
         for (KKIndexPath *indexPath in [self _allPotentiallyVisibleIndexPaths]) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            if (!cell) {
+//                NSLog(@"No cell at indexpath %@", indexPath);
+            }
             cell.frame = [self rectForCellAtIndexPath:indexPath];        
         }
     }];
@@ -309,7 +330,7 @@
                 if(offset <= 0.0f) f.origin.y = sectionY;
                 
                 KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
-                if(sectionTwo != nil){
+                if (sectionTwo != nil){
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
                     if((offset + sectionTwoHeight) >= sectionTwoY){

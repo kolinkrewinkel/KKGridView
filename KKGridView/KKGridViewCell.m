@@ -12,6 +12,7 @@
 
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
+@synthesize selectedBackgroundView = _selectedBackgroundView;
 
 #pragma mark - Designated Initializer
 
@@ -19,6 +20,12 @@
 {
     if ((self = [super initWithFrame:frame])) {
         self.reuseIdentifier = reuseIdentifier;
+        
+        _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        _selectedBackgroundView.backgroundColor = [UIColor blueColor];
+        _selectedBackgroundView.hidden = YES;
+        _selectedBackgroundView.alpha = 0.f;
+        [self addSubview:_selectedBackgroundView];
     }
     
     return self;
@@ -29,8 +36,17 @@
 - (void)setSelected:(BOOL)selected
 {
     _selected = selected;
-    self.backgroundColor = selected ? [UIColor blueColor] : [UIColor grayColor];
-
+    
+    if (selected == YES) {
+        _selectedBackgroundView.hidden = !selected;
+    }
+    
+    if ([UIView areAnimationsEnabled]) {
+        _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
+    } else {
+        _selectedBackgroundView.hidden = !selected;
+    }
+    
     [self setNeedsDisplay];
 }
 
@@ -38,12 +54,18 @@
 {
     [UIView animateWithDuration:0.2 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
         self.selected = selected;
-    } completion:nil];
+    } completion:^(BOOL finished) {
+        _selectedBackgroundView.hidden = !selected;
+    }];
 }
 
 #pragma mark - Drawing
 
-// For future use
+- (void)layoutSubviews
+{
+    _selectedBackgroundView.frame = self.bounds;
+    [super layoutSubviews];
+}
 
 #pragma mark - Subclassers
 
