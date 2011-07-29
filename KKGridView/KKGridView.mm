@@ -466,8 +466,11 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch *touch = [touches anyObject];
-    CGPoint location = [touch locationInView:self];
-    KKIndexPath * touchedItemPoint = [self indexPathsForItemAtPoint:location];
+    if ([touch.view isKindOfClass:[KKGridViewCell class]]) {
+        KKGridViewCell *cell = (KKGridViewCell *)touch.view;
+        cell.selected = YES;
+    }
+    KKIndexPath * touchedItemPoint = [self indexPathsForItemAtPoint:[touch locationInView:self]];
     if (touchedItemPoint.index == NSNotFound) {
         [super touchesBegan:touches withEvent:event];
         return;
@@ -496,6 +499,17 @@
     }
     
     [super touchesEnded:touches withEvent:event];
+}
+
+- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
+{
+    if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
+        [_selectedIndexPaths removeAllObjects];
+        [UIView animateWithDuration:0.2 animations:^(void) {
+            [self _layoutGridView];
+        }];
+    }
+    _allowsMultipleSelection = allowsMultipleSelection;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event

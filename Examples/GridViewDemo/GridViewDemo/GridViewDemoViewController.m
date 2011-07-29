@@ -40,7 +40,8 @@ static const NSUInteger kNumSection = 40;
     [super loadView];
     
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
-    
+    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
+
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
         UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
@@ -113,7 +114,6 @@ static const NSUInteger kNumSection = 40;
     
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
-        cell.backgroundColor = [UIColor grayColor];
     }
     
     return cell;
@@ -121,9 +121,7 @@ static const NSUInteger kNumSection = 40;
 
 - (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"You selected the cell with index: %d in section: %d.", indexPath.index, indexPath.section] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
-    [alertView show];
-    [alertView release];
+    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
