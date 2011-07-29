@@ -137,6 +137,15 @@
     [self _layoutGridView];
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    CGRect oldFrame = self.frame;
+    [super setFrame:frame];
+    if (_renderQueue != NULL && !CGSizeEqualToSize(frame.size, oldFrame.size)) {
+        [self _respondToBoundsChange];
+    }
+}
+
 - (void)setBounds:(CGRect)bounds
 {
     CGRect oldBounds = self.bounds;
@@ -145,6 +154,7 @@
         [self _respondToBoundsChange];
     }
 }
+
 
 - (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
 {
