@@ -559,8 +559,9 @@
          if (!_headerViews) {
                 _headerViews = [[NSMutableArray alloc] init];
             }
-            KKGridViewHeader *header = [KKGridViewHeader new];
-            header.view = [_dataSource gridView:self viewForHeaderInSection:section];
+            
+            UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
+            KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             [header release];
             
