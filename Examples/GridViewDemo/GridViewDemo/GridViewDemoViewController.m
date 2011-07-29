@@ -37,6 +37,8 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
+    
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
         KKGridViewHeader *view = [[[KKGridViewHeader alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
@@ -48,11 +50,21 @@ static const NSUInteger kNumSection = 40;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.cellPadding = CGSizeMake(4.f, 4.f);
-
+    _gridView.allowsMultipleSelection = NO;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view = _gridView;
     
+}
+
+- (void)toggleEditingStyle:(id)sender
+{
+    _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
+    if (_gridView.allowsMultipleSelection) {
+        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Disable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+    } else {
+        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+    }
 }
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
@@ -103,6 +115,13 @@ static const NSUInteger kNumSection = 40;
     }
     
     return cell;
+}
+
+- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath
+{
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"You selected the cell with index: %d in section: %d.", indexPath.index, indexPath.section] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

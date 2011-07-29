@@ -34,6 +34,7 @@
     std::vector<NSUInteger> _sectionItemCount;
     NSMutableDictionary *_visibleCells;
     NSRange _visibleSections;
+    NSMutableSet *_selectedIndexPaths;
 }
 
 - (void)_sharedInitialization;
@@ -46,6 +47,7 @@
 
 @implementation KKGridView
 
+@synthesize allowsMultipleSelection = _allowsMultipleSelection;
 @synthesize cellPadding = _cellPadding;
 @synthesize cellSize = _cellSize;
 @synthesize dataSource = _dataSource;
@@ -73,6 +75,7 @@
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
+    _selectedIndexPaths = [[NSMutableSet alloc] init];
     _renderQueue = dispatch_queue_create("com.gridviewdemo.kkgridview", NULL);
     dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_set_target_queue(_renderQueue, high);
@@ -221,6 +224,7 @@
         
         for (KKIndexPath *indexPath in visiblePaths) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            cell.selected = [_selectedIndexPaths containsObject:indexPath];
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
                 [_visibleCells setObject:cell forKey:indexPath];
@@ -329,7 +333,7 @@
     return rect;
 }
 
-- (NSArray *)visibleIndexPaths
+- (NSMutableArray *)visibleIndexPaths
 {
     const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
     NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
@@ -400,13 +404,99 @@
     }
 }
 
+- (NSArray *)indexPathsForItemsInRect:(CGRect)rect
+{
+    NSMutableArray *visiblePaths = [self visibleIndexPaths];
+    NSMutableArray *indexes = [[[NSMutableArray alloc] init] autorelease];
+    
+    for (KKIndexPath *indexPath in visiblePaths) {
+        CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
+        if (CGRectIntersectsRect(rect, cellRect)) {
+            [indexes addObject:indexPath];
+        }
+    }
+    
+    return indexes;
+}
+
+- (KKIndexPath *)indexPathsForItemAtPoint:(CGPoint)point
+{
+    NSArray *indexes = [self indexPathsForItemsInRect:CGRectMake(point.x, point.y, 1.f, 1.f)];
+    return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
+}
+
+
+- (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
+{
+    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+    if (_allowsMultipleSelection) {
+        if ([_selectedIndexPaths containsObject:indexPath]) {
+            [_selectedIndexPaths removeObject:indexPath];
+            cell.selected = NO;
+        } else {
+            [_selectedIndexPaths addObject:indexPath];
+            cell.selected = YES;
+        }
+    } else {
+        if ([_selectedIndexPaths count] > 0) {
+            KKGridViewCell *otherCell = [_visibleCells objectForKey:[_selectedIndexPaths anyObject]];
+            otherCell.selected = NO;
+            [_selectedIndexPaths removeAllObjects];
+        }
+        [_selectedIndexPaths addObject:indexPath];
+        cell.selected = YES;
+    }
+}
+
+#pragma mark - Touch Handling
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [touch locationInView:self];
+    KKIndexPath * touchedItemPoint = [self indexPathsForItemAtPoint:location];
+    if (touchedItemPoint.index == NSNotFound) {
+        [super touchesBegan:touches withEvent:event];
+        return;
+    }
+    [self performSelector:@selector(_selectItemAtIndexPath:) withObject:touchedItemPoint];
+    [super touchesBegan:touches withEvent:event];
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesMoved:touches withEvent:event];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [touch locationInView:self];
+    KKIndexPath * indexPath = [self indexPathsForItemAtPoint:location];
+    if (indexPath.index == NSNotFound) {
+        [super touchesEnded:touches withEvent:event];
+        return;
+    }
+
+    if (_flags.delegateRespondsToDidSelectItem) {
+        [_gridDelegate gridView:self didSelectItemIndexPath:indexPath];
+    }
+    
+    [super touchesEnded:touches withEvent:event];
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesCancelled:touches withEvent:event];
+}
+
 #pragma mark - Getters
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier 
 {
     if (!identifier) return nil;
     
-    NSMutableSet *reusableCellsForIdentifier = (id)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
+    NSMutableSet *reusableCellsForIdentifier = [_reusableCells objectForKey:identifier];
     
     if ([reusableCellsForIdentifier count] == 0)
         return nil;
@@ -480,12 +570,12 @@
             [self addSubview:header];
         }
     }
-    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
         [set addObject:cell];
     }
+    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 
     [_visibleCells removeAllObjects];
 }

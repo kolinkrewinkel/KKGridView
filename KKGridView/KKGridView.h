@@ -16,6 +16,7 @@
 
 #pragma mark - Properties
 
+@property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) CGSize cellPadding;
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic, assign) id <KKGridViewDataSource> dataSource;
@@ -24,6 +25,7 @@
 @property (nonatomic, retain) UIView *gridHeaderView;
 @property (nonatomic) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
+
 
 #pragma mark - Initializers
 
@@ -67,6 +69,6 @@
 
 @optional
 
-- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(NSIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath;
 
 @end
