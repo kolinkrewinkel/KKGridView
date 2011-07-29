@@ -220,7 +220,7 @@
                 f.origin.y = offset;
                 if(offset <= 0.0f) f.origin.y = sectionY;
                 
-                KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header->section + 1];
+                KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
                 if(sectionTwo != nil){
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;

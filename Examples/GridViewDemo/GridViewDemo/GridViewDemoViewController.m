@@ -39,8 +39,6 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
-    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
@@ -50,14 +48,19 @@ static const NSUInteger kNumSection = 40;
         [_headerViews addObject:view];
     }
     
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
+    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
+
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
+    _gridView.scrollsToTop = YES;
     _gridView.cellPadding = CGSizeMake(4.f, 4.f);
     _gridView.allowsMultipleSelection = NO;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view = _gridView;
     
+
 }
 
 - (void)toggleEditingStyle:(id)sender
