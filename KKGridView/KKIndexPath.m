@@ -45,22 +45,11 @@
 
 - (BOOL)isEqual:(id)object
 {
-    //    if ([object isKindOfClass:[KKIndexPath class]]) {
     KKIndexPath *indexPath = (KKIndexPath *)object;
-    if (indexPath.index == _index && indexPath.section == _section) {
+    if (indexPath.index == self.index && indexPath.section == self.section) {
         return YES;
-    } else {
-        return NO;
     }
     
-    //    } else if ([object isKindOfClass:[NSIndexPath class]]) {
-    //        NSIndexPath *indexPath = (NSIndexPath *)object;
-    //        if (indexPath.row == _index && indexPath.section == _section) {
-    //            return YES;
-    //        } else {
-    //            return NO;
-    //        }
-    //    }
     return NO;
 }
 

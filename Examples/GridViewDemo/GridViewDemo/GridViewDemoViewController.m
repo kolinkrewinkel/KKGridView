@@ -16,6 +16,7 @@ static const NSUInteger kNumSection = 40;
 @implementation GridViewDemoViewController {
     KKGridView *_gridView;
     NSMutableArray *_headerViews;
+    NSUInteger kFirstSectionCount;
 }
 
 - (void)dealloc
@@ -51,6 +52,7 @@ static const NSUInteger kNumSection = 40;
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
     [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
+    kFirstSectionCount = 15;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.scrollsToTop = YES;
@@ -60,7 +62,13 @@ static const NSUInteger kNumSection = 40;
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view = _gridView;
     
+    [self performSelector:@selector(addItems) withObject:nil afterDelay:4.0];
+}
 
+- (void)addItems
+{
+    kFirstSectionCount+= 2;
+    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], [KKIndexPath indexPathForIndex:1 inSection:0], nil] withAnimation:KKGridViewAnimationFade];
 }
 
 - (void)toggleEditingStyle:(id)sender
@@ -77,7 +85,7 @@ static const NSUInteger kNumSection = 40;
 {
     switch (section) {
         case 0:
-            return 20;
+            return kFirstSectionCount;
             break;
         case 1:
             return 15;

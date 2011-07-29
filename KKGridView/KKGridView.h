@@ -19,7 +19,6 @@ typedef enum {
     KKGridViewAnimationExplode,
     KKGridViewAnimationImplode,
     KKGridViewAnimationNone
-    
 } KKGridViewAnimation;
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
@@ -35,7 +34,7 @@ typedef enum {
 @property (nonatomic, assign) id <KKGridViewDelegate> gridDelegate;
 @property (nonatomic, retain) UIView *gridFooterView;
 @property (nonatomic, retain) UIView *gridHeaderView;
-@property (nonatomic) NSUInteger numberOfColumns;
+@property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 
 
@@ -84,7 +83,7 @@ typedef enum {
 
 #pragma mark - KKGridViewDelegate
 
-@protocol KKGridViewDelegate <NSObject>
+@protocol KKGridViewDelegate <NSObject, UIScrollViewDelegate>
 
 @optional
 
