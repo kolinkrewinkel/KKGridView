@@ -201,22 +201,22 @@
         for (KKGridViewHeader *header in _headerViews) {
             CGRect f = [header.view frame];
             f.size.width = visibleBounds.size.width;
-            CGFloat sectionY = header.stickPoint;
+            CGFloat sectionY = header->stickPoint;
             
             if(sectionY <= offset && offset > 0.0f){
                 f.origin.y = offset;
                 if(offset <= 0.0f) f.origin.y = sectionY;
                 
-                KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header.section + 1];
+                KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header->section + 1];
                 if(sectionTwo != nil){
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
-                    CGFloat	sectionTwoY = sectionTwo.stickPoint;
+                    CGFloat sectionTwoY = sectionTwo->stickPoint;
                     if((offset + sectionTwoHeight) >= sectionTwoY){
                         f.origin.y = sectionTwoY - sectionTwoHeight;
                     }
                 }
             } else {
-                f.origin.y = header.stickPoint;
+                f.origin.y = header->stickPoint;
             }
                         
             header.view.frame = f;
@@ -568,8 +568,8 @@
             CGFloat headerHeight = _headerHeights[section];
             CGFloat position = [self sectionHeightsCombinedUpToSection:section];
             header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
-            header.stickPoint = position;
-            header.section = section;
+            header->stickPoint = position;
+            header->section = section;
             [self addSubview:header.view];
         }
     }

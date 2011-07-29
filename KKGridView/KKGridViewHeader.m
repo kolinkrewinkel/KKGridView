@@ -11,9 +11,7 @@
 @implementation KKGridViewHeader
 
 @synthesize view = _view;
-@synthesize section = _section;
-@synthesize sticking = _sticking;
-@synthesize stickPoint = _stickPoint;
+
 - (id)initWithView:(UIView *)view
 {
     if ((self = [super init]))
