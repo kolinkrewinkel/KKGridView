@@ -67,6 +67,13 @@
     [super layoutSubviews];
 }
 
+- (void)drawRect:(CGRect)rect
+{
+    [[UIColor redColor] setStroke];
+    UIBezierPath *bezierPath = [UIBezierPath bezierPathWithRect:CGRectInset(self.bounds, 1.f, 1.f)];
+                                [bezierPath stroke];
+}
+
 #pragma mark - Subclassers
 
 - (void)prepareForReuse

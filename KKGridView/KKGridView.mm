@@ -179,13 +179,15 @@
 {
     NSMutableArray *cellArray = [[[NSMutableArray alloc] initWithCapacity:[indexPaths count]] autorelease];
     for (KKIndexPath *indexPath in indexPaths) {
-        KKGridViewCell *cell = [[_reusableCells objectForKey:[[_visibleCells objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]] reuseIdentifier]] anyObject] ?: [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-        
+        KKGridViewCell *cell = [[_reusableCells objectForKey:[[_visibleCells objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]] reuseIdentifier]] anyObject];
+            if (!cell)
+                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+    
         [cellArray addObject:cell];
     }
     
-
-
+    
+    
     NSUInteger cellPosition = 0;
     for (KKGridViewCell *cell in cellArray) {
         
@@ -193,16 +195,16 @@
         cell.frame = cellFrame;
         cell.backgroundColor = [UIColor greenColor];
         
-//        [self addSubview:cell];
-//        [self bringSubviewToFront:cell];
+        [self addSubview:cell];
+        [self bringSubviewToFront:cell];
         
-//        Perform ;)
+        //        Perform ;)
         
         
         switch (animation) {
             case KKGridViewAnimationFade: {
                 cell.alpha = 0.f;
-
+                
                 [UIView animateWithDuration:0.25 animations:^(void) {
                     cell.alpha = 1.f;
                 }];
@@ -210,7 +212,7 @@
             }   case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
                 cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.05f, 0.05f);
-
+                
                 [UIView animateWithDuration:0.1 animations:^(void) {
                     cell.alpha = 1.f;
                     cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1f, 1.1f);
@@ -224,15 +226,6 @@
                         }];
                     }];
                 }];
-//                } completion:^(BOOL finished) {
-//                    [UIView animateWithDuration:0.1 animations:^(void) {
-//                        cell.transform = CGAffineTransformMakeScale(0.9, 0.9);
-//                    } completion:^(BOOL finished) {
-//                        [UIView animateWithDuration:0.1 animations:^(void) {
-//                            cell.transform = CGAffineTransformMakeScale(0.9, 0.9);
-//                        }];
-//                    }];
-//                }];
                 break;
             }
             default: {
@@ -242,45 +235,59 @@
         
         cellPosition++;
     }
-
-
+    
+    NSMutableSet *sectionsBeingUpdated = [NSMutableSet set];
+    for (KKIndexPath *indexPath in indexPaths) {
+        [sectionsBeingUpdated addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
+    }
+    
     NSArray *keys = [_visibleCells allKeys];
     NSUInteger keyCount = [keys count];
-
+    
     NSMutableDictionary *newDict = [NSMutableDictionary dictionary];
     
     for (NSUInteger loopCount = 0; loopCount < keyCount; loopCount++) {
         KKIndexPath *oldPath = [keys objectAtIndex:loopCount];
-        KKGridViewCell *cell = [_visibleCells objectForKey:oldPath];
-        oldPath.index+=1;
-        [newDict setObject:cell forKey:oldPath];
+        if ([sectionsBeingUpdated containsObject:[NSNumber numberWithUnsignedInteger:oldPath.section]]) {
+            KKGridViewCell *cell = [_visibleCells objectForKey:oldPath];
+            [newDict setObject:cell forKey:[KKIndexPath indexPathForIndex:(oldPath.index + 2) inSection:oldPath.section]];
+            NSLog(@"old path. %@", oldPath);
+            NSLog(@"new path. %@", [[newDict allKeysForObject:cell] lastObject]);
+
+        }
     }
-        
+    
     NSUInteger index = 0;
-    NSLog(@"%@", [newDict objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
     for (KKGridViewCell *cell in cellArray) {
         [newDict setObject:cell forKey:[[[indexPaths objectAtIndex:index] copy] autorelease]];
         index++;
     }
-    NSLog(@"%@", [newDict objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
-
-    [_visibleCells release], _visibleCells = nil;
-    _visibleCells = [[NSMutableDictionary alloc] initWithDictionary:newDict];
+    
+    
+    
+    NSArray *valuesInNewArray = [newDict allValues];
+    NSArray *keysInNewArray = [newDict allKeys];
+    
+    NSUInteger position = 0;
+    for (KKIndexPath *indexPath in keysInNewArray) {
+        [_visibleCells setObject:[valuesInNewArray objectAtIndex:position] forKey:indexPath];
+        position++;
+    }
+    
+    
+    
     [self softReload];
-
+    
     _markedForDisplay = YES;
-    [UIView animateWithDuration:0.25 animations:^(void) {
-//        [self _layoutGridView];
+    [UIView animateWithDuration:4 animations:^(void) {
+        [self _layoutGridView];
         for (KKIndexPath *indexPath in [self _allPotentiallyVisibleIndexPaths]) {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-            if (!cell) {
-//                NSLog(@"No cell at indexpath %@", indexPath);
-            }
             cell.frame = [self rectForCellAtIndexPath:indexPath];        
         }
     }];
-
-
+    
+    
 }
 
 - (NSArray *)_allPotentiallyVisibleIndexPaths
@@ -317,7 +324,7 @@
         
         NSArray *visiblePaths = [self visibleIndexPaths];
         
-//        From CHGridView; thanks Cameron (even though I didn't ask you)
+        //        From CHGridView; thanks Cameron (even though I didn't ask you)
         CGFloat offset = self.contentOffset.y;
         
         for (KKGridViewHeader *header in _headerViews) {
@@ -348,6 +355,7 @@
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             cell.selected = [_selectedIndexPaths containsObject:indexPath];
             if (!cell) {
+                NSLog(@"%@", indexPath);
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
                 [_visibleCells setObject:cell forKey:indexPath];
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
@@ -359,13 +367,13 @@
             }
         }
         
-//        Not sure on this
+        //        Not sure on this
         
-//        if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
-//            _lastVisibleIndexPaths = [visiblePaths retain];
-//            return;
-//        }
-//        _lastVisibleIndexPaths = [visiblePaths retain];
+        //        if ([visiblePaths isEqualToArray:_lastVisibleIndexPaths]) {
+        //            _lastVisibleIndexPaths = [visiblePaths retain];
+        //            return;
+        //        }
+        //        _lastVisibleIndexPaths = [visiblePaths retain];
         
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
@@ -375,7 +383,7 @@
             if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
                 [cell removeFromSuperview];
                 [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
-//                CFDictionaryRemoveValue((CFMutableDictionaryRef)_visibleCells, CFArrayGetValueAtIndex((CFArrayRef)keys, loopCount));
+                //                CFDictionaryRemoveValue((CFMutableDictionaryRef)_visibleCells, CFArrayGetValueAtIndex((CFArrayRef)keys, loopCount));
                 [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
             }
             loopCount++;
@@ -748,13 +756,13 @@
         }
     }
     
-//    for (KKGridViewCell *cell in [_visibleCells allValues]) {
-//        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
-//        [set addObject:cell];
-//    }
-//    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-//    
-//    [_visibleCells removeAllObjects];
+    //    for (KKGridViewCell *cell in [_visibleCells allValues]) {
+    //        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
+    //        [set addObject:cell];
+    //    }
+    //    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    //    
+    //    [_visibleCells removeAllObjects];
 }
 
 @end
