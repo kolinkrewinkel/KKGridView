@@ -25,26 +25,46 @@ static const NSUInteger kNumSection = 40;
 
 #pragma mark - View lifecycle
 
+- (UIColor *)randomColor
+{
+    CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
+    CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
+    CGFloat green = (CGFloat)random()/(CGFloat)RAND_MAX;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.f];
+}
+
 - (void)loadView
 {
     [super loadView];
     
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
+    
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
-        UILabel *view = [[[UILabel alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
-        view.textAlignment = UITextAlignmentCenter;
-        view.textColor = [UIColor blackColor];
-        view.text = [NSString stringWithFormat:@"%i", section];
+        KKGridViewHeader *view = [[[KKGridViewHeader alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
+        view.backgroundColor = [self randomColor];
+        view.opaque = YES;
         [_headerViews addObject:view];
     }
     
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
-    _gridView.cellSize = CGSizeMake(100.f, 100.f);
+    _gridView.cellSize = CGSizeMake(75.f, 75.f);
+    _gridView.cellPadding = CGSizeMake(4.f, 4.f);
+    _gridView.allowsMultipleSelection = NO;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    _gridView.cellPadding = CGSizeMake(5.f, 5.f);
     self.view = _gridView;
     
+}
+
+- (void)toggleEditingStyle:(id)sender
+{
+    _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
+    if (_gridView.allowsMultipleSelection) {
+        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Disable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+    } else {
+        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+    }
 }
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
@@ -63,7 +83,7 @@ static const NSUInteger kNumSection = 40;
             return 5;
             break;
         default:
-            return 4;
+            return (section % 2) ? 4 : 7;
             break;
     }
 }
@@ -73,7 +93,7 @@ static const NSUInteger kNumSection = 40;
     return 25.f;
 }
 
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
 }
@@ -92,21 +112,16 @@ static const NSUInteger kNumSection = 40;
     if (!cell) {
         cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
         cell.backgroundColor = [UIColor grayColor];
-//        cell.layer.shadowRadius = 2.f;
-//        cell.layer.shadowColor = [UIColor blackColor].CGColor;
-//        cell.layer.shadowOffset = CGSizeZero;
-//        cell.layer.shadowOpacity = 0.8f;
-//        cell.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectInset(cell.bounds, 1.f, 1.f)].CGPath;
     }
     
     return cell;
 }
 
-- (void)viewDidUnload
+- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath
 {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"You selected the cell with index: %d in section: %d.", indexPath.index, indexPath.section] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

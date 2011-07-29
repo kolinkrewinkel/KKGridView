@@ -8,6 +8,7 @@
 
 #import "KKGridViewCell.h"
 #import "KKIndexPath.h"
+#import "KKGridViewHeader.h"
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
@@ -15,6 +16,7 @@
 
 #pragma mark - Properties
 
+@property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) CGSize cellPadding;
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic, assign) id <KKGridViewDataSource> dataSource;
@@ -23,6 +25,7 @@
 @property (nonatomic, retain) UIView *gridHeaderView;
 @property (nonatomic) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
+
 
 #pragma mark - Initializers
 
@@ -56,7 +59,7 @@
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 
 @end
 
@@ -66,6 +69,6 @@
 
 @optional
 
-- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(NSIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath;
 
 @end

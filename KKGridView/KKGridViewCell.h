@@ -17,6 +17,9 @@
 #pragma mark - Properties
 
 @property (nonatomic, copy) NSString *reuseIdentifier;
+@property (nonatomic) BOOL selected;
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 
 #pragma mark - Subclassers
 
