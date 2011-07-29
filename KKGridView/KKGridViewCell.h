@@ -6,7 +6,7 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKIndexPath.h"
+#import <UIKit/UIKit.h>
 
 @interface KKGridViewCell : UIView
 

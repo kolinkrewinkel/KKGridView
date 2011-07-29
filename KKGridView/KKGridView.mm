@@ -7,6 +7,9 @@
 //
 
 #import "KKGridView.h"
+#import "KKGridViewHeader.h"
+#import "KKIndexPath.h"
+#import "KKGridViewCell.h"
 #import <map>
 #import <vector>
 
@@ -218,7 +221,7 @@
             } else {
                 f.origin.y = header->stickPoint;
             }
-                        
+            
             header.view.frame = f;
         }
         
@@ -247,7 +250,7 @@
         
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
-
+        
         NSUInteger loopCount = 0;
         for (KKGridViewCell *cell in visible) {
             if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
@@ -258,9 +261,9 @@
             }
             loopCount++;
         }
-
+        
         _markedForDisplay = NO;
-
+        
     });
 }
 
@@ -270,7 +273,7 @@
     NSMutableSet *set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     if (!set) {
         CFDictionarySetValue((CFMutableDictionaryRef)_reusableCells, identifier, [NSMutableSet set]);
-    set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
+        set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     }
     CFSetAddValue((CFMutableSetRef)set, cell);
     [cell release];
@@ -294,7 +297,7 @@
     CGFloat numberOfRows = 0.f;
     
     if (_sectionItemCount.size() > 0) {
-                numberOfRows = ceilf(_sectionItemCount[section] / [[NSNumber numberWithUnsignedInt:_numberOfColumns] floatValue]);
+        numberOfRows = ceilf(_sectionItemCount[section] / [[NSNumber numberWithUnsignedInt:_numberOfColumns] floatValue]);
     } else {
         numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (CGFloat)_numberOfColumns);
     }
@@ -364,7 +367,7 @@
     
     NSUInteger oldColumns = _numberOfColumns;
     _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
-
+    
     if (oldColumns != _numberOfColumns) {
         _markedForDisplay = YES;
     }
@@ -477,7 +480,7 @@
         [super touchesEnded:touches withEvent:event];
         return;
     }
-
+    
     if (_flags.delegateRespondsToDidSelectItem) {
         [_gridDelegate gridView:self didSelectItemIndexPath:indexPath];
     }
@@ -548,7 +551,7 @@
 - (void)reloadData
 {
     [self reloadContentSize];
-
+    
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -556,7 +559,7 @@
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-         if (!_headerViews) {
+            if (!_headerViews) {
                 _headerViews = [[NSMutableArray alloc] init];
             }
             
@@ -573,13 +576,13 @@
             [self addSubview:header.view];
         }
     }
-
+    
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
         [set addObject:cell];
     }
     [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-
+    
     [_visibleCells removeAllObjects];
 }
 

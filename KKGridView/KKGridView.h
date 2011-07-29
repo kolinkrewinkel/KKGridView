@@ -6,10 +6,9 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewCell.h"
-#import "KKIndexPath.h"
-#import "KKGridViewHeader.h"
+#import <UIKit/UIKit.h>
 
+@class KKIndexPath, KKGridViewCell;
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
 @interface KKGridView : UIScrollView
@@ -45,6 +44,8 @@
 @end
 
 #pragma mark - KKGridViewDataSource
+
+@class KKGridViewHeader;
 
 @protocol KKGridViewDataSource <NSObject>
 
