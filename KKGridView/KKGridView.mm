@@ -406,7 +406,7 @@
 
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect
 {
-    NSMutableArray *visiblePaths = [self visibleIndexPaths];
+    NSArray *visiblePaths = [self visibleIndexPaths];
     NSMutableArray *indexes = [[[NSMutableArray alloc] init] autorelease];
     
     for (KKIndexPath *indexPath in visiblePaths) {
