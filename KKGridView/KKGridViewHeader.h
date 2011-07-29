@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KKGridViewHeader : UIView
+@interface KKGridViewHeader : NSObject
 
+@property (nonatomic, retain) UIView *view;
 @property (nonatomic, assign) CGFloat stickPoint;
 @property (nonatomic, assign) NSUInteger section;
 @property (nonatomic, assign) BOOL sticking;

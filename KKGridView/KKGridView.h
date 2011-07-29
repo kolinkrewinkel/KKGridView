@@ -59,7 +59,7 @@
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
-- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 
 @end
 

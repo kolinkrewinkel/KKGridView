@@ -41,7 +41,7 @@ static const NSUInteger kNumSection = 40;
     
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
-        KKGridViewHeader *view = [[[KKGridViewHeader alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
+        UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
         view.backgroundColor = [self randomColor];
         view.opaque = YES;
         [_headerViews addObject:view];
@@ -93,7 +93,7 @@ static const NSUInteger kNumSection = 40;
     return 25.f;
 }
 
-- (KKGridViewHeader *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
 }

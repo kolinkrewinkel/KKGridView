@@ -199,7 +199,7 @@
         CGFloat offset = self.contentOffset.y;
         
         for (KKGridViewHeader *header in _headerViews) {
-            CGRect f = [header frame];
+            CGRect f = [header.view frame];
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = header.stickPoint;
             
@@ -209,7 +209,7 @@
                 
                 KKGridViewHeader *sectionTwo = [_headerViews objectAtIndex:header.section + 1];
                 if(sectionTwo != nil){
-                    CGFloat sectionTwoHeight = sectionTwo.frame.size.height;
+                    CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat	sectionTwoY = sectionTwo.stickPoint;
                     if((offset + sectionTwoHeight) >= sectionTwoY){
                         f.origin.y = sectionTwoY - sectionTwoHeight;
@@ -219,7 +219,7 @@
                 f.origin.y = header.stickPoint;
             }
                         
-            header.frame = f;
+            header.view.frame = f;
         }
         
         for (KKIndexPath *indexPath in visiblePaths) {
@@ -551,7 +551,7 @@
 
     if (_flags.dataSourceRespondsToViewForHeaderInSection) {
         if (_headerViews) {
-            [_headerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
         }
         
@@ -559,15 +559,17 @@
          if (!_headerViews) {
                 _headerViews = [[NSMutableArray alloc] init];
             }
-            KKGridViewHeader *header = [_dataSource gridView:self viewForHeaderInSection:section];
+            KKGridViewHeader *header = [KKGridViewHeader new];
+            header.view = [_dataSource gridView:self viewForHeaderInSection:section];
             [_headerViews addObject:header];
+            [header release];
             
             CGFloat headerHeight = _headerHeights[section];
             CGFloat position = [self sectionHeightsCombinedUpToSection:section];
-            header.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
+            header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
             header.stickPoint = position;
             header.section = section;
-            [self addSubview:header];
+            [self addSubview:header.view];
         }
     }
 

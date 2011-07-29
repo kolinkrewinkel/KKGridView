@@ -10,8 +10,15 @@
 
 @implementation KKGridViewHeader
 
+@synthesize view = _view;
 @synthesize section = _section;
 @synthesize sticking = _sticking;
 @synthesize stickPoint = _stickPoint;
+
+- (void)dealloc
+{
+    [_view release];
+    [super dealloc];
+}
 
 @end
