@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A0BEC7613DDF862003C2632 /* KKIndexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0BEC7413DDF862003C2632 /* KKIndexPath.h */; };
+		1A0BEC7613DDF862003C2632 /* KKIndexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0BEC7413DDF862003C2632 /* KKIndexPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A0BEC7713DDF862003C2632 /* KKIndexPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0BEC7513DDF862003C2632 /* KKIndexPath.m */; };
 		1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */; };
 		1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */; };
@@ -17,7 +17,7 @@
 		1A32AD8A13DCDFC200E8CC7C /* KKGridViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */; };
 		1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5F356613DD02CD00A38A3E /* Definitions.h */; };
 		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
-		1AC6D07A13E14DB70000BB8C /* KKGridViewHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC6D07813E14DB70000BB8C /* KKGridViewHeader.h */; };
+		1AC6D07A13E14DB70000BB8C /* KKGridViewHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC6D07813E14DB70000BB8C /* KKGridViewHeader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AC6D07B13E14DB70000BB8C /* KKGridViewHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AC6D07913E14DB70000BB8C /* KKGridViewHeader.m */; };
 		1AD5397A13DF7A060071EFDC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397913DF7A060071EFDC /* CoreFoundation.framework */; };
 		1AD5397C13DF7E690071EFDC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397B13DF7E690071EFDC /* QuartzCore.framework */; };
@@ -123,9 +123,9 @@
 			files = (
 				1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */,
 				1A32AD8913DCDFC200E8CC7C /* KKGridViewCell.h in Headers */,
-				1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */,
 				1A0BEC7613DDF862003C2632 /* KKIndexPath.h in Headers */,
 				1AC6D07A13E14DB70000BB8C /* KKGridViewHeader.h in Headers */,
+				1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

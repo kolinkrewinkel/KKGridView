@@ -6,9 +6,22 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "KKGridViewCell.h"
+#import "KKIndexPath.h"
 
-@class KKIndexPath, KKGridViewCell;
+typedef enum {
+    KKGridViewAnimationFade,
+    KKGridViewAnimationResize,
+    KKGridViewAnimationSlideLeft,
+    KKGridViewAnimationSlideTop,
+    KKGridViewAnimationSlideRight,
+    KKGridViewAnimationSlideBottom,
+    KKGridViewAnimationExplode,
+    KKGridViewAnimationImplode,
+    KKGridViewAnimationNone
+    
+} KKGridViewAnimation;
+
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
 @interface KKGridView : UIScrollView
@@ -36,10 +49,15 @@
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath;
 - (NSArray *)visibleIndexPaths;
 
-#pragma mark - Methods
+#pragma mark - Data
 
 - (void)reloadContentSize;
 - (void)reloadData;
+- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
+- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
+- (void)insertSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
+- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
+- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
 
 @end
 
