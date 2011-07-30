@@ -7,6 +7,13 @@
 //
 
 #import "KKGridViewUpdateStack.h"
+#import "KKGridViewUpdate.h"
+
+@interface KKGridViewUpdateStack ()
+
+- (void)_sortItems;
+
+@end
 
 @implementation KKGridViewUpdateStack
 
@@ -21,10 +28,18 @@
     return self;
 }
 
+- (void)addUpdates:(NSArray *)updates
+{
+    for (KKGridViewUpdate *update in updates) {
+        [self addUpdate:update];
+    }
+}
+
 - (BOOL)addUpdate:(KKGridViewUpdate *)update
 {
     if (![_itemsToUpdate containsObject:update]) {
-        [_itemsToUpdate addObject:update];        
+        [_itemsToUpdate addObject:update];
+        [self _sortItems];
         return YES;
     }
     
@@ -33,7 +48,20 @@
 
 - (void)_sortItems
 {
-    [_itemsToUpdate sortUsingSelector:@selector(compare:)];
+    [_itemsToUpdate sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"indexPath" ascending:NO]]];
+}
+
+- (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
+{
+    if (_itemsToUpdate.count == 0) return NO;
+    
+    for (KKGridViewUpdate *update in _itemsToUpdate) {
+        if ([update isEqual:indexPath]) {
+            return YES;
+        }
+    }
+    
+    return NO;
 }
 
 @end

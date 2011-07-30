@@ -23,6 +23,26 @@
     return self;
 }
 
+- (NSComparisonResult)compare:(id)object
+{
+    KKIndexPath *indexPath = (KKIndexPath *)object;
+    if (self.index == indexPath.index && self.section == indexPath.section) {
+        return NSOrderedSame;
+    }
+    
+    if (indexPath.section > self.section) {
+        return NSOrderedDescending;
+    } else {
+        return NSOrderedAscending;
+    }
+    
+    if (indexPath.section == self.section && indexPath.index > self.index) {
+        return NSOrderedDescending;
+    } else if (indexPath.section == self.section && indexPath.index < self.index) {
+        return NSOrderedAscending;
+    }
+}
+
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
     return [[[[self class] alloc] initWithIndex:index section:section] autorelease];

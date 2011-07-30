@@ -7,6 +7,7 @@
 //
 
 #import "KKIndexPath.h"
+#import "KKGridView.h"
 
 typedef enum {
     KKGridViewUpdateTypeItemInsert,
@@ -19,8 +20,12 @@ typedef enum {
 
 @interface KKGridViewUpdate : NSObject
 
+@property (nonatomic) KKGridViewAnimation animation;
 @property (nonatomic, copy) KKIndexPath * indexPath;
 @property (nonatomic) BOOL sectionUpdate;
 @property (nonatomic) KKGridViewUpdateType type;
+
+- (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
++ (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 
 @end
