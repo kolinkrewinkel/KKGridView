@@ -237,7 +237,7 @@
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         NSArray *visiblePaths = [self visibleIndexPaths];
         
-        //        From CHGridView; thanks Cameron (even though I didn't ask you)
+        // From CHGridView; thanks Cameron (even though I didn't ask you)
         CGFloat offset = self.contentOffset.y;
         
         for (KKGridViewHeader *header in _headerViews) {
@@ -410,7 +410,7 @@
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
 {
     CGRect rect = CGRectZero;
-    CGFloat yPosition = _cellPadding.height;
+    CGFloat yPosition = _cellPadding.height + _gridHeaderView.frame.size.height;
     CGFloat xPosition = _cellPadding.width;
     for (NSUInteger section = 0; section < indexPath.section; section++) {
         if (_sectionHeights.size() > 0) {
@@ -471,7 +471,7 @@
         _markedForDisplay = YES;
     }
     
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, 0.f);
+    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height);
     
     _sectionHeights.clear();
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -653,6 +653,13 @@
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
 }
 
+- (void)setGridHeaderView:(UIView *)gridHeaderView
+{
+    _gridHeaderView = gridHeaderView;
+    _gridHeaderView.frame = (CGRect){CGPointZero, gridHeaderView.frame.size};
+    [self addSubview:gridHeaderView];
+}
+
 #pragma mark - General
 
 - (void)reloadData
@@ -675,7 +682,7 @@
             [_headerViews addObject:header];
             
             CGFloat headerHeight = _headerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
             header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
             header->stickPoint = position;
             header->section = section;

@@ -54,6 +54,10 @@ static const NSUInteger kNumSection = 40;
     _gridView.allowsMultipleSelection = NO;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 200)];
+    headerView.backgroundColor = [UIColor redColor];
+    _gridView.gridHeaderView = headerView;
     self.view = _gridView;
     
     [self performSelector:@selector(addItems) withObject:nil afterDelay:4.0];
