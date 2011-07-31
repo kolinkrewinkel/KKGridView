@@ -177,9 +177,7 @@
     }
     
     [_updateStack addUpdates:updates];
-    [UIView animateWithDuration:1 animations:^(void) {
-        [self _layoutGridView];
-    }];
+    [self _layoutGridView];
 }
 
 - (NSArray *)_allPotentiallyVisibleIndexPaths
@@ -208,26 +206,23 @@
     return indexPaths;
 }
 
+
 - (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
     NSArray *keys = [_visibleCells allKeys];
-    NSArray *values = [_visibleCells allValues];
+    NSArray *cells = [_visibleCells allValues];
     
-    NSMutableDictionary *newVisibleCells = [NSMutableDictionary dictionary];
-    
+    [_visibleCells removeAllObjects];
     
     NSUInteger index = 0;
     for (KKIndexPath *indexPath in keys) {
-        if ([indexPath compare:fromPath] == (NSOrderedSame | NSOrderedAscending) && [indexPath compare:throughPath] == (NSOrderedSame | NSOrderedDescending)) {           KKIndexPath *newPath = [indexPath copy];
-            newPath.index++;
-            [newVisibleCells setObject:[values objectAtIndex:index] forKey:indexPath];
+        if (([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedAscending) && ([indexPath compare:throughPath] == NSOrderedSame || [indexPath compare:throughPath] == NSOrderedDescending)) {
+            
+            indexPath.index++;
+            [_visibleCells setObject:[cells objectAtIndex:index] forKey:indexPath];
             index++;
         }
-        
     }
-    
-    [_visibleCells removeAllObjects];
-    [_visibleCells setDictionary:newVisibleCells];
 }
 
 - (void)_layoutGridView
@@ -245,7 +240,7 @@
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = header->stickPoint;
             
-            if(sectionY <= offset && offset > 0.0f) {
+            if (sectionY <= offset && offset > 0.0f) {
                 f.origin.y = offset;
                 if(offset <= 0.0f) f.origin.y = sectionY;
                 
@@ -253,7 +248,7 @@
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if((offset + sectionTwoHeight) >= sectionTwoY) {
+                    if ((offset + sectionTwoHeight) >= sectionTwoY) {
                         f.origin.y = sectionTwoY - sectionTwoHeight;
                     }
                 }
@@ -265,18 +260,17 @@
         }
         
         BOOL animated = NO;
-        
+        NSTimeInterval delay = 0.3;
         for (KKIndexPath *indexPath in visiblePaths) {
-            
             if (_updateStack.itemsToUpdate.count > 0) {
                 if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                     KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
                     if (update.type == KKGridViewUpdateTypeItemInsert) {
                         [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
                     }
-                    //                if (update.animation != KKGridViewAnimationNone) {
-                    //                    animated = YES;
-                    //                }
+                    if (update.animation != KKGridViewAnimationNone) {
+                        animated = YES;
+                    }
                     _markedForDisplay = YES;
                     
                     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -320,28 +314,38 @@
                 }
                 
             } else {
-//                NSTimeInterval duration = 0.0;
-//                NSTimeInterval delay = 0.0;
-//                if (animated) {
-//                    duration = 4;
-//                    delay = .3;
-//                }
-                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                cell.selected = [_selectedIndexPaths containsObject:indexPath];
                 
-                //                [UIView animateWithDuration:duration delay:delay options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-                if (!cell) {
-                    cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                    [_visibleCells setObject:cell forKey:indexPath];
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                if (animated) {
+                    __block KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                    cell.selected = [_selectedIndexPaths containsObject:indexPath];
+                    [UIView animateWithDuration:0.25 delay:delay options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                        if (!cell) {
+                            cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                            [_visibleCells setObject:cell forKey:indexPath];
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
+                            
+                            [self addSubview:cell];
+                            [self sendSubviewToBack:cell];
+                        } else if (_markedForDisplay) {
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
+                        }
+                    } completion:nil];
                     
-                    [self addSubview:cell];
-                    [self sendSubviewToBack:cell];
-                } else if (_markedForDisplay) {
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                }
-                //                } completion:nil];
-                //            TODO: ALWAYS CALL DELEGATE METHOD BY RETURNING VISIBLE CELL IN DEQUEUE METHOD
+                } else {
+                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                    cell.selected = [_selectedIndexPaths containsObject:indexPath];
+                    
+                    if (!cell) {
+                        cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                        [_visibleCells setObject:cell forKey:indexPath];
+                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                        
+                        [self addSubview:cell];
+                        [self sendSubviewToBack:cell];
+                    } else if (_markedForDisplay) {
+                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    }
+                }       
             }
             
             

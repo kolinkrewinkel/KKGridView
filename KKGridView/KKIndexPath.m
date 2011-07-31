@@ -31,15 +31,15 @@
     }
     
     if (indexPath.section > self.section) {
-        return NSOrderedDescending;
-    } else {
         return NSOrderedAscending;
+    } else {
+        return NSOrderedDescending;
     }
     
     if (indexPath.section == self.section && indexPath.index > self.index) {
-        return NSOrderedDescending;
-    } else if (indexPath.section == self.section && indexPath.index < self.index) {
         return NSOrderedAscending;
+    } else if (indexPath.section == self.section && indexPath.index < self.index) {
+        return NSOrderedDescending;
     }
 }
 
