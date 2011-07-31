@@ -117,7 +117,7 @@ static const NSUInteger kNumSection = 40;
     }
 }
 
-/*- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
 {
     return 25.f;
 }
@@ -125,7 +125,7 @@ static const NSUInteger kNumSection = 40;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
-}*/
+}
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
 {
