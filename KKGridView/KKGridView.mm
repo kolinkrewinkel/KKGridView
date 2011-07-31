@@ -320,12 +320,12 @@
                 }
                 
             } else {
-//                NSTimeInterval duration = 0.0;
-//                NSTimeInterval delay = 0.0;
-//                if (animated) {
-//                    duration = 4;
-//                    delay = .3;
-//                }
+                //                NSTimeInterval duration = 0.0;
+                //                NSTimeInterval delay = 0.0;
+                //                if (animated) {
+                //                    duration = 4;
+                //                    delay = .3;
+                //                }
                 KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
                 cell.selected = [_selectedIndexPaths containsObject:indexPath];
                 
@@ -364,6 +364,22 @@
         _markedForDisplay = NO;
         _staggerForInsertion = NO;
         
+        // layout gridHeaderView
+        if (_gridHeaderView != nil) {
+            CGRect headerRect = _gridHeaderView.frame;
+            headerRect.origin = CGPointZero;
+            headerRect.size.width = self.bounds.size.width;
+            _gridHeaderView.frame = headerRect;
+        }
+        
+        // layout gridFooterView
+        if (_gridFooterView != nil) {
+            CGRect footerRect = _gridFooterView.frame;
+            footerRect.origin.x = 0.0;
+            footerRect.origin.y  = self.contentSize.height - footerRect.size.height;
+            footerRect.size.width = self.bounds.size.width;
+            _gridFooterView.frame = footerRect;
+        }
     });
 }
 
@@ -471,7 +487,7 @@
         _markedForDisplay = YES;
     }
     
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height);
+    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
     _sectionHeights.clear();
     [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
@@ -655,9 +671,23 @@
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
 {
-    _gridHeaderView = gridHeaderView;
-    _gridHeaderView.frame = (CGRect){CGPointZero, gridHeaderView.frame.size};
-    [self addSubview:gridHeaderView];
+    if (gridHeaderView != _gridHeaderView) {
+        [_gridHeaderView removeFromSuperview];
+        _gridHeaderView = gridHeaderView;
+        
+        [self addSubview:gridHeaderView];
+        [self setNeedsLayout];
+    }
+}
+
+- (void)setGridFooterView:(UIView *)gridFooterView
+{
+    if (_gridFooterView != gridFooterView) {
+        _gridFooterView = gridFooterView;
+
+        [self addSubview:gridFooterView];
+        [self setNeedsLayout];
+    }
 }
 
 #pragma mark - General

@@ -58,6 +58,11 @@ static const NSUInteger kNumSection = 40;
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 200)];
     headerView.backgroundColor = [UIColor redColor];
     _gridView.gridHeaderView = headerView;
+    
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 150)];
+    footerView.backgroundColor = [UIColor blueColor];
+    _gridView.gridFooterView = footerView;
+    
     self.view = _gridView;
     
     [self performSelector:@selector(addItems) withObject:nil afterDelay:4.0];
