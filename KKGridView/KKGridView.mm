@@ -265,8 +265,6 @@
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = footer->stickPoint;
             
-            NSLog(@"%f", sectionY);
-            
             if (sectionY <= offset && offset > 0.0f) {
                 f.origin.y = offset;
                 if (offset <= 0.0f)
@@ -440,10 +438,7 @@
     CGFloat height = 0.f;
     
     if (_headerHeights.size() > section) {
-        height += _headerHeights[section];
-        
-    } else {
-        height += KKGridViewDefaultHeaderHeight;
+        height += _headerHeights[section];   
     }
     
     if (_footerHeights.size() > section) {
@@ -748,7 +743,7 @@
 {
     [self reloadContentSize];
     
-    if (_flags.dataSourceRespondsToViewForHeaderInSection) {
+    if (_flags.dataSourceRespondsToViewForHeaderInSection && _flags.dataSourceRespondsToHeightForHeaderInSection) {
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
@@ -772,7 +767,7 @@
         }
     }
     
-    if (_flags.dataSourceRespondsToViewForFooterInSection) {
+    if (_flags.dataSourceRespondsToViewForFooterInSection && _flags.dataSourceRespondsToHeightForFooterInSection) {
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
@@ -788,7 +783,7 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
             footer->stickPoint = position;
             footer->section = section;
 
@@ -810,7 +805,7 @@
 {
     [self reloadContentSize];
     
-    if (_flags.dataSourceRespondsToViewForHeaderInSection) {
+    if (_flags.dataSourceRespondsToViewForHeaderInSection && _flags.dataSourceRespondsToHeightForHeaderInSection) {
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
@@ -834,7 +829,7 @@
         }
     }
     
-    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
+    if (_flags.dataSourceRespondsToViewForFooterInSection && _flags.dataSourceRespondsToHeightForFooterInSection) {
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
@@ -850,7 +845,7 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - footerHeight;
             footer->stickPoint = position;
             footer->section = section;
             
