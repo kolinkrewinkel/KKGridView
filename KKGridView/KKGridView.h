@@ -7,6 +7,7 @@
 //
 
 #import "KKGridViewCell.h"
+#import "Definitions.h"
 #import "KKIndexPath.h"
 
 typedef enum {
@@ -30,8 +31,8 @@ typedef enum {
 @property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) CGSize cellPadding;
 @property (nonatomic) CGSize cellSize;
-@property (nonatomic, unsafe_unretained) id <KKGridViewDataSource> dataSource;
-@property (nonatomic, unsafe_unretained) id <KKGridViewDelegate> gridDelegate;
+@property (nonatomic, __kk_weak) id <KKGridViewDataSource> dataSource;
+@property (nonatomic, __kk_weak) id <KKGridViewDelegate> gridDelegate;
 @property (nonatomic, strong) UIView *gridFooterView;
 @property (nonatomic, strong) UIView *gridHeaderView;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;

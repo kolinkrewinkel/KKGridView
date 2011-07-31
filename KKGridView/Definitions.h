@@ -6,6 +6,8 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
+#import <AvailabilityInternal.h>
+
 // Constants
 
 
@@ -14,6 +16,12 @@
 #define KKGridViewDefaultHeaderHeight 27.f
 
 // Macros
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
+#define __kk_weak weak
+#else 
+#define __kk_weak unsafe_unretained
+#endif
 
 static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
 {
