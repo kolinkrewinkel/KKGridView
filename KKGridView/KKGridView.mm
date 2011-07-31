@@ -254,6 +254,7 @@
                 }
             } else {
                 f.origin.y = header->stickPoint;
+                [self sendSubviewToBack:header.view];
             }
             
             header.view.frame = f;
@@ -263,25 +264,28 @@
             CGRect f = [footer.view frame];
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = footer->stickPoint;
+            CGFloat heightOfSection = _sectionHeights[footer->section] - f.size.height;
+            CGFloat screenBottom = offset + visibleBounds.size.height;
             
-            if (sectionY <= offset && offset > 0.0f) {
-                f.origin.y = offset;
+            if (screenBottom > sectionY - heightOfSection && screenBottom - sectionY < f.size.height) {
+                f.origin.y = offset + visibleBounds.size.height - f.size.height;
                 
                 KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if ((offset + sectionTwoHeight) >= sectionTwoY) {
+                    if ((screenBottom + sectionTwoHeight) >= sectionTwoY) {
                         f.origin.y = sectionTwoY - sectionTwoHeight;
                     }
                 }
             } else {
-                f.origin.y = (self.contentOffset.y + visibleBounds.size.height) - f.size.height;
+                f.origin.y = footer->stickPoint;
+                [self sendSubviewToBack:footer.view];
             }
             
             footer.view.frame = f;
         }
-
+        
         
         BOOL animated = NO;
         NSTimeInterval delay = 0.3;
@@ -392,6 +396,8 @@
                     [cell removeFromSuperview];
                     [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
                     [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+                } else {
+                    [self sendSubviewToBack:cell];
                 }
                 loopCount++;
             }
@@ -728,7 +734,7 @@
 {
     if (_gridFooterView != gridFooterView) {
         _gridFooterView = gridFooterView;
-
+        
         [self addSubview:gridFooterView];
         [self setNeedsLayout];
     }
@@ -783,7 +789,7 @@
             CGFloat position = [self sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
             footer->stickPoint = position;
             footer->section = section;
-
+            
             footer.view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
             [self addSubview:footer.view];
         }
@@ -850,7 +856,7 @@
             [self addSubview:footer.view];
         }
     }
-
+    
     
     //    for (KKGridViewCell *cell in [_visibleCells allValues]) {
     //        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
