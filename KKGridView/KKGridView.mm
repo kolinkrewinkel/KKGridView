@@ -274,13 +274,7 @@
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    
-                    if (sectionTwo->section == 0) {
-                        NSLog(@"2 height: %f", sectionTwoHeight);
-                        NSLog(@"2 y: %f", sectionTwoY);
-                        NSLog(@"screenBottom: %f", screenBottom);
-                    }
-                    
+                   
                     if (screenBottom + sectionTwoHeight >= sectionTwoY && (screenBottom - (sectionTwoY + sectionTwoHeight) < sectionTwo.view.frame.size.height)) {
                         f.origin.y = sectionTwoY + sectionTwoHeight;
                     }
