@@ -662,11 +662,11 @@
             [_headerViews removeAllObjects];
         }
         
+        if (!_headerViews) {
+            _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
+        
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            if (!_headerViews) {
-                _headerViews = [[NSMutableArray alloc] init];
-            }
-            
             UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
