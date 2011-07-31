@@ -265,7 +265,8 @@
             
             if (sectionY <= offset && offset > 0.0f) {
                 f.origin.y = offset;
-                if(offset <= 0.0f) f.origin.y = sectionY;
+                if (offset <= 0.0f)
+                    f.origin.y = sectionY;
                 
                 KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
                 if (sectionTwo != nil) {

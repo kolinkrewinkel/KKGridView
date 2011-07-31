@@ -54,7 +54,7 @@ static const NSUInteger kNumSection = 40;
 
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
-    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
+//    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
     kFirstSectionCount = 15;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
@@ -80,8 +80,8 @@ static const NSUInteger kNumSection = 40;
 
 - (void)addItems
 {
-    kFirstSectionCount+= 1;
-    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], nil] withAnimation:KKGridViewAnimationExplode];
+//    kFirstSectionCount+= 1;
+//    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], nil] withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)toggleEditingStyle:(id)sender
@@ -151,7 +151,7 @@ static const NSUInteger kNumSection = 40;
 
 - (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath
 {
-    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
+//    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
