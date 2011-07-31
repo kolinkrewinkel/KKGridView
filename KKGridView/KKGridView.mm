@@ -257,6 +257,7 @@
             }
             
             header.view.frame = f;
+            [self bringSubviewToFront:header.view];
         }
         
         BOOL animated = NO;
