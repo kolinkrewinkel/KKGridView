@@ -270,12 +270,19 @@
             if (screenBottom > sectionY - heightOfSection && screenBottom - sectionY < f.size.height) {
                 f.origin.y = offset + visibleBounds.size.height - f.size.height;
                 
-                KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
+                KKGridViewFooter *sectionTwo = footer->section > 0 ? [_footerViews objectAtIndex:footer->section - 1] : nil;
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if ((screenBottom + sectionTwoHeight) >= sectionTwoY) {
-                        f.origin.y = sectionTwoY - sectionTwoHeight;
+                    
+                    if (sectionTwo->section == 0) {
+                        NSLog(@"2 height: %f", sectionTwoHeight);
+                        NSLog(@"2 y: %f", sectionTwoY);
+                        NSLog(@"screenBottom: %f", screenBottom);
+                    }
+                    
+                    if (screenBottom + sectionTwoHeight >= sectionTwoY && (screenBottom - (sectionTwoY + sectionTwoHeight) < sectionTwo.view.frame.size.height)) {
+                        f.origin.y = sectionTwoY + sectionTwoHeight;
                     }
                 }
             } else {
