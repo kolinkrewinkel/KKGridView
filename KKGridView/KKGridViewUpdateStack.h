@@ -11,7 +11,7 @@
 @class KKGridViewUpdate;
 @interface KKGridViewUpdateStack : NSObject
 
-@property (nonatomic, readonly) NSMutableArray *itemsToUpdate;
+@property (nonatomic, readonly, strong) NSMutableArray *itemsToUpdate;
 
 - (BOOL)addUpdate:(KKGridViewUpdate *)update;
 - (void)addUpdates:(NSArray *)updates;

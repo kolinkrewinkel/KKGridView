@@ -249,6 +249,9 @@
 		1A61BE1D13DCAF1F00AB4243 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = donothing;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = NO;
 				DSTROOT = /tmp/KKGridView.dst;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -265,6 +268,9 @@
 		1A61BE1E13DCAF1F00AB4243 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ARC_MIGRATION = donothing;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_OBJCPP_ARC_ABI = NO;
 				DSTROOT = /tmp/KKGridView.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";

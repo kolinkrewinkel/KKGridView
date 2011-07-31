@@ -19,7 +19,6 @@
     // Override point for customization after application launch.
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.viewController];
     self.window.rootViewController = navigationController;
-    [navigationController release];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -63,11 +62,5 @@
      */
 }
 
-- (void)dealloc
-{
-    [_window release];
-    [_viewController release];
-    [super dealloc];
-}
 
 @end

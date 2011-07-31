@@ -30,8 +30,8 @@ typedef enum {
 @property (nonatomic) BOOL allowsMultipleSelection;
 @property (nonatomic) CGSize cellPadding;
 @property (nonatomic) CGSize cellSize;
-@property (nonatomic, assign) id <KKGridViewDataSource> dataSource;
-@property (nonatomic, assign) id <KKGridViewDelegate> gridDelegate;
+@property (nonatomic, unsafe_unretained) id <KKGridViewDataSource> dataSource;
+@property (nonatomic, unsafe_unretained) id <KKGridViewDelegate> gridDelegate;
 @property (nonatomic, retain) UIView *gridFooterView;
 @property (nonatomic, retain) UIView *gridHeaderView;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;

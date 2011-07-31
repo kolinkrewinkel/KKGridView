@@ -28,14 +28,6 @@
     return self;
 }
 
-#ifndef KK_ARC_ON
-- (void)dealloc
-{
-    [_itemsToUpdate release], _itemsToUpdate = nil;
-    [super dealloc];
-}
-#endif
-
 - (void)addUpdates:(NSArray *)updates
 {
     for (KKGridViewUpdate *update in updates) {

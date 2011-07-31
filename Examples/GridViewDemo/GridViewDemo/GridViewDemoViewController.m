@@ -19,12 +19,6 @@ static const NSUInteger kNumSection = 40;
     NSUInteger kFirstSectionCount;
 }
 
-- (void)dealloc
-{
-    [_gridView release];
-    [_headerViews release];
-    [super dealloc];
-}
 
 #pragma mark - View lifecycle
 
@@ -43,13 +37,13 @@ static const NSUInteger kNumSection = 40;
 
     _headerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
-        UIView *view = [[[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)] autorelease];
+        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)];
         view.backgroundColor = [self randomColor];
         view.opaque = YES;
         [_headerViews addObject:view];
     }
     
-    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
     [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
     kFirstSectionCount = 15;
@@ -75,9 +69,9 @@ static const NSUInteger kNumSection = 40;
 {
     _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
     if (_gridView.allowsMultipleSelection) {
-        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Disable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Disable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
     } else {
-        [self.navigationItem setRightBarButtonItem:[[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] autorelease] animated:YES];
+        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
     }
 }
 
