@@ -69,10 +69,12 @@
 
 - (void)dealloc
 {
+    dispatch_release(_renderQueue), _renderQueue = nil;
+#ifndef KK_ARC_ON
     [_reusableCells release], _reusableCells = nil;
     [_visibleCells release], _visibleCells = nil;
-    dispatch_release(_renderQueue), _renderQueue = nil;
     [super dealloc];
+#endif
 }
 
 #pragma mark - Initialization Methods
@@ -359,7 +361,9 @@
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
 {
+#ifndef KK_ARC_ON
     [cell retain];
+#endif
     NSMutableSet *set = (NSMutableSet *)CFDictionaryGetValue((CFMutableDictionaryRef)_reusableCells, identifier);
     if (!set) {
         CFDictionarySetValue((CFMutableDictionaryRef)_reusableCells, identifier, [NSMutableSet set]);
@@ -609,7 +613,9 @@
         return nil;
     
     KKGridViewCell *reusableCell = [reusableCellsForIdentifier anyObject];
+#ifndef KK_ARC_ON
     [[reusableCell retain] autorelease]; // HOLD IT
+#endif
     [reusableCellsForIdentifier removeObject:reusableCell];
     
     [reusableCell prepareForReuse];

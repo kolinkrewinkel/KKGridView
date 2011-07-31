@@ -45,7 +45,11 @@
 
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
-    return [[[[self class] alloc] initWithIndex:index section:section] autorelease];
+    id retVal = [[[self class] alloc] initWithIndex:index section:section];
+#ifndef KK_ARC_ON
+    [retVal autorelease];
+#endif
+    return retVal;
 }
 
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath 
@@ -60,7 +64,11 @@
 
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath 
 {
-    return [[[[self class] alloc] initWithNSIndexPath:indexPath] autorelease];
+    id retVal = [[[self class] alloc] initWithNSIndexPath:indexPath];
+#ifndef KK_ARC_ON
+    [retVal autorelease];
+#endif
+    return retVal;
 }
 
 - (BOOL)isEqual:(id)object

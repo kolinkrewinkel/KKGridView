@@ -29,7 +29,10 @@
     KKGridViewCell *cell = (KKGridViewCell *)[gridView dequeueReusableCellWithIdentifier:cellID];
     
     if (cell == nil) {
-        cell = [[[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID] autorelease];
+        cell = [[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID];
+#ifndef KK_ARC_ON
+        [cell autorelease];
+#endif
     }
     
     return cell;
@@ -97,10 +100,12 @@
 
 #pragma mark - NSObject
 
+#ifndef KK_ARC_ON
 - (void)dealloc
 {
     [_reuseIdentifier release];
     [super dealloc];
 }
+#endif
 
 @end
