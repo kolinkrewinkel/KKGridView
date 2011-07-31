@@ -227,8 +227,8 @@
     NSUInteger index = 0;
     for (KKIndexPath *indexPath in keys) {
         if ([indexPath compare:fromPath] == (NSOrderedSame | NSOrderedAscending) && [indexPath compare:throughPath] == (NSOrderedSame | NSOrderedDescending)) {
-            KKIndexPath *newPath = [indexPath copy];
-            newPath.index++;
+            //KKIndexPath *newPath = [indexPath copy];
+            //newPath.index++;
             [newVisibleCells setObject:[values objectAtIndex:index] forKey:indexPath];
             index++;
         }
