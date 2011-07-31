@@ -291,26 +291,27 @@
                     switch (update.animation) {
                         case KKGridViewAnimationExplode: {
                             cell.alpha = 0.f;
-                            cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.f, 0.f);
+                            cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
                             cell.backgroundColor = [UIColor greenColor];
                             [self addSubview:cell];
                             [self bringSubviewToFront:cell];
-                            [UIView animateWithDuration:0.1 animations:^(void) {
+                            [UIView animateWithDuration:5 animations:^(void) {
                                 cell.alpha = 0.8f;
-                                cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1f, 1.f);
+                                cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
                             } completion:^(BOOL finished) {
-                                [UIView animateWithDuration:0.1 animations:^(void) {
+                                [UIView animateWithDuration:5 animations:^(void) {
                                     cell.alpha = 0.9f;
-                                    cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.8f, 0.8f);
+                                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
                                 } completion:^(BOOL finished) {
-                                    [UIView animateWithDuration:0.1 animations:^(void) {
+                                    [UIView animateWithDuration:5 animations:^(void) {
                                         cell.alpha = 1.f;
-                                        cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.f, 1.f);
+                                        cell.transform = CGAffineTransformIdentity;
 
                                     }];
                                 }];
                             }];
-                        }   break;
+                            break;
+                        }   
                             
                         default:
                             break;

@@ -68,7 +68,7 @@
     if (_itemsToUpdate.count == 0) return NO;
     
     for (KKGridViewUpdate *update in _itemsToUpdate) {
-        if ([update isEqual:indexPath]) {
+        if ([update.indexPath isEqual:indexPath]) {
             return YES;
         }
     }
