@@ -473,7 +473,9 @@
         }
     }
     
-    yPosition += _headerHeights[indexPath.section];
+    if (indexPath.section < _headerHeights.size()) {
+        yPosition += _headerHeights[indexPath.section];
+    }
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
     NSInteger column = indexPath.index - (row * _numberOfColumns);
