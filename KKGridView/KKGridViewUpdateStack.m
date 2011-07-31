@@ -46,9 +46,21 @@
     return NO;
 }
 
+- (BOOL)removeUpdateForIndexPath:(KKIndexPath *)indexPath
+{
+    [_itemsToUpdate removeObject:[self updateForIndexPath:indexPath]];
+    
+    return YES;
+}
+
 - (void)_sortItems
 {
     [_itemsToUpdate sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"indexPath" ascending:NO]]];
+}
+
+- (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath
+{
+    return [[[NSSet setWithArray:_itemsToUpdate] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"indexPath = %@", indexPath]] anyObject];
 }
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath

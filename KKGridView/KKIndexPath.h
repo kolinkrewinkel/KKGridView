@@ -19,4 +19,6 @@
 @property (nonatomic, readwrite) NSUInteger section;
 @property (nonatomic, readwrite) NSUInteger index;
 
+- (NSComparisonResult)compare:(id)other;
+
 @end

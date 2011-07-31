@@ -40,7 +40,7 @@
     NSMutableDictionary *_visibleCells;
     NSRange _visibleSections;
     NSMutableSet *_selectedIndexPaths;
-//    BOOL _modifyingItems;
+    //    BOOL _modifyingItems;
     BOOL _staggerForInsertion;
     KKGridViewUpdateStack *_updateStack;
 }
@@ -187,6 +187,7 @@
     }
     
     [_updateStack addUpdates:updates];
+    [self _layoutGridView];
 }
 
 - (NSArray *)_allPotentiallyVisibleIndexPaths
@@ -215,7 +216,7 @@
     return indexPaths;
 }
 
-- (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)indexPath throughIndexPath:(KKIndexPath *)throughPath
+- (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
     NSArray *keys = [_visibleCells allKeys];
     NSArray *values = [_visibleCells allValues];
@@ -224,17 +225,18 @@
     
     
     NSUInteger index = 0;
-    BOOL _alreadyInitiated = NO;
     for (KKIndexPath *indexPath in keys) {
-        if (_alreadyInitiated) {
-            
+        if ([indexPath compare:fromPath] == (NSOrderedSame | NSOrderedAscending) && [indexPath compare:throughPath] == (NSOrderedSame | NSOrderedDescending)) {
+            KKIndexPath *newPath = [indexPath copy];
+            newPath.index++;
+            [newVisibleCells setObject:[values objectAtIndex:index] forKey:indexPath];
+            index++;
         }
-        KKIndexPath *newPath = [indexPath copy];
-    
-        [newVisibleCells setObject:[values objectAtIndex:index] forKey:indexPath];
-        index++;
+        
     }
     
+    [_visibleCells removeAllObjects];
+    [_visibleCells addEntriesFromDictionary:newVisibleCells];
 }
 
 - (void)_layoutGridView
@@ -244,7 +246,7 @@
         const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
         NSArray *visiblePaths = [self visibleIndexPaths];
         
-//        From CHGridView; thanks Cameron (even though I didn't ask you)
+        //        From CHGridView; thanks Cameron (even though I didn't ask you)
         CGFloat offset = self.contentOffset.y;
         
         for (KKGridViewHeader *header in _headerViews) {
@@ -273,23 +275,69 @@
         
         for (KKIndexPath *indexPath in visiblePaths) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
-                [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
+                
+                KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
+                if (update.type == KKGridViewUpdateTypeItemInsert) {
+                    [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
+                }
+                
+                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                cell.selected = [_selectedIndexPaths containsObject:indexPath];
+                if (!cell) {
+                    cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                    [_visibleCells setObject:cell forKey:indexPath];
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    
+                    switch (update.animation) {
+                        case KKGridViewAnimationExplode: {
+                            cell.alpha = 0.f;
+                            cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.f, 0.f);
+                            cell.backgroundColor = [UIColor greenColor];
+                            [self addSubview:cell];
+                            [self bringSubviewToFront:cell];
+                            [UIView animateWithDuration:0.1 animations:^(void) {
+                                cell.alpha = 0.8f;
+                                cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1f, 1.f);
+                            } completion:^(BOOL finished) {
+                                [UIView animateWithDuration:0.1 animations:^(void) {
+                                    cell.alpha = 0.9f;
+                                    cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.8f, 0.8f);
+                                } completion:^(BOOL finished) {
+                                    [UIView animateWithDuration:0.1 animations:^(void) {
+                                        cell.alpha = 1.f;
+                                        cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.f, 1.f);
+
+                                    }];
+                                }];
+                            }];
+                        }   break;
+                            
+                        default:
+                            break;
+                    }
+                    
+                }
+                
+                [_updateStack removeUpdateForIndexPath:indexPath];
+            } else {
+                //            TODO: ALWAYS CALL DELEGATE METHOD BY RETURNING VISIBLE CELL IN DEQUEUE METHOD
+                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                cell.selected = [_selectedIndexPaths containsObject:indexPath];
+                if (!cell) {
+                    cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                    [_visibleCells setObject:cell forKey:indexPath];
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    
+                    [self addSubview:cell];
+                    [self sendSubviewToBack:cell];
+                } else if (_markedForDisplay) {
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                }
             }
             
-            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-            cell.selected = [_selectedIndexPaths containsObject:indexPath];
-            if (!cell) {
-                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                [_visibleCells setObject:cell forKey:indexPath];
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-            } else if (_markedForDisplay) {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-            }
+            
         }
-
+        
         NSArray *visible = [_visibleCells allValues];
         NSArray *keys = [_visibleCells allKeys];
         
