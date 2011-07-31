@@ -16,6 +16,7 @@ static const NSUInteger kNumSection = 40;
 @implementation GridViewDemoViewController {
     KKGridView *_gridView;
     NSMutableArray *_headerViews;
+    NSMutableArray *_footerViews;
     NSUInteger kFirstSectionCount;
 }
 
@@ -42,6 +43,15 @@ static const NSUInteger kNumSection = 40;
         view.opaque = YES;
         [_headerViews addObject:view];
     }
+    
+    _footerViews = [[NSMutableArray alloc] init];
+    for (NSUInteger section = 0; section < kNumSection; section++) {
+        UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
+        view.backgroundColor = [UIColor whiteColor];
+        view.opaque = YES;
+        [_footerViews addObject:view];
+    }
+
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
     [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
@@ -113,6 +123,16 @@ static const NSUInteger kNumSection = 40;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
+}
+
+- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
+{
+    return 35.f;
+}
+
+- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section
+{
+    return [_footerViews objectAtIndex:section];
 }
 
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView

@@ -78,6 +78,7 @@ typedef enum {
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
 
 @end
 

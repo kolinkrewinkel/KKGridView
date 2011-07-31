@@ -162,7 +162,7 @@
 - (CGFloat)sectionHeightsCombinedUpToSection:(NSUInteger)section
 {
     CGFloat height = 0.f;
-    for (NSUInteger index = 0; index < section; index++) {
+    for (NSUInteger index = 0; index < section && index < _sectionHeights.size(); index++) {
         height += _sectionHeights[index];
     }
     return height;
@@ -527,6 +527,14 @@
         }
     }
     
+    _footerHeights.clear();
+    
+    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
+        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            _footerHeights.push_back([_dataSource gridView:self heightForFooterInSection:section]);
+        }
+    }
+    
     _sectionItemCount.clear();
     
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
@@ -732,6 +740,27 @@
         }
     }
     
+    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
+        if (_footerViews) {
+            [_footerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [_footerViews removeAllObjects];
+        }
+        
+        if (!_footerViews) {
+            _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
+        
+        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
+            [_footerViews addObject:view];
+            
+            CGFloat footerHeight = _footerHeights[section];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
+            [self addSubview:view];
+        }
+    }
+    
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
         [set addObject:cell];
@@ -751,23 +780,45 @@
             [_headerViews removeAllObjects];
         }
         
+        if (!_headerViews) {
+            _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
+        
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            if (!_headerViews) {
-                _headerViews = [[NSMutableArray alloc] init];
-            }
-            
             UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
             CGFloat headerHeight = _headerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
             header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
             header->stickPoint = position;
             header->section = section;
             [self addSubview:header.view];
         }
     }
+    
+    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
+        if (_footerViews) {
+            [_footerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [_footerViews removeAllObjects];
+        }
+        
+        if (!_footerViews) {
+            _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
+        
+        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
+            [_footerViews addObject:view];
+            
+            CGFloat footerHeight = _footerHeights[section];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
+            [self addSubview:view];
+        }
+    }
+
     
     //    for (KKGridViewCell *cell in [_visibleCells allValues]) {
     //        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
