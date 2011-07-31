@@ -7,12 +7,33 @@
 //
 
 #import "KKGridViewCell.h"
+#import "KKGridView.h"
 
 @implementation KKGridViewCell
 
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
+
+
+#pragma mark - Class Methods
+
++ (NSString *)cellIdentifier
+{
+    return NSStringFromClass([self class]);
+}
+
++ (id)cellForGridView:(KKGridView *)gridView
+{
+    NSString *cellID = [self cellIdentifier];
+    KKGridViewCell *cell = (KKGridViewCell *)[gridView dequeueReusableCellWithIdentifier:cellID];
+    
+    if (cell == nil) {
+        cell = [[[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID] autorelease];
+    }
+    
+    return cell;
+}
 
 #pragma mark - Designated Initializer
 

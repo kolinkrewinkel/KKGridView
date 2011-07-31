@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@class KKGridView;
+
 @interface KKGridViewCell : UIView
+
+#pragma mark - Class Methods
+
++ (NSString *)cellIdentifier;
++ (id)cellForGridView:(KKGridView *)gridView;
 
 #pragma mark - Designated Initializer
 

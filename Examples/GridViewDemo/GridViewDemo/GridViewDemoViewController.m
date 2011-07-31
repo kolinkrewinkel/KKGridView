@@ -119,14 +119,9 @@ static const NSUInteger kNumSection = 40;
 
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
     
-    KKGridViewCell *cell = [gridView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
-    if (!cell) {
-        cell = [[[KKGridViewCell alloc] initWithFrame:CGRectMake(0.f, 0.f, gridView.cellSize.width, gridView.cellSize.height) reuseIdentifier:CellIdentifier] autorelease];
-        cell.backgroundColor = [UIColor lightGrayColor];
-    }
+    cell.backgroundColor = [UIColor lightGrayColor];
     
     return cell;
 }
