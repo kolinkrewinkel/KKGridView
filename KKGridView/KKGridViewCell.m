@@ -30,9 +30,6 @@
     
     if (cell == nil) {
         cell = [[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID];
-#ifndef KK_ARC_ON
-        [cell autorelease];
-#endif
     }
     
     return cell;

@@ -15,12 +15,6 @@
 
 // Macros
 
-// Place ARC macro here.
-
-#if __has_feature(objc_arc)
-#define KK_ARC_ON
-#endif
-
 static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
 {
     return (CGRectGetMinY(rect2) < CGRectGetMaxY(rect1)) && (CGRectGetMaxY(rect2) > CGRectGetMinY(rect1));
