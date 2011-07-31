@@ -6,8 +6,6 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 @interface KKIndexPath : NSObject <NSCopying>
 
 - (id)initWithIndex:(NSUInteger)index section:(NSUInteger)section;

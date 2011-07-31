@@ -15,7 +15,7 @@
     BOOL sticking;
 }
 
-@property (nonatomic, retain, readonly) UIView *view;
+@property (nonatomic, strong, readonly) UIView *view;
 
 - (id)initWithView:(UIView *)view;
 

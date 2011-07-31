@@ -98,14 +98,4 @@
     
 }
 
-#pragma mark - NSObject
-
-#ifndef KK_ARC_ON
-- (void)dealloc
-{
-    [_reuseIdentifier release];
-    [super dealloc];
-}
-#endif
-
 @end

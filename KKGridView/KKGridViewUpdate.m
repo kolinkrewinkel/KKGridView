@@ -15,14 +15,6 @@
 @synthesize sectionUpdate = _sectionUpdate;
 @synthesize type = _type;
 
-#ifndef KK_ARC_ON
-- (void)dealloc
-{
-    [_indexPath release];
-    [super dealloc];
-}
-#endif
-
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation
 {
     if ((self = [super init])) {
@@ -38,9 +30,6 @@
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation
 {
     id retVal = [[[self class] alloc] initWithIndexPath:indexPath isSectionUpdate:sectionUpdate type:type animation:animation];
-#ifndef KK_ARC_ON
-    [retVal autorelease];
-#endif
     return retVal;
 }
 

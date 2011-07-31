@@ -14,24 +14,11 @@
 
 - (id)initWithView:(UIView *)view
 {
-    if ((self = [super init]))
-    {
-#ifndef KK_ARC_ON
-        _view = [view retain];
-#else
+    if ((self = [super init])) {
         _view = view;
-#endif
     }
     
     return self;
 }
-
-#ifndef KK_ARC_ON
-- (void)dealloc
-{
-    [_view release];
-    [super dealloc];
-}
-#endif
 
 @end

@@ -46,9 +46,6 @@
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
     id retVal = [[[self class] alloc] initWithIndex:index section:section];
-#ifndef KK_ARC_ON
-    [retVal autorelease];
-#endif
     return retVal;
 }
 
@@ -64,11 +61,7 @@
 
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath 
 {
-    id retVal = [[[self class] alloc] initWithNSIndexPath:indexPath];
-#ifndef KK_ARC_ON
-    [retVal autorelease];
-#endif
-    return retVal;
+    return [[[self class] alloc] initWithNSIndexPath:indexPath];
 }
 
 - (BOOL)isEqual:(id)object
@@ -88,8 +81,7 @@
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    id new = [[[self class] alloc] initWithIndex:_index section:_section];
-    return new;
+    return [[[self class] alloc] initWithIndex:_index section:_section];
 }
 
 - (NSString *)description

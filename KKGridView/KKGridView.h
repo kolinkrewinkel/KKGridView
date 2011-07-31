@@ -32,8 +32,8 @@ typedef enum {
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic, unsafe_unretained) id <KKGridViewDataSource> dataSource;
 @property (nonatomic, unsafe_unretained) id <KKGridViewDelegate> gridDelegate;
-@property (nonatomic, retain) UIView *gridFooterView;
-@property (nonatomic, retain) UIView *gridHeaderView;
+@property (nonatomic, strong) UIView *gridFooterView;
+@property (nonatomic, strong) UIView *gridHeaderView;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 
