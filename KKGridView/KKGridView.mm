@@ -258,15 +258,15 @@
             
             header.view.frame = f;
         }
+        
         for (KKGridViewFooter *footer in _footerViews) {
             CGRect f = [footer.view frame];
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = footer->stickPoint;
             
-            if (sectionY <= offset && offset > 0.0f) {
-                f.origin.y = offset;
-                if (offset <= 0.0f)
-                    f.origin.y = sectionY;
+            if (sectionY <= (offset + self.bounds.size.height) && offset > 0.0f) {
+                f.origin.y = (offset + self.bounds.size.height) - f.size.height;
+                if(offset <= 0.0f) f.origin.y = sectionY;
                 
                 KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
                 if (sectionTwo != nil) {
@@ -277,7 +277,7 @@
                     }
                 }
             } else {
-                f.origin.y = (self.contentOffset.y + visibleBounds.size.height) - f.size.height;
+                f.origin.y = footer->stickPoint;
             }
             
             footer.view.frame = f;
@@ -783,7 +783,7 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
             footer->stickPoint = position;
             footer->section = section;
 

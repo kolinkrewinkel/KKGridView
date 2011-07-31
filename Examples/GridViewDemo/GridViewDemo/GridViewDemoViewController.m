@@ -45,7 +45,9 @@ static const NSUInteger kNumSection = 40;
         header.opaque = YES;
         [_headerViews addObject:header];
         
-        UIView *footer = [[UIView alloc] initWithFrame:CGRectZero];
+        UILabel *footer = [[UILabel alloc] initWithFrame:CGRectZero];
+        footer.textAlignment = UITextAlignmentCenter;
+        footer.text = [NSString stringWithFormat:@"%d", section];
         footer.backgroundColor = [UIColor whiteColor];
         footer.opaque = YES;
         [_footerViews addObject:footer];
