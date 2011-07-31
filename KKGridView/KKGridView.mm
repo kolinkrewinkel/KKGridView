@@ -257,8 +257,31 @@
             }
             
             header.view.frame = f;
-            [self bringSubviewToFront:header.view];
         }
+        for (KKGridViewFooter *footer in _footerViews) {
+            CGRect f = [footer.view frame];
+            f.size.width = visibleBounds.size.width;
+            CGFloat sectionY = footer->stickPoint;
+            
+            if (sectionY <= offset && offset > 0.0f) {
+                f.origin.y = offset;
+                if(offset <= 0.0f) f.origin.y = sectionY;
+                
+                KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
+                if (sectionTwo != nil) {
+                    CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
+                    CGFloat sectionTwoY = sectionTwo->stickPoint;
+                    if ((offset + sectionTwoHeight) >= sectionTwoY) {
+                        f.origin.y = sectionTwoY - sectionTwoHeight;
+                    }
+                }
+            } else {
+                f.origin.y = (self.contentOffset.y + visibleBounds.size.height) - f.size.height;
+            }
+            
+            footer.view.frame = f;
+        }
+
         
         BOOL animated = NO;
         NSTimeInterval delay = 0.3;
@@ -743,7 +766,7 @@
     
     if (_flags.dataSourceRespondsToHeightForFooterInSection) {
         if (_footerViews) {
-            [_footerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
         }
         
@@ -753,12 +776,16 @@
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
-            [_footerViews addObject:view];
+            KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
+            [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
-            view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
-            [self addSubview:view];
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            footer->stickPoint = position;
+            footer->section = section;
+
+            footer.view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
+            [self addSubview:footer.view];
         }
     }
     
@@ -801,7 +828,7 @@
     
     if (_flags.dataSourceRespondsToHeightForFooterInSection) {
         if (_footerViews) {
-            [_footerViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
+            [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
         }
         
@@ -811,12 +838,16 @@
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
-            [_footerViews addObject:view];
+            KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
+            [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
             CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
-            view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
-            [self addSubview:view];
+            footer->stickPoint = position;
+            footer->section = section;
+            
+            footer.view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
+            [self addSubview:footer.view];
         }
     }
 

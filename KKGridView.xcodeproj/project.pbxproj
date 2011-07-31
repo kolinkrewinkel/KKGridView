@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1A0BEC7613DDF862003C2632 /* KKIndexPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0BEC7413DDF862003C2632 /* KKIndexPath.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A0BEC7713DDF862003C2632 /* KKIndexPath.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0BEC7513DDF862003C2632 /* KKIndexPath.m */; };
+		1A0C365713E5DD6E00260194 /* KKGridViewFooter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0C365513E5DD6E00260194 /* KKGridViewFooter.h */; };
+		1A0C365813E5DD6E00260194 /* KKGridViewFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A0C365613E5DD6E00260194 /* KKGridViewFooter.m */; };
 		1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */; };
 		1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */; };
 		1A32AD8513DCDFB200E8CC7C /* KKGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A32AD8313DCDFB200E8CC7C /* KKGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,6 +32,8 @@
 /* Begin PBXFileReference section */
 		1A0BEC7413DDF862003C2632 /* KKIndexPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKIndexPath.h; sourceTree = "<group>"; };
 		1A0BEC7513DDF862003C2632 /* KKIndexPath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKIndexPath.m; sourceTree = "<group>"; };
+		1A0C365513E5DD6E00260194 /* KKGridViewFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewFooter.h; sourceTree = "<group>"; };
+		1A0C365613E5DD6E00260194 /* KKGridViewFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewFooter.m; sourceTree = "<group>"; };
 		1A32AD7F13DCDF1D00E8CC7C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		1A32AD8013DCDF1D00E8CC7C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A32AD8313DCDFB200E8CC7C /* KKGridView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridView.h; sourceTree = "<group>"; };
@@ -104,6 +108,8 @@
 				1A32AD8413DCDFB200E8CC7C /* KKGridView.mm */,
 				1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */,
 				1A32AD8813DCDFC200E8CC7C /* KKGridViewCell.m */,
+				1A0C365513E5DD6E00260194 /* KKGridViewFooter.h */,
+				1A0C365613E5DD6E00260194 /* KKGridViewFooter.m */,
 				1AC6D07813E14DB70000BB8C /* KKGridViewHeader.h */,
 				1AC6D07913E14DB70000BB8C /* KKGridViewHeader.m */,
 				1A0BEC7413DDF862003C2632 /* KKIndexPath.h */,
@@ -140,6 +146,7 @@
 				1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */,
 				1A3F1B7013E34A62006747A3 /* KKGridViewUpdateStack.h in Headers */,
 				1A3F1B7413E34CF8006747A3 /* KKGridViewUpdate.h in Headers */,
+				1A0C365713E5DD6E00260194 /* KKGridViewFooter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -200,6 +207,7 @@
 				1AC6D07B13E14DB70000BB8C /* KKGridViewHeader.m in Sources */,
 				1A3F1B7113E34A62006747A3 /* KKGridViewUpdateStack.m in Sources */,
 				1A3F1B7513E34CF8006747A3 /* KKGridViewUpdate.m in Sources */,
+				1A0C365813E5DD6E00260194 /* KKGridViewFooter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

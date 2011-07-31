@@ -9,6 +9,7 @@
 #import "KKGridViewCell.h"
 #import "Definitions.h"
 #import "KKIndexPath.h"
+#import "KKGridViewFooter.h"
 
 typedef enum {
     KKGridViewAnimationFade,
