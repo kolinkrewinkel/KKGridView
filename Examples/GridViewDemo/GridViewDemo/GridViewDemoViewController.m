@@ -47,7 +47,9 @@ static const NSUInteger kNumSection = 40;
     _footerViews = [[NSMutableArray alloc] init];
     for (NSUInteger section = 0; section < kNumSection; section++) {
         UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
-        view.backgroundColor = [UIColor whiteColor];
+        view.backgroundColor = [self randomColor];
+        view.layer.borderColor = [UIColor blackColor].CGColor;
+        view.layer.borderWidth = 1;
         view.opaque = YES;
         [_footerViews addObject:view];
     }
@@ -115,7 +117,7 @@ static const NSUInteger kNumSection = 40;
     }
 }
 
-- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
+/*- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
 {
     return 25.f;
 }
@@ -123,7 +125,7 @@ static const NSUInteger kNumSection = 40;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
 {
     return [_headerViews objectAtIndex:section];
-}
+}*/
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
 {

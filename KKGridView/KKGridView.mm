@@ -20,6 +20,7 @@
         unsigned dataSourceRespondsToHeightForFooterInSection:1;
         unsigned dataSourceRespondsToHeightForHeaderInSection:1;
         unsigned dataSourceRespondsToViewForHeaderInSection;
+        unsigned dataSourceRespondsToViewForFooterInSection;
         unsigned dataSourceRespondsToNumberOfSections:1;
         unsigned delegateRespondsToDidSelectItem:1;
     } _flags;
@@ -258,10 +259,13 @@
             
             header.view.frame = f;
         }
+        
         for (KKGridViewFooter *footer in _footerViews) {
             CGRect f = [footer.view frame];
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = footer->stickPoint;
+            
+            NSLog(@"%f", sectionY);
             
             if (sectionY <= offset && offset > 0.0f) {
                 f.origin.y = offset;
@@ -708,6 +712,7 @@
     _flags.dataSourceRespondsToHeightForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
     _flags.dataSourceRespondsToNumberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
     _flags.dataSourceRespondsToViewForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
+    _flags.dataSourceRespondsToViewForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
 }
 
 - (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
@@ -767,7 +772,7 @@
         }
     }
     
-    if (_flags.dataSourceRespondsToHeightForFooterInSection) {
+    if (_flags.dataSourceRespondsToViewForFooterInSection) {
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
