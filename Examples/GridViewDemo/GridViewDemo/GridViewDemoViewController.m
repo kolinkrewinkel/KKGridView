@@ -36,25 +36,25 @@ static const NSUInteger kNumSection = 40;
     [super loadView];
     
 
-    _headerViews = [[NSMutableArray alloc] init];
-    for (NSUInteger section = 0; section < kNumSection; section++) {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 25.f)];
-        view.backgroundColor = [self randomColor];
-        view.opaque = YES;
-        [_headerViews addObject:view];
-    }
-    
-    _footerViews = [[NSMutableArray alloc] init];
-    for (NSUInteger section = 0; section < kNumSection; section++) {
-        UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
-        view.backgroundColor = [self randomColor];
-        view.layer.borderColor = [UIColor blackColor].CGColor;
-        view.layer.borderWidth = 1;
-        view.opaque = YES;
-        [_footerViews addObject:view];
-    }
+    _headerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
+    _footerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
 
-    
+    for (NSUInteger section = 0; section < kNumSection; section++) {
+        UIView *header = [[UIView alloc] initWithFrame:CGRectZero];
+        header.backgroundColor = [self randomColor];
+        header.opaque = YES;
+        header.layer.borderColor = [UIColor blackColor].CGColor;
+        header.layer.borderWidth = 2;
+        [_headerViews addObject:header];
+        
+        UIView *footer = [[UIView alloc] initWithFrame:CGRectZero];
+        footer.backgroundColor = [self randomColor];
+        footer.opaque = YES;
+        footer.layer.borderColor = [UIColor whiteColor].CGColor;
+        footer.layer.borderWidth = 2;
+        [_footerViews addObject:footer];
+    }
+        
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
 //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
@@ -67,11 +67,11 @@ static const NSUInteger kNumSection = 40;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 200)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50.f)];
     headerView.backgroundColor = [UIColor redColor];
     _gridView.gridHeaderView = headerView;
     
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 150)];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 50.f)];
     footerView.backgroundColor = [UIColor blueColor];
     _gridView.gridFooterView = footerView;
     
