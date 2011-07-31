@@ -282,7 +282,7 @@
                 if (update.type == KKGridViewUpdateTypeItemInsert) {
                     [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
                 }
-                
+                _markedForDisplay = YES;
                 KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
                 cell.selected = [_selectedIndexPaths containsObject:indexPath];
                 if (!cell) {
@@ -297,15 +297,15 @@
                             cell.backgroundColor = [UIColor greenColor];
                             [self addSubview:cell];
                             [self bringSubviewToFront:cell];
-                            [UIView animateWithDuration:5 animations:^(void) {
+                            [UIView animateWithDuration:0.15 animations:^(void) {
                                 cell.alpha = 0.8f;
                                 cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
                             } completion:^(BOOL finished) {
-                                [UIView animateWithDuration:5 animations:^(void) {
-                                    cell.alpha = 0.9f;
+                                [UIView animateWithDuration:0.05 animations:^(void) {
+                                    cell.alpha = 0.75f;
                                     cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
                                 } completion:^(BOOL finished) {
-                                    [UIView animateWithDuration:5 animations:^(void) {
+                                    [UIView animateWithDuration:0.05 animations:^(void) {
                                         cell.alpha = 1.f;
                                         cell.transform = CGAffineTransformIdentity;
 
