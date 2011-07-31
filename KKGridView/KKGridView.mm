@@ -272,7 +272,7 @@
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if ((offset + sectionTwoHeight) >= sectionTwoY) {
+                    if (((offset + self.bounds.size.height) + sectionTwoHeight) >= sectionTwoY) {
                         f.origin.y = sectionTwoY - sectionTwoHeight;
                     }
                 }
