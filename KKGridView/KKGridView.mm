@@ -532,7 +532,7 @@
     [self _reloadIntegers];
     
     NSUInteger oldColumns = _numberOfColumns;
-    _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
+    _numberOfColumns = self.bounds.size.width / (_cellSize.width + _cellPadding.width);
     
     if (oldColumns != _numberOfColumns) {
         _markedForDisplay = YES;
