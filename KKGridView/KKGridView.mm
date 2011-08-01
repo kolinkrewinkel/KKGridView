@@ -264,22 +264,31 @@
             CGRect f = [footer.view frame];
             f.size.width = visibleBounds.size.width;
             CGFloat sectionY = footer->stickPoint;
+            // height of current section without height of footerView itself
             CGFloat heightOfSection = _sectionHeights[footer->section] - f.size.height;
+            // for footerViews we have to work with the bottom of the screen
             CGFloat screenBottom = offset + visibleBounds.size.height;
             
+            // determine if current section footer should be displayed sticky
+            // this is if current section is visible and the "normal" y-position of the footer
+            // isn't further away from the bottom of the screen than it's height
             if (screenBottom > sectionY - heightOfSection && screenBottom - sectionY < f.size.height) {
+                // stick footer at bottom of screen
                 f.origin.y = offset + visibleBounds.size.height - f.size.height;
                 
+                // animate second footer
                 KKGridViewFooter *sectionTwo = footer->section > 0 ? [_footerViews objectAtIndex:footer->section - 1] : nil;
                 if (sectionTwo != nil) {
                     CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                     CGFloat sectionTwoY = sectionTwo->stickPoint;
                    
+                    // we move the current sticky footer depending on the position of the second footer
                     if (screenBottom + sectionTwoHeight >= sectionTwoY && (screenBottom - (sectionTwoY + sectionTwoHeight) < sectionTwo.view.frame.size.height)) {
                         f.origin.y = sectionTwoY + sectionTwoHeight;
                     }
                 }
             } else {
+                // footer isn't sticky anymore, set originTop to saved position
                 f.origin.y = footer->stickPoint;
                 [self sendSubviewToBack:footer.view];
             }
