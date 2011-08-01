@@ -183,7 +183,7 @@
 
 - (NSArray *)_allPotentiallyVisibleIndexPaths
 {
-    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
     NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
     
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
@@ -230,7 +230,7 @@
 {
     // TODO: add an update method so cells can be updated by datasource
     dispatch_sync(_renderQueue, ^(void) {
-        const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+        const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
         NSArray *visiblePaths = [self visibleIndexPaths];
         
         // From CHGridView; thanks Cameron (even though I didn't ask you)
@@ -504,7 +504,7 @@
 
 - (NSMutableArray *)visibleIndexPaths
 {
-    const CGRect visibleBounds = CGRectMake(self.contentOffset.x, self.contentOffset.y, self.bounds.size.width, self.bounds.size.height);
+    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
     NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
     
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
@@ -598,7 +598,7 @@
 
 - (KKIndexPath *)indexPathsForItemAtPoint:(CGPoint)point
 {
-    NSArray *indexes = [self indexPathsForItemsInRect:CGRectMake(point.x, point.y, 1.f, 1.f)];
+    NSArray *indexes = [self indexPathsForItemsInRect:(CGRect){ point, {1.f, 1.f } }];
     return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
 
