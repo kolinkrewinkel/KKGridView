@@ -272,7 +272,7 @@
             if (sectionTwo != nil) {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
-                if (((offset + self.bounds.size.height) + sectionTwoHeight) >= sectionTwoY) {
+                if (((offset + self.bounds.size.height)) >= sectionTwoY) {
                     f.origin.y = sectionTwoY - sectionTwoHeight;
                 }
             }
@@ -767,7 +767,7 @@
             if (upToSection == 0)
                 upToSection++;
             
-            CGFloat position = ([self sectionHeightsCombinedUpToSection:upToSection] + _gridHeaderView.frame.size.height) /* - view.frame.size.height */;
+            CGFloat position = ([self sectionHeightsCombinedUpToSection:upToSection] + _gridHeaderView.frame.size.height);
             footer->stickPoint = position;
             footer->section = section;
             
