@@ -502,20 +502,21 @@
     [self _reloadIntegers];
     
     NSUInteger oldColumns = _numberOfColumns;
-    _numberOfColumns = [[NSString stringWithFormat:@"%f", self.bounds.size.width / (_cellSize.width + _cellPadding.width)] integerValue];
+    _numberOfColumns = self.bounds.size.width / (_cellSize.width + _cellPadding.width);
     
     if (oldColumns != _numberOfColumns) {
         _markedForDisplay = YES;
     }
     
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
+    CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
     _sectionHeights.clear();
-    [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        CGFloat heightForSection = [self heightForSection:idx];
+    
+    for (NSUInteger i = 0; i < _numberOfSections; ++i) {
+        CGFloat heightForSection = [self heightForSection:i];
         _sectionHeights.push_back(heightForSection);
         newContentSize.height += heightForSection;
-    }];
+    }
     
     [super setContentSize:newContentSize];
 }
@@ -609,7 +610,7 @@
         [super touchesBegan:touches withEvent:event];
         return;
     }
-    [self performSelector:@selector(_selectItemAtIndexPath:) withObject:touchedItemPoint];
+    [self _selectItemAtIndexPath:touchedItemPoint];
     [super touchesBegan:touches withEvent:event];
 }
 
@@ -730,9 +731,7 @@
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
-        }
-        
-        if (!_headerViews) {
+        } else {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -754,9 +753,7 @@
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
-        }
-        
-        if (!_footerViews) {
+        } else {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -792,9 +789,7 @@
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
-        }
-        
-        if (!_headerViews) {
+        } else {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -816,9 +811,7 @@
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
-        }
-        
-        if (!_footerViews) {
+        } else {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         

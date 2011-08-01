@@ -59,8 +59,9 @@
 }
 
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath
-{
-    return [[[NSSet setWithArray:_itemsToUpdate] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"indexPath = %@", indexPath]] anyObject];
+{   
+    NSPredicate *sameIndexPath = [NSPredicate predicateWithFormat:@"indexPath = %@", indexPath];
+    return [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] lastObject];
 }
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
