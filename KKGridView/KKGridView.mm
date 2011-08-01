@@ -7,7 +7,7 @@
 //
 
 #import "KKGridView.h"
-#import "KKGridViewHeader.h"
+#import "KKGridViewViewInfo.h"
 #import "KKIndexPath.h"
 #import "KKGridViewUpdate.h"
 #import "KKGridViewUpdateStack.h"

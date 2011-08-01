@@ -19,3 +19,9 @@
 - (id)initWithView:(UIView *)view;
 
 @end
+
+@interface KKGridViewFooter : KKGridViewViewInfo
+@end
+
+@interface KKGridViewHeader : KKGridViewViewInfo
+@end
