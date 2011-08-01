@@ -7,16 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "KKGridViewViewInfo.h"
 
-@interface KKGridViewHeader : NSObject {
-    @package
-    CGFloat stickPoint;
-    NSUInteger section;
-    BOOL sticking;
-}
-
-@property (nonatomic, strong, readonly) UIView *view;
-
-- (id)initWithView:(UIView *)view;
-
+@interface KKGridViewHeader : KKGridViewViewInfo
 @end

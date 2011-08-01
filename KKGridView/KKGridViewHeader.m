@@ -9,16 +9,4 @@
 #import "KKGridViewHeader.h"
 
 @implementation KKGridViewHeader
-
-@synthesize view = _view;
-
-- (id)initWithView:(UIView *)view
-{
-    if ((self = [super init])) {
-        _view = view;
-    }
-    
-    return self;
-}
-
 @end
