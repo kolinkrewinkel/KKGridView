@@ -79,6 +79,7 @@
     dispatch_set_target_queue(_renderQueue, high);
     
     self.alwaysBounceVertical = YES;
+    self.delaysContentTouches = NO;
 }
 
 - (id)init
@@ -108,7 +109,7 @@
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame dataSource:(id<KKGridViewDataSource>)dataSource delegate:(id<KKGridViewDelegate>)delegate
+- (id)initWithFrame:(CGRect)frame dataSource:(id <KKGridViewDataSource>)dataSource delegate:(id <KKGridViewDelegate>)delegate
 {
     if ((self = [self initWithFrame:frame])) {
         self.dataSource = dataSource;
@@ -229,11 +230,10 @@
 - (void)_layoutAccessories
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-
     CGFloat offset = self.contentOffset.y;
     
     for (KKGridViewHeader *header in _headerViews) {
-        CGRect f = [header.view frame];
+        CGRect f = header.view.frame;
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = header->stickPoint;
         
@@ -255,15 +255,19 @@
         header.view.frame = f;
     }
     
+    NSUInteger index = 0;
     for (KKGridViewFooter *footer in _footerViews) {
-        CGRect f = [footer.view frame];
+        CGRect f = footer.view.frame;
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = footer->stickPoint;
-        
-        if (sectionY <= (offset + self.bounds.size.height) && offset > 0.0f) {
+                
+        if (sectionY <= (offset + self.bounds.size.height) && offset >= 0.0f) {
             f.origin.y = (offset + self.bounds.size.height) - f.size.height;
-            if(offset <= 0.0f) f.origin.y = sectionY;
-            
+
+            if (offset < 0.0f) {
+                f.origin.y = sectionY;
+            }
+                
             KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
             if (sectionTwo != nil) {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
@@ -277,6 +281,7 @@
         }
         
         footer.view.frame = f;
+        index++;
     }
 }
 
@@ -302,7 +307,7 @@
 - (void)_cleanupCells
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-
+    
     NSArray *visible = [_visibleCells allValues];
     NSArray *keys = [_visibleCells allKeys];
     
@@ -368,11 +373,9 @@
                 }
                 [_updateStack removeUpdateForIndexPath:indexPath];
             }
-            
         } else {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
             cell.selected = [_selectedIndexPaths containsObject:indexPath];
-            
             
             if (!cell) {
                 cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
@@ -385,13 +388,9 @@
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
         }
-        
         [self _cleanupCells];
     }
-    
 }
-
-
 
 - (void)_layoutGridView
 {
@@ -684,7 +683,7 @@
     }
 }
 
-- (void)setDataSource:(id<KKGridViewDataSource>)dataSource
+- (void)setDataSource:(id <KKGridViewDataSource>)dataSource
 {
     _dataSource = dataSource;
     _flags.dataSourceRespondsToHeightForHeaderInSection = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
@@ -694,7 +693,7 @@
     _flags.dataSourceRespondsToViewForFooterInSection = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
 }
 
-- (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
+- (void)setGridDelegate:(id <KKGridViewDelegate>)gridDelegate
 {
     _gridDelegate = gridDelegate;
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
@@ -763,7 +762,12 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
+            NSUInteger upToSection = section;
+            
+            if (upToSection == 0)
+                upToSection++;
+            
+            CGFloat position = ([self sectionHeightsCombinedUpToSection:upToSection] + _gridHeaderView.frame.size.height) /* - view.frame.size.height */;
             footer->stickPoint = position;
             footer->section = section;
             
