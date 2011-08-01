@@ -1,14 +1,14 @@
 //
-//  KKGridViewHeader.m
+//  KKGridViewViewInfo.m
 //  KKGridView
 //
-//  Created by Kolin Krewinkel on 7.28.11.
+//  Created by Jonathan Sterling on 7/31/11.
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewHeader.h"
+#import "KKGridViewViewInfo.h"
 
-@implementation KKGridViewHeader
+@implementation KKGridViewViewInfo
 
 @synthesize view = _view;
 
@@ -21,4 +21,10 @@
     return self;
 }
 
+@end
+
+@implementation KKGridViewFooter
+@end
+
+@implementation KKGridViewHeader
 @end
