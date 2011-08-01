@@ -226,202 +226,182 @@
     }
 }
 
+- (void)_layoutAccessories
+{
+    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
+
+    CGFloat offset = self.contentOffset.y;
+    
+    for (KKGridViewHeader *header in _headerViews) {
+        CGRect f = [header.view frame];
+        f.size.width = visibleBounds.size.width;
+        CGFloat sectionY = header->stickPoint;
+        
+        if (sectionY <= offset && offset > 0.0f) {
+            f.origin.y = offset;
+            
+            KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
+            if (sectionTwo != nil) {
+                CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
+                CGFloat sectionTwoY = sectionTwo->stickPoint;
+                if ((offset + sectionTwoHeight) >= sectionTwoY) {
+                    f.origin.y = sectionTwoY - sectionTwoHeight;
+                }
+            }
+        } else {
+            f.origin.y = header->stickPoint;
+        }
+        
+        header.view.frame = f;
+    }
+    
+    for (KKGridViewFooter *footer in _footerViews) {
+        CGRect f = [footer.view frame];
+        f.size.width = visibleBounds.size.width;
+        CGFloat sectionY = footer->stickPoint;
+        
+        if (sectionY <= (offset + self.bounds.size.height) && offset > 0.0f) {
+            f.origin.y = (offset + self.bounds.size.height) - f.size.height;
+            if(offset <= 0.0f) f.origin.y = sectionY;
+            
+            KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
+            if (sectionTwo != nil) {
+                CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
+                CGFloat sectionTwoY = sectionTwo->stickPoint;
+                if (((offset + self.bounds.size.height) + sectionTwoHeight) >= sectionTwoY) {
+                    f.origin.y = sectionTwoY - sectionTwoHeight;
+                }
+            }
+        } else {
+            f.origin.y = footer->stickPoint;
+        }
+        
+        footer.view.frame = f;
+    }
+}
+
+- (void)_layoutExtremities
+{
+    if (_gridHeaderView != nil) {
+        CGRect headerRect = _gridHeaderView.frame;
+        headerRect.origin = CGPointZero;
+        headerRect.size.width = self.bounds.size.width;
+        _gridHeaderView.frame = headerRect;
+    }
+    
+    // layout gridFooterView
+    if (_gridFooterView != nil) {
+        CGRect footerRect = _gridFooterView.frame;
+        footerRect.origin.x = 0.0;
+        footerRect.origin.y  = self.contentSize.height - footerRect.size.height;
+        footerRect.size.width = self.bounds.size.width;
+        _gridFooterView.frame = footerRect;
+    }
+}
+
+- (void)_cleanupCells
+{
+    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
+
+    NSArray *visible = [_visibleCells allValues];
+    NSArray *keys = [_visibleCells allKeys];
+    
+    NSUInteger loopCount = 0;
+    for (KKGridViewCell *cell in visible) {
+        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
+            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+        }
+        loopCount++;
+    }
+}
+
+- (void)_layoutVisibleCells
+{    
+    NSArray *visiblePaths = [self visibleIndexPaths];
+    for (KKIndexPath *indexPath in visiblePaths) {
+        if (_updateStack.itemsToUpdate.count > 0) {
+            if ([_updateStack hasUpdateForIndexPath:indexPath]) {
+                KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
+                if (update.type == KKGridViewUpdateTypeItemInsert) {
+                    [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
+                }
+                _markedForDisplay = YES;
+                
+                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                cell.selected = [_selectedIndexPaths containsObject:indexPath];
+                if (!cell) {
+                    cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                    [_visibleCells setObject:cell forKey:indexPath];
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    
+                    switch (update.animation) {
+                        case KKGridViewAnimationExplode: {
+                            cell.alpha = 0.f;
+                            cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
+                            cell.backgroundColor = [UIColor greenColor];
+                            [self addSubview:cell];
+                            [self bringSubviewToFront:cell];
+                            [UIView animateWithDuration:0.15 animations:^(void) {
+                                cell.alpha = 0.8f;
+                                cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                            } completion:^(BOOL finished) {
+                                [UIView animateWithDuration:0.05 animations:^(void) {
+                                    cell.alpha = 0.75f;
+                                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+                                } completion:^(BOOL finished) {
+                                    [UIView animateWithDuration:0.05 animations:^(void) {
+                                        cell.alpha = 1.f;
+                                        cell.transform = CGAffineTransformIdentity;
+                                        
+                                    }];
+                                }];
+                            }];
+                            break;
+                        }   
+                            
+                        default:
+                            break;
+                    }
+                    
+                }
+                [_updateStack removeUpdateForIndexPath:indexPath];
+            }
+            
+        } else {
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            cell.selected = [_selectedIndexPaths containsObject:indexPath];
+            
+            
+            if (!cell) {
+                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                [_visibleCells setObject:cell forKey:indexPath];
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+            } else if (_markedForDisplay) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+            }
+        }
+        
+        [self _cleanupCells];
+    }
+    
+}
+
+
+
 - (void)_layoutGridView
 {
     // TODO: add an update method so cells can be updated by datasource
     dispatch_sync(_renderQueue, ^(void) {
-        const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-        NSArray *visiblePaths = [self visibleIndexPaths];
-        
-        // From CHGridView; thanks Cameron (even though I didn't ask you)
-        CGFloat offset = self.contentOffset.y;
-        
-        for (KKGridViewHeader *header in _headerViews) {
-            CGRect f = [header.view frame];
-            f.size.width = visibleBounds.size.width;
-            CGFloat sectionY = header->stickPoint;
-            
-            if (sectionY <= offset && offset > 0.0f) {
-                f.origin.y = offset;
-                
-                KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
-                if (sectionTwo != nil) {
-                    CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
-                    CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if ((offset + sectionTwoHeight) >= sectionTwoY) {
-                        f.origin.y = sectionTwoY - sectionTwoHeight;
-                    }
-                }
-            } else {
-                f.origin.y = header->stickPoint;
-            }
-            
-            header.view.frame = f;
-        }
-        
-        for (KKGridViewFooter *footer in _footerViews) {
-            CGRect f = [footer.view frame];
-            f.size.width = visibleBounds.size.width;
-            CGFloat sectionY = footer->stickPoint;
-            
-<<<<<<< HEAD
-            if (sectionY <= (offset + self.bounds.size.height) && offset > 0.0f) {
-                f.origin.y = (offset + self.bounds.size.height) - f.size.height;
-                if(offset <= 0.0f) f.origin.y = sectionY;
-=======
-            if (sectionY <= offset && offset > 0.0f) {
-                f.origin.y = offset;
->>>>>>> 3f7b405dd3fb66070133082a6589133583f43280
-                
-                KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
-                if (sectionTwo != nil) {
-                    CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
-                    CGFloat sectionTwoY = sectionTwo->stickPoint;
-                    if (((offset + self.bounds.size.height) + sectionTwoHeight) >= sectionTwoY) {
-                        f.origin.y = sectionTwoY - sectionTwoHeight;
-                    }
-                }
-            } else {
-                f.origin.y = footer->stickPoint;
-            }
-            
-            footer.view.frame = f;
-        }
-
-        
-        BOOL animated = NO;
-        NSTimeInterval delay = 0.3;
-        for (KKIndexPath *indexPath in visiblePaths) {
-            if (_updateStack.itemsToUpdate.count > 0) {
-                if ([_updateStack hasUpdateForIndexPath:indexPath]) {
-                    KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                    if (update.type == KKGridViewUpdateTypeItemInsert) {
-                        [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
-                    }
-                    if (update.animation != KKGridViewAnimationNone) {
-                        animated = YES;
-                    }
-                    _markedForDisplay = YES;
-                    
-                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                    cell.selected = [_selectedIndexPaths containsObject:indexPath];
-                    if (!cell) {
-                        cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                        [_visibleCells setObject:cell forKey:indexPath];
-                        cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        
-                        switch (update.animation) {
-                            case KKGridViewAnimationExplode: {
-                                cell.alpha = 0.f;
-                                cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
-                                cell.backgroundColor = [UIColor greenColor];
-                                [self addSubview:cell];
-                                [self bringSubviewToFront:cell];
-                                [UIView animateWithDuration:0.15 animations:^(void) {
-                                    cell.alpha = 0.8f;
-                                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
-                                } completion:^(BOOL finished) {
-                                    [UIView animateWithDuration:0.05 animations:^(void) {
-                                        cell.alpha = 0.75f;
-                                        cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
-                                    } completion:^(BOOL finished) {
-                                        [UIView animateWithDuration:0.05 animations:^(void) {
-                                            cell.alpha = 1.f;
-                                            cell.transform = CGAffineTransformIdentity;
-                                            
-                                        }];
-                                    }];
-                                }];
-                                break;
-                            }   
-                                
-                            default:
-                                break;
-                        }
-                        
-                    }
-                    [_updateStack removeUpdateForIndexPath:indexPath];
-                }
-                
-            } else {
-                //                NSTimeInterval duration = 0.0;
-                //                NSTimeInterval delay = 0.0;
-                //                if (animated) {
-                //                    duration = 4;
-                //                    delay = .3;
-                //                }
-                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                cell.selected = [_selectedIndexPaths containsObject:indexPath];
-                
-                if (animated) {
-                    __block KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                    cell.selected = [_selectedIndexPaths containsObject:indexPath];
-                    [UIView animateWithDuration:0.25 delay:delay options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-                        if (!cell) {
-                            cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                            [_visibleCells setObject:cell forKey:indexPath];
-                            cell.frame = [self rectForCellAtIndexPath:indexPath];
-                            
-                            [self addSubview:cell];
-                            [self sendSubviewToBack:cell];
-                        } else if (_markedForDisplay) {
-                            cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        }
-                    } completion:nil];
-                    
-                } else {
-                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                    cell.selected = [_selectedIndexPaths containsObject:indexPath];
-                    
-                    if (!cell) {
-                        cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
-                        [_visibleCells setObject:cell forKey:indexPath];
-                        cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        
-                        [self addSubview:cell];
-                        [self sendSubviewToBack:cell];
-                    } else if (_markedForDisplay) {
-                        cell.frame = [self rectForCellAtIndexPath:indexPath];
-                    }
-                }       
-            }
-            
-            
-            //        }
-            //        
-            NSArray *visible = [_visibleCells allValues];
-            NSArray *keys = [_visibleCells allKeys];
-            
-            NSUInteger loopCount = 0;
-            for (KKGridViewCell *cell in visible) {
-                if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
-                    [cell removeFromSuperview];
-                    [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
-                    [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-                }
-                loopCount++;
-            }
-        }
-        
+        [self _layoutAccessories];
+        [self _layoutVisibleCells];
+        [self _layoutExtremities];
         _markedForDisplay = NO;
         _staggerForInsertion = NO;
-        
-        // layout gridHeaderView
-        if (_gridHeaderView != nil) {
-            CGRect headerRect = _gridHeaderView.frame;
-            headerRect.origin = CGPointZero;
-            headerRect.size.width = self.bounds.size.width;
-            _gridHeaderView.frame = headerRect;
-        }
-        
-        // layout gridFooterView
-        if (_gridFooterView != nil) {
-            CGRect footerRect = _gridFooterView.frame;
-            footerRect.origin.x = 0.0;
-            footerRect.origin.y  = self.contentSize.height - footerRect.size.height;
-            footerRect.size.width = self.bounds.size.width;
-            _gridFooterView.frame = footerRect;
-        }
     });
 }
 
@@ -734,7 +714,7 @@
 {
     if (_gridFooterView != gridFooterView) {
         _gridFooterView = gridFooterView;
-
+        
         [self addSubview:gridFooterView];
         [self setNeedsLayout];
     }
@@ -786,14 +766,10 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-<<<<<<< HEAD
             CGFloat position = [self sectionHeightsCombinedUpToSection:section + 1] + _gridHeaderView.frame.size.height - view.frame.size.height;
-=======
-            CGFloat position = [self sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
->>>>>>> 3f7b405dd3fb66070133082a6589133583f43280
             footer->stickPoint = position;
             footer->section = section;
-
+            
             footer.view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
             [self addSubview:footer.view];
         }
@@ -860,7 +836,7 @@
             [self addSubview:footer.view];
         }
     }
-
+    
     
     //    for (KKGridViewCell *cell in [_visibleCells allValues]) {
     //        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
