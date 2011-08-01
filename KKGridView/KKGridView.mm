@@ -541,11 +541,12 @@
     __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
     _sectionHeights.clear();
-    [[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, _numberOfSections)] enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
-        CGFloat heightForSection = [self heightForSection:idx];
+    
+    for (NSUInteger i = 0; i < _numberOfSections; ++i) {
+        CGFloat heightForSection = [self heightForSection:i];
         _sectionHeights.push_back(heightForSection);
         newContentSize.height += heightForSection;
-    }];
+    }
     
     [super setContentSize:newContentSize];
 }
