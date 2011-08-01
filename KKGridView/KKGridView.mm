@@ -640,7 +640,7 @@
         [super touchesBegan:touches withEvent:event];
         return;
     }
-    [self performSelector:@selector(_selectItemAtIndexPath:) withObject:touchedItemPoint];
+    [self _selectItemAtIndexPath:touchedItemPoint];
     [super touchesBegan:touches withEvent:event];
 }
 
@@ -761,9 +761,7 @@
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
-        }
-        
-        if (!_headerViews) {
+        } else {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -785,9 +783,7 @@
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
-        }
-        
-        if (!_footerViews) {
+        } else {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -823,9 +819,7 @@
         if (_headerViews) {
             [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_headerViews removeAllObjects];
-        }
-        
-        if (!_headerViews) {
+        } else {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -847,9 +841,7 @@
         if (_footerViews) {
             [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
             [_footerViews removeAllObjects];
-        }
-        
-        if (!_footerViews) {
+        } else {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
