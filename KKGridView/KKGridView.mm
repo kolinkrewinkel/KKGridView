@@ -538,7 +538,7 @@
         _markedForDisplay = YES;
     }
     
-    __block CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
+    CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
     _sectionHeights.clear();
     
