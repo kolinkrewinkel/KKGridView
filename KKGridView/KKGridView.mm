@@ -130,7 +130,7 @@
 - (void)_respondToBoundsChange
 {
     [self reloadData];
-    [self _layoutGridView];
+    [self setNeedsLayout];
 }
 
 - (void)setFrame:(CGRect)frame
@@ -179,7 +179,7 @@
     }
     
     [_updateStack addUpdates:updates];
-    [self _layoutGridView];
+    [self setNeedsLayout];
 }
 
 - (NSArray *)_allPotentiallyVisibleIndexPaths
@@ -269,7 +269,7 @@
             }
                 
             KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
-            if (sectionTwo != nil) {
+            if (sectionTwo) {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
                 if (((offset + self.bounds.size.height)) >= sectionTwoY) {
@@ -640,7 +640,7 @@
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:0.25 animations:^(void) {
-            [self _layoutGridView];
+            [self setNeedsLayout];
         }];
     }
     _allowsMultipleSelection = allowsMultipleSelection;
