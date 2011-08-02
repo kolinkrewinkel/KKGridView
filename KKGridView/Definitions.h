@@ -13,8 +13,6 @@
 
 // Defines
 
-#define KKGridViewDefaultHeaderHeight 27.f
-
 // Macros
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
