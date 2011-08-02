@@ -41,6 +41,7 @@
     NSMutableDictionary *_visibleCells;
     NSRange _visibleSections;
     NSMutableSet *_selectedIndexPaths;
+    KKGridViewCell * _lastSelectedCell;
     //    BOOL _modifyingItems;
     BOOL _staggerForInsertion;
     __strong KKGridViewUpdateStack *_updateStack;
@@ -151,13 +152,13 @@
     }
 }
 
-
 - (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
 {
     for (KKIndexPath *indexPath in [_visibleCells allKeys]) {
         if ([_visibleCells objectForKey:indexPath] == cell)
             return indexPath;
     }
+
     return [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
 
@@ -257,27 +258,37 @@
     
     NSUInteger index = 0;
     for (KKGridViewFooter *footer in _footerViews) {
-        CGRect f = footer.view.frame;
+        CGRect f = [footer.view frame];
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = footer->stickPoint;
-                
-        if (sectionY <= (offset + self.bounds.size.height) && offset >= 0.0f) {
-            f.origin.y = (offset + self.bounds.size.height) - f.size.height;
-
-            if (offset < 0.0f) {
-                f.origin.y = sectionY;
-            }
-                
-            KKGridViewFooter *sectionTwo = [_footerViews count] > footer->section + 1 ? [_footerViews objectAtIndex:footer->section + 1] : nil;
-            if (sectionTwo) {
+        // height of current section without height of footerView itself
+        CGFloat heightOfSection = _sectionHeights[footer->section] - f.size.height;
+        // for footerViews we have to work with the bottom of the screen
+        CGFloat screenBottom = offset + visibleBounds.size.height;
+        
+        // determine if current section footer should be displayed sticky
+        // this is if current section is visible and the "normal" y-position of the footer
+        // isn't further away from the bottom of the screen than it's height
+        if (screenBottom > sectionY - heightOfSection && screenBottom - sectionY < f.size.height) {
+            // stick footer at bottom of screen
+            f.origin.y = offset + visibleBounds.size.height - f.size.height;
+            
+            // animate second footer
+            KKGridViewFooter *sectionTwo = footer->section > 0 ? [_footerViews objectAtIndex:footer->section - 1] : nil;
+            if (sectionTwo != nil) {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
-                if (((offset + self.bounds.size.height)) >= sectionTwoY) {
-                    f.origin.y = sectionTwoY - sectionTwoHeight;
+                
+                // we move the current sticky footer depending on the position of the second footer
+                if (screenBottom + sectionTwoHeight >= sectionTwoY && (screenBottom - (sectionTwoY + sectionTwoHeight) < sectionTwo.view.frame.size.height)) {
+                    f.origin.y = sectionTwoY + sectionTwoHeight;
                 }
             }
+            [self bringSubviewToFront:footer.view];
         } else {
+            // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
+            [self sendSubviewToBack:footer.view];
         }
         
         footer.view.frame = f;
@@ -603,6 +614,7 @@
     if ([touch.view isKindOfClass:[KKGridViewCell class]]) {
         KKGridViewCell *cell = (KKGridViewCell *)touch.view;
         cell.selected = YES;
+        _lastSelectedCell = cell;
     }
     KKIndexPath * touchedItemPoint = [self indexPathsForItemAtPoint:[touch locationInView:self]];
     if (touchedItemPoint.index == NSNotFound) {
@@ -615,6 +627,10 @@
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    if (_lastSelectedCell) {
+        _lastSelectedCell.selectedBackgroundView.opaque = NO;
+        _lastSelectedCell.selectedBackgroundView.alpha = 0.7f;
+    }
     [super touchesMoved:touches withEvent:event];
 }
 
@@ -631,7 +647,8 @@
     if (_flags.delegateRespondsToDidSelectItem) {
         [_gridDelegate gridView:self didSelectItemIndexPath:indexPath];
     }
-    
+    _lastSelectedCell = nil;
+
     [super touchesEnded:touches withEvent:event];
 }
 
@@ -740,6 +757,7 @@
             [_headerViews addObject:header];
             
             CGFloat headerHeight = _headerHeights[section];
+            
             CGFloat position = [self sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
             header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
             header->stickPoint = position;
@@ -762,12 +780,7 @@
             [_footerViews addObject:footer];
             
             CGFloat footerHeight = _footerHeights[section];
-            NSUInteger upToSection = section;
-            
-            if (upToSection == 0)
-                upToSection++;
-            
-            CGFloat position = ([self sectionHeightsCombinedUpToSection:upToSection] + _gridHeaderView.frame.size.height);
+            CGFloat position = [self sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
             footer->stickPoint = position;
             footer->section = section;
             
