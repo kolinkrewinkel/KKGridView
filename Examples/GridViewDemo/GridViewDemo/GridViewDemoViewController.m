@@ -115,6 +115,21 @@ static const NSUInteger kNumSection = 40;
     }
 }
 
+
+- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
+{
+    return kNumSection;
+}
+
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
+{
+    KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
+    
+    cell.backgroundColor = [UIColor lightGrayColor];
+    
+    return cell;
+}
+
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
 {
     return 25.f;
@@ -135,19 +150,6 @@ static const NSUInteger kNumSection = 40;
     return [_footerViews objectAtIndex:section];
 }
 
-- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
-{
-    return kNumSection;
-}
-
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
-{
-    KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    
-    cell.backgroundColor = [UIColor lightGrayColor];
-    
-    return cell;
-}
 
 - (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath
 {
