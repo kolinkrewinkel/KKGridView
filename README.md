@@ -13,11 +13,11 @@ KKGridView was created in July 2011 for usage in [StratusApp](http://getstratusa
 
 When we set out building this, we all had a few common things we knew we needed to focus on.
 
-* Performance — 55+ FPS in the worst case
-* UITableView similarities — strive to be as close to drop-in as possible
-* Feature completeness — as above, match the latest UITableView implementation in features; add anything else worthwhile
-* Solid codebase — we didn't want something that was inextensible and 
-full of messy code
+* Performance — 55+ FPS in the worst case.
+* UITableView similarities — Strive to be as close to drop-in as possible.
+* Feature completeness — As above, match the latest UITableView implementation in features; add anything else worthwhile.
+* Solid codebase — We didn't want something that was inextensible and 
+full of messy code.
 
 
 ***
