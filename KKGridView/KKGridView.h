@@ -55,10 +55,10 @@ typedef enum {
 - (void)reloadContentSize;
 - (void)reloadData;
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
-- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
-- (void)insertSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
-- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
-- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
+//- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
+//- (void)insertSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
+//- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
+//- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
 
 @end
 
