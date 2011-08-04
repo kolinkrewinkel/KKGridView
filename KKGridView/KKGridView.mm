@@ -617,7 +617,7 @@
     }
     
     if (_flags.delegateRespondsToDidSelectItem) {
-        [_gridDelegate gridView:self didSelectItemIndexPath:indexPath];
+        [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
     }
     _lastSelectedCell = nil;
 
@@ -737,7 +737,7 @@
 - (void)setGridDelegate:(id <KKGridViewDelegate>)gridDelegate
 {
     _gridDelegate = gridDelegate;
-    _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
+    _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemAtIndexPath:)];
     _flags.delegateRespondsToWillDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCell:forItemAtIndexPath:)];
 }
 
