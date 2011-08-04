@@ -58,6 +58,8 @@
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 
+- (void)_performUpdate:(KKGridViewUpdate *)update;
+
 @end
 
 @implementation KKGridView
@@ -350,48 +352,7 @@
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                if (update.type == KKGridViewUpdateTypeItemInsert) {
-//                    [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
-                }
-                _markedForDisplay = YES;
-                
-                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                cell.selected = [_selectedIndexPaths containsObject:indexPath];
-                if (!cell) {
-                    cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-                    [_visibleCells setObject:cell forKey:indexPath];
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                    
-                    switch (update.animation) {
-                        case KKGridViewAnimationExplode: {
-                            cell.alpha = 0.f;
-                            cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
-                            cell.backgroundColor = [UIColor greenColor];
-                            [self addSubview:cell];
-                            [self bringSubviewToFront:cell];
-                            [UIView animateWithDuration:0.15 animations:^(void) {
-                                cell.alpha = 0.8f;
-                                cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
-                            } completion:^(BOOL finished) {
-                                [UIView animateWithDuration:0.05 animations:^(void) {
-                                    cell.alpha = 0.75f;
-                                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
-                                } completion:^(BOOL finished) {
-                                    [UIView animateWithDuration:0.05 animations:^(void) {
-                                        cell.alpha = 1.f;
-                                        cell.transform = CGAffineTransformIdentity;
-                                        
-                                    }];
-                                }];
-                            }];
-                            break;
-                        }   
-                            
-                        default:
-                            break;
-                    }
-                    
-                }
+                [self _performUpdate:update];
                 [_updateStack removeUpdateForIndexPath:indexPath];
             }
         } else {
@@ -410,6 +371,54 @@
             }
         }
         [self _cleanupCells];
+    }
+}
+
+- (void)_performUpdate:(KKGridViewUpdate *)update
+{
+    if (update.type == KKGridViewUpdateTypeItemInsert) {
+        //                    [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
+    }
+    _markedForDisplay = YES;
+    
+    
+    KKIndexPath *indexPath = update.indexPath;
+    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+    cell.selected = [_selectedIndexPaths containsObject:indexPath];
+    if (!cell) {
+        cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
+        [_visibleCells setObject:cell forKey:indexPath];
+        cell.frame = [self rectForCellAtIndexPath:indexPath];
+        
+        switch (update.animation) {
+            case KKGridViewAnimationExplode: {
+                cell.alpha = 0.f;
+                cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
+                cell.backgroundColor = [UIColor greenColor];
+                [self addSubview:cell];
+                [self bringSubviewToFront:cell];
+                [UIView animateWithDuration:0.15 animations:^(void) {
+                    cell.alpha = 0.8f;
+                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.05 animations:^(void) {
+                        cell.alpha = 0.75f;
+                        cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+                    } completion:^(BOOL finished) {
+                        [UIView animateWithDuration:0.05 animations:^(void) {
+                            cell.alpha = 1.f;
+                            cell.transform = CGAffineTransformIdentity;
+                            
+                        }];
+                    }];
+                }];
+                break;
+            }   
+                
+            default:
+                break;
+        }
+        
     }
 }
 
