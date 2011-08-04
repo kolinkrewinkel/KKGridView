@@ -157,6 +157,7 @@ static const NSUInteger kNumSection = 40;
 - (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath
 {
 //    return [KKIndexPath indexPathForIndex:0 inSection:indexPath.section];
+    return nil;
 }
 
 - (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell forItemAtIndexPath:(KKIndexPath *)indexPath
