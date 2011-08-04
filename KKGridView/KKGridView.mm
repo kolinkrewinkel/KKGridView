@@ -24,6 +24,8 @@
         unsigned dataSourceRespondsToNumberOfSections:1;
         unsigned delegateRespondsToWillSelectItem:1;
         unsigned delegateRespondsToDidSelectItem:1;
+        unsigned delegateRespondsToWillDeselectItem:1;
+        unsigned delegateRespondsToDidDeselectItem:1;
         unsigned delegateRespondsToWillDisplayCell:1;
     } _flags;
     
@@ -64,6 +66,9 @@
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
 
 - (void)_performUpdate:(KKGridViewUpdate *)update;
+
+- (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
 
 @end
 
@@ -579,20 +584,39 @@
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     if (_allowsMultipleSelection) {
         if ([_selectedIndexPaths containsObject:indexPath]) {
-            [_selectedIndexPaths removeObject:indexPath];
-            cell.selected = NO;
+            [self _deselectItemAtIndexPath:indexPath];
         } else {
             [_selectedIndexPaths addObject:indexPath];
             cell.selected = YES;
         }
     } else {
-        if ([_selectedIndexPaths count] > 0) {
-            KKGridViewCell *otherCell = [_visibleCells objectForKey:[_selectedIndexPaths anyObject]];
-            otherCell.selected = NO;
-            [_selectedIndexPaths removeAllObjects];
+        for (KKIndexPath *path in _selectedIndexPaths) {
+            [self _deselectItemAtIndexPath:path];
         }
+        
         [_selectedIndexPaths addObject:indexPath];
         cell.selected = YES;
+    }
+}
+
+- (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
+{
+    if (_selectedIndexPaths.count > 0 && _flags.delegateRespondsToWillDeselectItem) {
+        KKIndexPath *redirectedPath = [_gridDelegate gridView:self willDeselectItemAtIndexPath:indexPath];
+        if (redirectedPath != nil && ![redirectedPath isEqual:indexPath]) {
+            indexPath = redirectedPath ? redirectedPath : indexPath;
+        }
+    }
+    
+    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+    if ([_selectedIndexPaths containsObject:indexPath]) {
+        [_selectedIndexPaths removeObject:indexPath];
+        cell.selected = NO;
+    }
+    
+    if (_flags.delegateRespondsToDidDeselectItem)
+    {
+        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
     }
 }
 
@@ -754,6 +778,8 @@
     _gridDelegate = gridDelegate;
     _flags.delegateRespondsToWillSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:willSelectItemAtIndexPath:)];
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemAtIndexPath:)];
+    _flags.delegateRespondsToWillDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:willDeselectItemAtIndexPath:)];
+    _flags.delegateRespondsToDidDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:didDeselectItemAtIndexPath:)];
     _flags.delegateRespondsToWillDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCell:forItemAtIndexPath:)];
 }
 
