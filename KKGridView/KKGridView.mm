@@ -358,7 +358,7 @@
                 KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
                 cell.selected = [_selectedIndexPaths containsObject:indexPath];
                 if (!cell) {
-                    cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                    cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
                     [_visibleCells setObject:cell forKey:indexPath];
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                     
@@ -399,7 +399,7 @@
             cell.selected = [_selectedIndexPaths containsObject:indexPath];
             
             if (!cell) {
-                cell = [_dataSource gridView:self cellForRowAtIndexPath:indexPath];
+                cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
                 [_visibleCells setObject:cell forKey:indexPath];
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
                 

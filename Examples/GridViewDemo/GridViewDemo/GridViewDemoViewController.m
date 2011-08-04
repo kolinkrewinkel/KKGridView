@@ -140,7 +140,7 @@ static const NSUInteger kNumSection = 40;
     return kNumSection;
 }
 
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
     

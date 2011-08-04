@@ -72,7 +72,7 @@ typedef enum {
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
 //- (NSUInteger)numberOfColumnsInGridView:(KKGridView *)gridView;
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath;
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath;
 
 @optional
 
