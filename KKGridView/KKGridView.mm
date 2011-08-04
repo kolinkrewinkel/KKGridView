@@ -356,17 +356,16 @@
                 [_updateStack removeUpdateForIndexPath:indexPath];
             }
         } else {
-            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
             cell.selected = [_selectedIndexPaths containsObject:indexPath];
             
-            if (!cell) {
-                cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-                [_visibleCells setObject:cell forKey:indexPath];
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-            } else if (_markedForDisplay) {
+            [_visibleCells setObject:cell forKey:indexPath];
+            cell.frame = [self rectForCellAtIndexPath:indexPath];
+            
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            if (_markedForDisplay) {
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
         }
