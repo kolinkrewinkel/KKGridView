@@ -62,10 +62,12 @@
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 
+- (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)indexPath throughIndexPath:(KKIndexPath *)throughPath;
+
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
 
-- (void)_performUpdate:(KKGridViewUpdate *)update;
+- (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)indexPaths;
 
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
@@ -362,7 +364,7 @@
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                [self _performUpdate:update];
+                [self _performUpdate:update withVisiblePaths:visiblePaths];
                 [_updateStack removeUpdateForIndexPath:indexPath];
             }
         } else {
@@ -373,7 +375,7 @@
                 cell = [self _loadCellAtVisibleIndexPath:indexPath];
                 [self _displayCell:cell atIndexPath:indexPath];
             } else if (_markedForDisplay) {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                cell.frame = [self rectForCellAtIndexPath:indexPath];   
             }
         }
         [self _cleanupCells];
@@ -399,22 +401,25 @@
     [self sendSubviewToBack:cell];
 }
 
-- (void)_performUpdate:(KKGridViewUpdate *)update
+- (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)visiblePaths
 {
-    if (update.type == KKGridViewUpdateTypeItemInsert) {
-        //                    [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
-    }
-    _markedForDisplay = YES;
-    
     
     KKIndexPath *indexPath = update.indexPath;
+    _markedForDisplay = YES;
+
+    if (update.type == KKGridViewUpdateTypeItemInsert) {
+        [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
+    }
+    
+    
+    
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     cell.selected = [_selectedIndexPaths containsObject:indexPath];
     if (!cell) {
         cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
         [_visibleCells setObject:cell forKey:indexPath];
         cell.frame = [self rectForCellAtIndexPath:indexPath];
-        
+        cell.backgroundColor = [UIColor greenColor];
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
@@ -469,7 +474,9 @@
     }
     
     [_updateStack addUpdates:updates];
-    [self setNeedsLayout];
+    [UIView animateWithDuration:3 animations:^(void) {
+        [self _layoutGridView];
+    }];
 }
 
 - (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
@@ -477,20 +484,20 @@
     NSArray *keys = [_visibleCells allKeys];
     NSArray *cells = [_visibleCells allValues];
     
+    NSLog(@"%@", [_visibleCells objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
+    
     [_visibleCells removeAllObjects];
+    
     
     NSUInteger index = 0;
     for (KKIndexPath *indexPath in keys) {
-        if (([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedAscending) && ([indexPath compare:throughPath] == NSOrderedSame || [indexPath compare:throughPath] == NSOrderedDescending)) {
-            
-            indexPath.index++;
-            [_visibleCells setObject:[cells objectAtIndex:index] forKey:indexPath];
+        if (([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedDescending) && ([indexPath compare:throughPath] == NSOrderedSame || [indexPath compare:throughPath] == NSOrderedAscending)) {
+            [_visibleCells setObject:[cells objectAtIndex:index] forKey:[KKIndexPath indexPathForIndex:indexPath.index + 1 inSection:indexPath.section]];
             index++;
         }
     }
+    NSLog(@"%@", [_visibleCells objectForKey:[KKIndexPath indexPathForIndex:1 inSection:0]]);
 }
-
-
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
 {

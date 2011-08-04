@@ -56,7 +56,7 @@ static const NSUInteger kNumSection = 40;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
 //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
 
-    kFirstSectionCount = 15;
+    kFirstSectionCount = 7;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.scrollsToTop = YES;
@@ -80,8 +80,8 @@ static const NSUInteger kNumSection = 40;
 
 - (void)addItems
 {
-//    kFirstSectionCount+= 1;
-//    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], nil] withAnimation:KKGridViewAnimationExplode];
+    kFirstSectionCount+= 1;
+    [_gridView insertItemsAtIndexPaths:[NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], nil] withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)toggleEditingStyle:(id)sender
