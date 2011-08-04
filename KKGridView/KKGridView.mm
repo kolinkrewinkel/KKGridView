@@ -810,13 +810,18 @@
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views)
+    void (^clearAuxiliaryViews)(__strong NSMutableArray *&) = ^(__strong NSMutableArray *&views)
     {
         [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
         [views removeAllObjects];
+        
+        if (!views)
+        {
+            views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
     };
     
-    void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat, CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
+    void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
     {
         aux.view.frame = CGRectMake(0.f, pos, self.bounds.size.width, h);
         aux->stickPoint = pos;
@@ -826,17 +831,13 @@
     if (_flags.dataSourceRespondsToViewForHeaderInSection && _flags.dataSourceRespondsToHeightForHeaderInSection) {
         clearAuxiliaryViews(_headerViews);
         
-        if (!_headerViews) {
-            _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
-        }
-        
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            configureAuxiliaryView(header,section,position, _headerHeights[section]);
+            configureAuxiliaryView(header, section,position, _headerHeights[section]);
             
             [self addSubview:header.view];
         }
@@ -845,10 +846,6 @@
     if (_flags.dataSourceRespondsToViewForFooterInSection && _flags.dataSourceRespondsToHeightForFooterInSection) {
         clearAuxiliaryViews(_footerViews);
         
-        if (!_footerViews) {
-            _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
-        }
-        
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
             KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
@@ -856,7 +853,7 @@
             
             CGFloat footerHeight = _footerHeights[section];
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-            configureAuxiliaryView(footer,section, position, footerHeight);
+            configureAuxiliaryView(footer, section, position, footerHeight);
             
             [self addSubview:footer.view];
         }
@@ -866,8 +863,8 @@
         NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
         [set addObject:cell];
     }
-    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
+    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_visibleCells removeAllObjects];
 }
 
