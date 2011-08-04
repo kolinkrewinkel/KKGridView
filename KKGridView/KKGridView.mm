@@ -23,6 +23,7 @@
         unsigned dataSourceRespondsToViewForFooterInSection;
         unsigned dataSourceRespondsToNumberOfSections:1;
         unsigned delegateRespondsToDidSelectItem:1;
+        unsigned delegateRespondsToWillDisplayCell:1;
     } _flags;
     
     std::vector<CGFloat> _footerHeights;
@@ -57,6 +58,9 @@
 - (void)_layoutExtremities;
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
+
+- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
+- (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
 
 - (void)_performUpdate:(KKGridViewUpdate *)update;
 
@@ -360,18 +364,33 @@
             cell.selected = [_selectedIndexPaths containsObject:indexPath];
             
             if (!cell) {
-                cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-                [_visibleCells setObject:cell forKey:indexPath];
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
+                cell = [self _loadCellAtVisibleIndexPath:indexPath];
+                [self _displayCell:cell atIndexPath:indexPath];
             } else if (_markedForDisplay) {
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
         }
         [self _cleanupCells];
     }
+}
+
+- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
+{
+    KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
+    [_visibleCells setObject:cell forKey:indexPath];
+    cell.frame = [self rectForCellAtIndexPath:indexPath];
+    return cell;
+}
+
+- (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath
+{
+    if (_flags.delegateRespondsToWillDisplayCell)
+    {
+        [self.gridDelegate gridView:self willDisplayCell:cell forItemAtIndexPath:indexPath];
+    }
+    
+    [self addSubview:cell];
+    [self sendSubviewToBack:cell];
 }
 
 - (void)_performUpdate:(KKGridViewUpdate *)update
@@ -719,6 +738,7 @@
 {
     _gridDelegate = gridDelegate;
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemIndexPath:)];
+    _flags.delegateRespondsToWillDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCell:forItemAtIndexPath:)];
 }
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
@@ -818,12 +838,8 @@
             [_visibleCells removeObjectForKey:path];
         }
         
-        cell = [_dataSource gridView:self cellForItemAtIndexPath:path];
-        [_visibleCells setObject:cell forKey:path];
-        cell.frame = [self rectForCellAtIndexPath:path];
-        
-        [self addSubview:cell];
-        [self sendSubviewToBack:cell];
+        cell = [self _loadCellAtVisibleIndexPath:path];
+        [self _displayCell:cell atIndexPath:path];
     }
 }
 

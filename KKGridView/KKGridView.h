@@ -92,5 +92,6 @@ typedef enum {
 @optional
 
 - (void)gridView:(KKGridView *)gridView didSelectItemIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)item forItemAtIndexPath:(KKIndexPath *)indexPath;
 
 @end
