@@ -154,6 +154,11 @@ static const NSUInteger kNumSection = 40;
 //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
 }
 
+- (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath
+{
+//    return [KKIndexPath indexPathForIndex:0 inSection:indexPath.section];
+}
+
 - (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell forItemAtIndexPath:(KKIndexPath *)indexPath
 {
 //    NSLog(@"will display cell: %@", indexPath);

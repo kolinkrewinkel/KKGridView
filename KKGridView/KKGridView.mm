@@ -22,6 +22,7 @@
         unsigned dataSourceRespondsToViewForHeaderInSection;
         unsigned dataSourceRespondsToViewForFooterInSection;
         unsigned dataSourceRespondsToNumberOfSections:1;
+        unsigned delegateRespondsToWillSelectItem:1;
         unsigned delegateRespondsToDidSelectItem:1;
         unsigned delegateRespondsToWillDisplayCell:1;
     } _flags;
@@ -610,15 +611,30 @@
 {
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInView:self];
-    KKIndexPath * indexPath = [self indexPathsForItemAtPoint:location];
+    KKIndexPath *indexPath = [self indexPathsForItemAtPoint:location];
+    
     if (indexPath.index == NSNotFound) {
         [super touchesEnded:touches withEvent:event];
         return;
     }
     
+    if (_flags.delegateRespondsToWillSelectItem)
+    {
+        KKIndexPath *redirectedPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
+        if (redirectedPath != nil && ![redirectedPath isEqual:indexPath])
+        {
+            indexPath = redirectedPath;
+            
+            _lastSelectedCell.selected = NO;
+            _lastSelectedCell = [_visibleCells objectForKey:indexPath];
+            [self _selectItemAtIndexPath:indexPath];
+        }
+    }
+    
     if (_flags.delegateRespondsToDidSelectItem) {
         [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
     }
+    
     _lastSelectedCell = nil;
 
     [super touchesEnded:touches withEvent:event];
@@ -628,25 +644,24 @@
 {
     UITouch *touch = [touches anyObject];
     if ([touch.view isKindOfClass:[KKGridViewCell class]]) {
-        KKGridViewCell *cell = (KKGridViewCell *)touch.view;
-        cell.selected = YES;
-        _lastSelectedCell = cell;
+        _lastSelectedCell = (KKGridViewCell *)touch.view;
     }
-    KKIndexPath * touchedItemPoint = [self indexPathsForItemAtPoint:[touch locationInView:self]];
-    if (touchedItemPoint.index == NSNotFound) {
+    
+    KKIndexPath *indexPathToSelect = [self indexPathsForItemAtPoint:[touch locationInView:self]];
+    
+    if (indexPathToSelect.index == NSNotFound) {
         return YES;
     }
-    [self _selectItemAtIndexPath:touchedItemPoint];    
+        
+    [self _selectItemAtIndexPath:indexPathToSelect];
     
     return YES;
 }
 
 - (BOOL)touchesShouldCancelInContentView:(UIView *)view
 {
-    if (_lastSelectedCell) {
-        _lastSelectedCell.selected = NO;
-        _lastSelectedCell = nil;
-    }
+    _lastSelectedCell.selected = NO;
+    _lastSelectedCell = nil;
     
     return YES;
 }
@@ -737,6 +752,7 @@
 - (void)setGridDelegate:(id <KKGridViewDelegate>)gridDelegate
 {
     _gridDelegate = gridDelegate;
+    _flags.delegateRespondsToWillSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:willSelectItemAtIndexPath:)];
     _flags.delegateRespondsToDidSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemAtIndexPath:)];
     _flags.delegateRespondsToWillDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCell:forItemAtIndexPath:)];
 }
