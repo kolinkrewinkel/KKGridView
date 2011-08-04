@@ -748,11 +748,23 @@
 {
     [self reloadContentSize];
     
+    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views)
+    {
+        [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [views removeAllObjects];
+    };
+    
+    void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat, CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
+    {
+        aux.view.frame = CGRectMake(0.f, pos, self.bounds.size.width, h);
+        aux->stickPoint = pos;
+        aux->section = sec;
+    };
+    
     if (_flags.dataSourceRespondsToViewForHeaderInSection && _flags.dataSourceRespondsToHeightForHeaderInSection) {
-        if (_headerViews) {
-            [[_headerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-            [_headerViews removeAllObjects];
-        } else {
+        clearAuxiliaryViews(_headerViews);
+        
+        if (!_headerViews) {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -761,21 +773,17 @@
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
-            CGFloat headerHeight = _headerHeights[section];
-            
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            header.view.frame = CGRectMake(0.f, position, self.bounds.size.width, headerHeight);
-            header->stickPoint = position;
-            header->section = section;
+            configureAuxiliaryView(header,section,position, _headerHeights[section]);
+            
             [self addSubview:header.view];
         }
     }
     
     if (_flags.dataSourceRespondsToViewForFooterInSection && _flags.dataSourceRespondsToHeightForFooterInSection) {
-        if (_footerViews) {
-            [[_footerViews valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-            [_footerViews removeAllObjects];
-        } else {
+        clearAuxiliaryViews(_footerViews);
+        
+        if (!_footerViews) {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
@@ -786,10 +794,8 @@
             
             CGFloat footerHeight = _footerHeights[section];
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-            footer->stickPoint = position;
-            footer->section = section;
+            configureAuxiliaryView(footer,section, position, footerHeight);
             
-            footer.view.frame = CGRectMake(0.f, position, self.bounds.size.width, footerHeight);
             [self addSubview:footer.view];
         }
     }
