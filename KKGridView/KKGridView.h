@@ -12,6 +12,13 @@
 #import "KKGridViewViewInfo.h"
 
 typedef enum {
+    KKGridViewScrollPositionNone,        
+    KKGridViewScrollPositionTop,    
+    KKGridViewScrollPositionMiddle,   
+    KKGridViewScrollPositionBottom
+} KKGridViewScrollPosition;
+
+typedef enum {
     KKGridViewAnimationFade,
     KKGridViewAnimationResize,
     KKGridViewAnimationSlideLeft,
@@ -60,6 +67,8 @@ typedef enum {
 //- (void)insertSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
+
+- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated;
 
 @end
 

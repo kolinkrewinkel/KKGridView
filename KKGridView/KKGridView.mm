@@ -572,12 +572,16 @@
     return indexes;
 }
 
+- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated
+{
+    [self scrollRectToVisible:[self rectForCellAtIndexPath:indexPath] animated:YES];
+}
+
 - (KKIndexPath *)indexPathsForItemAtPoint:(CGPoint)point
 {
     NSArray *indexes = [self indexPathsForItemsInRect:(CGRect){ point, {1.f, 1.f } }];
     return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
-
 
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
 {
