@@ -809,4 +809,22 @@
     [_visibleCells removeAllObjects];
 }
 
+- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
+{
+    for (KKIndexPath *path in indexPaths) {
+        KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        if (cell) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:path];
+        }
+        
+        cell = [_dataSource gridView:self cellForItemAtIndexPath:path];
+        [_visibleCells setObject:cell forKey:path];
+        cell.frame = [self rectForCellAtIndexPath:path];
+        
+        [self addSubview:cell];
+        [self sendSubviewToBack:cell];
+    }
+}
+
 @end
