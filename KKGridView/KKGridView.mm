@@ -484,11 +484,7 @@
     NSArray *keys = [_visibleCells allKeys];
     NSArray *cells = [_visibleCells allValues];
     
-    NSLog(@"%@", [_visibleCells objectForKey:[KKIndexPath indexPathForIndex:0 inSection:0]]);
-    
     [_visibleCells removeAllObjects];
-    
-    
     NSUInteger index = 0;
     for (KKIndexPath *indexPath in keys) {
         if (([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedDescending) && ([indexPath compare:throughPath] == NSOrderedSame || [indexPath compare:throughPath] == NSOrderedAscending)) {
@@ -496,7 +492,6 @@
             index++;
         }
     }
-    NSLog(@"%@", [_visibleCells objectForKey:[KKIndexPath indexPathForIndex:1 inSection:0]]);
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
