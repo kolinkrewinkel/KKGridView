@@ -25,20 +25,20 @@
 
 - (NSComparisonResult)compare:(id)object
 {
-    KKIndexPath *indexPath = (KKIndexPath *)object;
-    if (self.index == indexPath.index && self.section == indexPath.section) {
+    KKIndexPath *otherIndexPath = (KKIndexPath *)object;
+    if (self.index == otherIndexPath.index && self.section == otherIndexPath.section) {
         return NSOrderedSame;
     }
     
-    if (indexPath.section > self.section) {
+    if (otherIndexPath.section > self.section) {
         return NSOrderedAscending;
     } else {
         return NSOrderedDescending;
     }
     
-    if (indexPath.section == self.section && indexPath.index > self.index) {
+    if (otherIndexPath.index > self.index) {
         return NSOrderedAscending;
-    } else if (indexPath.section == self.section && indexPath.index < self.index) {
+    } else if (otherIndexPath.index < self.index) {
         return NSOrderedDescending;
     }
 }

@@ -357,8 +357,11 @@
     }
 }
 
+
 - (void)_layoutVisibleCells
 {    
+    BOOL loopAgain = NO;
+    
     NSArray *visiblePaths = [self visibleIndexPaths];
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
@@ -366,6 +369,8 @@
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
                 [self _performUpdate:update withVisiblePaths:visiblePaths];
                 [_updateStack removeUpdateForIndexPath:indexPath];
+                loopAgain = YES;
+                break;
             }
         } else {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -378,7 +383,22 @@
                 cell.frame = [self rectForCellAtIndexPath:indexPath];   
             }
         }
-        [self _cleanupCells];
+    }
+    [self _cleanupCells];
+    
+    
+    if (loopAgain) {
+        for (KKIndexPath *indexPath in visiblePaths) {
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            cell.selected = [_selectedIndexPaths containsObject:indexPath];
+            
+            if (!cell) {
+                cell = [self _loadCellAtVisibleIndexPath:indexPath];
+                [self _displayCell:cell atIndexPath:indexPath];
+            } else if (_markedForDisplay) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];   
+            }
+        }
     }
 }
 
@@ -406,7 +426,7 @@
     
     KKIndexPath *indexPath = update.indexPath;
     _markedForDisplay = YES;
-
+    
     if (update.type == KKGridViewUpdateTypeItemInsert) {
         [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
     }
@@ -460,7 +480,7 @@
         if ([_visibleCells objectForKey:indexPath] == cell)
             return indexPath;
     }
-
+    
     return [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
 
@@ -481,8 +501,10 @@
 
 - (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-    NSArray *keys = [_visibleCells allKeys];
+    NSArray *keys = [[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)];  
     NSArray *cells = [_visibleCells allValues];
+    
+    NSLog(@"%@", keys);
     
     [_visibleCells removeAllObjects];
     NSUInteger index = 0;
@@ -666,7 +688,7 @@
     }
     
     _lastSelectedCell = nil;
-
+    
     [super touchesEnded:touches withEvent:event];
 }
 
@@ -682,7 +704,7 @@
     if (indexPathToSelect.index == NSNotFound) {
         return YES;
     }
-        
+    
     [self _selectItemAtIndexPath:indexPathToSelect];
     
     return YES;
