@@ -14,7 +14,7 @@ KKGridView was created in July 2011 for usage in [StratusApp](http://getstratusa
 When we set out building this, we all had a few common things we knew we needed to focus on.
 
 * Performance — 55+ FPS in the worst case.
-* UITableView similarities — Strive to be as close to drop-in as possible.
+* `UITableView` similarities — Strive to be as close to drop-in as possible.
 * Feature completeness — As above, match the latest UITableView implementation in features; add anything else worthwhile.
 * Solid codebase — We didn't want something that was inextensible and 
 full of messy code.
@@ -23,19 +23,19 @@ full of messy code.
 ***
 
 ###Usage
-####This is liable to change as a KKGridViewController is added as a correspondence to UITableViewController.
+**This is liable to change as a `KKGridViewController` is added as a correspondence to `UITableViewController`.**
 
-First, instantiate a grid view instance.  <i>Using the designated initializer and a _gridView ivar:</i>
+First, instantiate a grid view instance.  *Using the designated initializer and a `_gridView` ivar:*
 	
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
 
-Now, you can setup your default UIScrollView+UIView properties, since KKGridView inherits from said class.
+Now, you can setup your default `UIScrollView` and `UIView` properties, since `KKGridView` inherits from said class.
 
     _gridView.scrollsToTop = YES;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-Metrics must also be set (automatic sizing <i>may</i> come in the future)
+Metrics must also be set (automatic sizing *may* come in the future).
 
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.cellPadding = CGSizeMake(4.f, 4.f);
@@ -79,7 +79,7 @@ Data source methods:
         }
     }
 
-Optionally, you can specify how many section you would like in the grid.  <i>(Default is 1)</i>
+Optionally, you can specify how many section you would like in the grid. *(Default is 1)*
 
 	- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
     {
@@ -88,9 +88,9 @@ Optionally, you can specify how many section you would like in the grid.  <i>(De
 
 The last required method is to return a cell, just like UITableView.  We've made it easier on you, though.
 
-<i>KKIndexPath works in just the same way as NSIndexPath, only -row is replaced with -index.</i>
+*`KKIndexPath` works in just the same way as `NSIndexPath`, only `-row` is replaced with `-index`.*
 
-<i>KKGridViewCell, like UITableViewCell, is designed to be subclassed.</i>
+*`KKGridViewCell`, like `UITableViewCell`, is designed to be subclassed.*
 
 	- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
     {
@@ -103,4 +103,4 @@ The last required method is to return a cell, just like UITableView.  We've made
 
 <br />
 
-There are no required delegate methods, though all that are implemented in UITableView will soon be available in KKGridView.
+There are no required delegate methods, though all that are implemented in `UITableView` will soon be available in `KKGridView`.
