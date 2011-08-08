@@ -357,11 +357,8 @@
     }
 }
 
-
 - (void)_layoutVisibleCells
 {    
-    BOOL loopAgain = NO;
-    
     NSArray *visiblePaths = [self visibleIndexPaths];
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
@@ -369,8 +366,6 @@
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
                 [self _performUpdate:update withVisiblePaths:visiblePaths];
                 [_updateStack removeUpdateForIndexPath:indexPath];
-                loopAgain = YES;
-                break;
             }
         } else {
             KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -380,26 +375,16 @@
                 cell = [self _loadCellAtVisibleIndexPath:indexPath];
                 [self _displayCell:cell atIndexPath:indexPath];
             } else if (_markedForDisplay) {
+                if (_staggerForInsertion) {
+                    [UIView animateWithDuration:0.25 delay:0.12 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    } completion:nil]; 
+                }
                 cell.frame = [self rectForCellAtIndexPath:indexPath];   
             }
         }
     }
     [self _cleanupCells];
-    
-    
-    if (loopAgain) {
-        for (KKIndexPath *indexPath in visiblePaths) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-            cell.selected = [_selectedIndexPaths containsObject:indexPath];
-            
-            if (!cell) {
-                cell = [self _loadCellAtVisibleIndexPath:indexPath];
-                [self _displayCell:cell atIndexPath:indexPath];
-            } else if (_markedForDisplay) {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];   
-            }
-        }
-    }
 }
 
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
@@ -423,15 +408,13 @@
 
 - (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)visiblePaths
 {
-    
     KKIndexPath *indexPath = update.indexPath;
     _markedForDisplay = YES;
     
     if (update.type == KKGridViewUpdateTypeItemInsert) {
+        _staggerForInsertion = YES;
         [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[visiblePaths lastObject]];
     }
-    
-    
     
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     cell.selected = [_selectedIndexPaths containsObject:indexPath];
@@ -494,26 +477,24 @@
     }
     
     [_updateStack addUpdates:updates];
-    [UIView animateWithDuration:3 animations:^(void) {
+//    [UIView animateWithDuration:0.35 animations:^(void) {
         [self _layoutGridView];
-    }];
+//    }];
 }
 
 - (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-    NSArray *keys = [[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)];  
-    NSArray *cells = [_visibleCells allValues];
-    
-    NSLog(@"%@", keys);
-    
-    [_visibleCells removeAllObjects];
-    NSUInteger index = 0;
-    for (KKIndexPath *indexPath in keys) {
-        if (([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedDescending) && ([indexPath compare:throughPath] == NSOrderedSame || [indexPath compare:throughPath] == NSOrderedAscending)) {
-            [_visibleCells setObject:[cells objectAtIndex:index] forKey:[KKIndexPath indexPathForIndex:indexPath.index + 1 inSection:indexPath.section]];
-            index++;
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        KKIndexPath *indexPath = (KKIndexPath *)key;
+//        TODO: Switch to NSRange intersection-checking
+        if (indexPath.section == fromPath.section) { 
+            indexPath.index+=amount;
         }
-    }
+        [dictionary setObject:obj forKey:indexPath];
+    }];
+    
+    [_visibleCells removeAllObjects], [_visibleCells setDictionary:dictionary];
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier

@@ -19,7 +19,7 @@
         _index = index;
         _section = section;
     }
-    
+
     return self;
 }
 
@@ -32,7 +32,7 @@
     
     if (otherIndexPath.section > self.section) {
         return NSOrderedAscending;
-    } else {
+    } else if (otherIndexPath.section < self.section) {
         return NSOrderedDescending;
     }
     
@@ -41,6 +41,8 @@
     } else if (otherIndexPath.index < self.index) {
         return NSOrderedDescending;
     }
+    
+    return NSOrderedSame;
 }
 
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
