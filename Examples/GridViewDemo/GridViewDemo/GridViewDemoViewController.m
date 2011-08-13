@@ -40,14 +40,16 @@ static const NSUInteger kNumSection = 40;
     _footerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
 
     for (NSUInteger section = 0; section < kNumSection; section++) {
-        UIView *header = [[UIView alloc] initWithFrame:CGRectZero];
+        UILabel *header = [[UILabel alloc] initWithFrame:CGRectZero];
         header.backgroundColor = [self randomColor];
         header.opaque = YES;
+        header.textAlignment = UITextAlignmentCenter;
+        header.text = [NSString stringWithFormat:@"Header %d", section + 1];
         [_headerViews addObject:header];
         
         UILabel *footer = [[UILabel alloc] initWithFrame:CGRectZero];
         footer.textAlignment = UITextAlignmentCenter;
-        footer.text = [NSString stringWithFormat:@"%d", section];
+        footer.text = [NSString stringWithFormat:@"Footer %d", section + 1];
         footer.backgroundColor = [UIColor whiteColor];
         footer.opaque = YES;
         [_footerViews addObject:footer];
@@ -80,9 +82,12 @@ static const NSUInteger kNumSection = 40;
 
 - (void)addItems
 {
-    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0], [KKIndexPath indexPathForIndex:1 inSection:0], nil];
-    kFirstSectionCount+= [items count];
-    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    [_gridView scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:3 inSection:9] animated:YES position:KKGridViewScrollPositionMiddle];
+    
+//    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], nil];
+//
+//    kFirstSectionCount+= [items count];
+//    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)toggleEditingStyle:(id)sender

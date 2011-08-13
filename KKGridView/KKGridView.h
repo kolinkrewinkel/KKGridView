@@ -68,7 +68,7 @@ typedef enum {
 //- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
 
-- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated;
+- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition;
 
 @end
 

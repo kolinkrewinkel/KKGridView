@@ -370,6 +370,7 @@
 {    
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
+    NSUInteger index = 0;
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
@@ -388,13 +389,14 @@
                 [self _displayCell:cell atIndexPath:indexPath];
             } else if (_markedForDisplay) {
                 if (_staggerForInsertion)
-                    [UIView animateWithDuration:0.25 delay:0.1 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                    [UIView animateWithDuration:0.25 delay:index > 0 ? 0.1 : 0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
                         cell.frame = [self rectForCellAtIndexPath:indexPath];
                     } completion:nil]; 
                 
                 cell.frame = [self rectForCellAtIndexPath:indexPath];   
             }
         }
+        index++;
     }
     [self _cleanupCells];
     
@@ -463,6 +465,8 @@
         cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
         [_visibleCells setObject:cell forKey:indexPath];
         cell.frame = [self rectForCellAtIndexPath:indexPath];
+        cell.backgroundColor = [UIColor cyanColor];
+        
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
@@ -511,7 +515,7 @@
 {
     NSMutableArray *updates = [NSMutableArray array];
     
-    for (KKIndexPath *indexPath in indexPaths) {
+    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
         [updates addObject:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
     }
     
@@ -617,9 +621,39 @@
     return indexes;
 }
 
-- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated
+- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition
 {
-    [self scrollRectToVisible:[self rectForCellAtIndexPath:indexPath] animated:YES];
+    if (animated && scrollPosition != KKGridViewScrollPositionNone) {
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.3];
+    }
+    
+    CGPoint point = CGPointZero;
+    
+    switch (scrollPosition) {
+        case KKGridViewScrollPositionTop:
+            point.y = CGRectGetMinY([self rectForCellAtIndexPath:indexPath]);
+            break;
+        case KKGridViewScrollPositionBottom:
+            point.y = CGRectGetMaxY([self rectForCellAtIndexPath:indexPath]) - self.bounds.size.height;
+            break;
+        case KKGridViewScrollPositionMiddle:
+            point.y = CGRectGetMaxY([self rectForCellAtIndexPath:indexPath]) - (self.bounds.size.height * .5f);
+            break;
+        case KKGridViewScrollPositionNone:
+            [self scrollRectToVisible:[self rectForCellAtIndexPath:indexPath] animated:animated];
+            return;
+            break;
+        default:
+            break;
+    }
+    
+//    point.y -= _headerHeights[indexPath.section];
+    
+    self.contentOffset = point;
+    
+    if (animated)
+        [UIView commitAnimations];
 }
 
 - (KKIndexPath *)indexPathsForItemAtPoint:(CGPoint)point
