@@ -411,7 +411,6 @@
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 } completion:nil];
             } else {
-                
                 cell.frame = [self rectForCellAtIndexPath:indexPath];   
             }
         }
@@ -485,19 +484,17 @@
     
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     cell.selected = [_selectedIndexPaths containsObject:indexPath];
-    NSLog(@"%@", indexPath);
     if (!cell) {
         cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
         [_visibleCells setObject:cell forKey:indexPath];
         cell.frame = [self rectForCellAtIndexPath:indexPath];
-        cell.backgroundColor = [UIColor cyanColor];
         
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
                 cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
                 [self addSubview:cell];
-                [self bringSubviewToFront:cell];
+                [self sendSubviewToBack:cell];
                 [UIView animateWithDuration:0.15 animations:^(void) {
                     cell.alpha = 0.8f;
                     cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
@@ -515,7 +512,53 @@
                 }];
                 break;
             }   
+            case KKGridViewAnimationFade: {
+                cell.alpha = 0.f;
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
                 
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.alpha = 1.f;
+                }];
+                
+                break;
+            }
+            case KKGridViewAnimationNone: {
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                break;
+            }
+            case KKGridViewAnimationResize: {
+                cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                }];
+                break;
+            }
+            case KKGridViewAnimationImplode: {
+                cell.alpha = 0.f;
+                cell.transform = CGAffineTransformMakeScale(1.3f, 1.3f);
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                [UIView animateWithDuration:0.15 animations:^(void) {
+                    cell.alpha = 0.8f;
+                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.05 animations:^(void) {
+                        cell.alpha = 0.75f;
+                        cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                    } completion:^(BOOL finished) {
+                        [UIView animateWithDuration:0.05 animations:^(void) {
+                            cell.alpha = 1.f;
+                            cell.transform = CGAffineTransformIdentity;
+                            
+                        }];
+                    }];
+                }];
+                break;
+            }
             default:
                 break;
         }
