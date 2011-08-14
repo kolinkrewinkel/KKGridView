@@ -67,27 +67,26 @@ static const NSUInteger kNumSection = 40;
     _gridView.backgroundColor = [UIColor darkGrayColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 50.f)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, self.view.bounds.size.width, 50.f)];
     headerView.backgroundColor = [UIColor redColor];
     _gridView.gridHeaderView = headerView;
     
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 20, 50.f)];
+    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
     footerView.backgroundColor = [UIColor blueColor];
     _gridView.gridFooterView = footerView;
     
     self.view = _gridView;
     
-    [self performSelector:@selector(addItems) withObject:nil afterDelay:4.0];
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
+    self.navigationItem.leftBarButtonItem = item;
 }
 
-- (void)addItems
+- (void)addItems:(id)sender
 {
-    [_gridView scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:3 inSection:9] animated:YES position:KKGridViewScrollPositionMiddle];
-    
-//    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], nil];
-//
-//    kFirstSectionCount+= [items count];
-//    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], nil];
+
+    kFirstSectionCount+= [items count];
+    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)toggleEditingStyle:(id)sender
@@ -173,9 +172,9 @@ static const NSUInteger kNumSection = 40;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    // Return YES for supported orientations
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         return YES;
+    
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 

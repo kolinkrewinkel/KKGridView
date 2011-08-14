@@ -47,7 +47,7 @@
 
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
-    id retVal = [[[self class] alloc] initWithIndex:index section:section];
+    __autoreleasing id retVal = [[[self class] alloc] initWithIndex:index section:section];
     return retVal;
 }
 

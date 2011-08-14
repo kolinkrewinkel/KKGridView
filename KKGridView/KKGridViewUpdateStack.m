@@ -66,7 +66,8 @@
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
 {
-    if (_itemsToUpdate.count == 0) return NO;
+    if (_itemsToUpdate.count == 0)
+        return NO;
     
     for (KKGridViewUpdate *update in _itemsToUpdate) {
         if ([update.indexPath isEqual:indexPath]) {
