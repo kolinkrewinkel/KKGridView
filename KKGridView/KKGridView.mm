@@ -506,6 +506,7 @@
                         [UIView animateWithDuration:0.05 animations:^(void) {
                             cell.alpha = 1.f;
                             cell.transform = CGAffineTransformIdentity;
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
                             
                         }];
                     }];
