@@ -86,23 +86,23 @@ Alternatively, you can add the grid to your view-hierarchy.
 ~~~~objc
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
-		switch (section) {
-				case 0:
-						return kFirstSectionCount;
-						break;
-				case 1:
-						return 15;
-						break;
-				case 2:
-						return 10;
-						break;
-				case 3:
-						return 5;
-						break;
-				default:
-						return 0;
-						break;
-		}
+  switch (section) {
+    case 0:
+      return kFirstSectionCount;
+      break;
+    case 1:
+      return 15;
+      break;
+    case 2:
+      return 10;
+      break;
+    case 3:
+      return 5;
+      break;
+    default:
+      return 0;
+      break;
+  }
 }
 ~~~~
 
@@ -111,7 +111,7 @@ Optionally, you can specify how many section you would like in the grid. *(Defau
 ~~~~objc
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
-		return kNumSection;
+  return kNumSection;
 }
 ~~~~
 
@@ -124,13 +124,13 @@ The last required method is to return a cell, just like UITableView.  We've made
 ~~~~objc
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
 {
-		KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-		
-		cell.backgroundColor = [UIColor lightGrayColor];
-		
-		return cell;
+  KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
+  
+  cell.backgroundColor = [UIColor lightGrayColor];
+  
+  return cell;
 }
-~~~~objc
+~~~~
 
 
 There are no required delegate methods, though all that are implemented in `UITableView` will soon be available in `KKGridView`.
