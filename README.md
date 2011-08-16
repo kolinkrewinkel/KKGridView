@@ -1,21 +1,17 @@
 #KKGridView
 
-High-performance iOS grid view.
+High-performance iOS grid view (MIT license).
 
-***
-###Current Issues
+##Current Issues
 
 Most features, bugs, and missing items for the project are in the Issues section.  Currently, there are placement issues after inserting.  We were initially going to fix these before public release, but instead decided to release now and allow outside contribution.
 Other than that, editing and selection are the only things that need work.
 
-***
-###Motivations
+##Motivations
 
 KKGridView was created in July 2011 for usage in [StratusApp](http://getstratusapp.com/).  When I discovered that this would be both very difficult and time consuming, I sought out the help of [Giulio Petek](http://twitter.com/GiloTM) and [Jonathan Sterling](http://twitter.com/jonsterling).  Additionally, we brought on [Kyle Hickinson](http://twiter.com/kylehickinson), [Matthias Tretter](http://twitter.com/myell0w), and most recently, [Peter Steinberger](http://twitter.com/steipete).  Luckily, all of my fellow collaborators shared the common opinion that all of the grid views available now are slow, feature-incomplete, and coded in an inextensible fashion.  With this in mind, we set out to create the best grid view component available for iOS to-date.
 
-***
-
-###Goals
+##Goals
 
 When we set out building this, we all had a few common things we knew we needed to focus on.
 
@@ -26,9 +22,7 @@ When we set out building this, we all had a few common things we knew we needed 
 full of messy code.
 
 
-***
-
-###Usage
+##Usage
 **This is liable to change as a `KKGridViewController` is added as a correspondence to `UITableViewController`.**
 
 First, instantiate a grid view instance.  *Using the designated initializer and a `_gridView` ivar:*
