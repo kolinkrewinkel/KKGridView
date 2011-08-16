@@ -5,7 +5,7 @@ High-performance iOS grid view.
 ***
 ###Current Issues
 
-Most features, bugs, and missing items for the project are in the Issues section.  Currently, there are placement issues after inserting.  We were initially going to fix these before public release, but instead decided to leave this to you guys.
+Most features, bugs, and missing items for the project are in the Issues section.  Currently, there are placement issues after inserting.  We were initially going to fix these before public release, but instead decided to release now and allow outside contribution.
 Other than that, editing and selection are the only things that need work.
 
 ***
