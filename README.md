@@ -1,6 +1,18 @@
 #KKGridView
 
-High-performance iOS grid view (MIT license).
+High-performance iOS grid view (MIT license). **Requirements**: you need
+to build KKGridView with a compiler that supports *Automatic Reference
+Counting*. We know this stings at first, but we strongly believe that
+the future is better served by requiring this now. Moreover, the move to
+ARC improved KKGridView's performance greatly. Remember that your
+project need not use ARC to include KKGridView.
+
+### Contributing
+If you see something you don't like, you are always welcome to submit it
+as an issue. But if you can find it in your heart, we'd be so grateful
+if you would fix it yourself and send us a pull request. We promise not
+to bite!
+
 
 ##Current Issues
 
