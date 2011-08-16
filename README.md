@@ -1,6 +1,6 @@
 #KKGridView
 
-KKGridView is a static library for iOS which aims to provide easy & high performance grid views for your app.
+High-performance iOS grid view.
 
 ***
 ###Current Issues
