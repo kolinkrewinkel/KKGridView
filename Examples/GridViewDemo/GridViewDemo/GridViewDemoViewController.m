@@ -23,26 +23,15 @@ static const NSUInteger kNumSection = 40;
 
 #pragma mark - View lifecycle
 
-- (UIColor *)randomColor
-{
-    CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
-    CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
-    CGFloat green = (CGFloat)random()/(CGFloat)RAND_MAX;
-    return [UIColor colorWithRed:red green:green blue:blue alpha:1.f];
-}
-
 - (void)loadView
 {
     [super loadView];
-    
-
     _headerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
     _footerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
-
+    
     for (NSUInteger section = 0; section < kNumSection; section++) {
         UILabel *header = [[UILabel alloc] initWithFrame:CGRectZero];
-        header.backgroundColor = [self randomColor];
-        header.opaque = YES;
+        header.backgroundColor = [UIColor grayColor];
         header.textAlignment = UITextAlignmentCenter;
         header.text = [NSString stringWithFormat:@"Header %d", section + 1];
         [_headerViews addObject:header];
@@ -50,29 +39,28 @@ static const NSUInteger kNumSection = 40;
         UILabel *footer = [[UILabel alloc] initWithFrame:CGRectZero];
         footer.textAlignment = UITextAlignmentCenter;
         footer.text = [NSString stringWithFormat:@"Footer %d", section + 1];
-        footer.backgroundColor = [UIColor whiteColor];
-        footer.opaque = YES;
+        footer.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
         [_footerViews addObject:footer];
     }
-        
+    
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
-//    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
-
+    //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
+    
     kFirstSectionCount = 7;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.scrollsToTop = YES;
     _gridView.cellPadding = CGSizeMake(4.f, 4.f);
     _gridView.allowsMultipleSelection = NO;
-    _gridView.backgroundColor = [UIColor darkGrayColor];
+    _gridView.backgroundColor = [UIColor whiteColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
+    
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, self.view.bounds.size.width, 50.f)];
-    headerView.backgroundColor = [UIColor redColor];
+    headerView.backgroundColor = [UIColor darkGrayColor];
     _gridView.gridHeaderView = headerView;
     
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
-    footerView.backgroundColor = [UIColor blueColor];
+    footerView.backgroundColor = [UIColor darkGrayColor];
     _gridView.gridFooterView = footerView;
     
     self.view = _gridView;
@@ -84,7 +72,7 @@ static const NSUInteger kNumSection = 40;
 - (void)addItems:(id)sender
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:4 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
-
+    
     kFirstSectionCount+= [items count];
     [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
@@ -92,11 +80,7 @@ static const NSUInteger kNumSection = 40;
 - (void)toggleEditingStyle:(id)sender
 {
     _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
-    if (_gridView.allowsMultipleSelection) {
-        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Disable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
-    } else {
-        [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
-    }
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:_gridView.allowsMultipleSelection ? @"Disable Multiple Selection" : @"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
 }
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
@@ -156,18 +140,18 @@ static const NSUInteger kNumSection = 40;
 
 - (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-//    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
+    //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
 }
 
 - (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-//    return [KKIndexPath indexPathForIndex:0 inSection:indexPath.section];
+    //    return [KKIndexPath indexPathForIndex:0 inSection:indexPath.section];
     return nil;
 }
 
 - (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell forItemAtIndexPath:(KKIndexPath *)indexPath
 {
-//    NSLog(@"will display cell: %@", indexPath);
+    //    NSLog(@"will display cell: %@", indexPath);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

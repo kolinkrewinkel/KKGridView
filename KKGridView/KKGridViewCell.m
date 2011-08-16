@@ -30,8 +30,6 @@
     
     if (cell == nil) {
         cell = [[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID];
-        cell.layer.borderColor = [UIColor colorWithWhite:0.2 alpha:1.0].CGColor;
-        cell.layer.borderWidth = 2.f;
     }
     
     return cell;

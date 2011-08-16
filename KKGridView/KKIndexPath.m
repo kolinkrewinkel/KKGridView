@@ -63,7 +63,8 @@
 
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath 
 {
-    return [[[self class] alloc] initWithNSIndexPath:indexPath];
+    __autoreleasing id retVal = [[[self class] alloc] initWithNSIndexPath:indexPath];
+    return retVal;
 }
 
 - (BOOL)isEqual:(id)object

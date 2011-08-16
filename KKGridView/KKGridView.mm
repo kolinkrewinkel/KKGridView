@@ -383,7 +383,7 @@
                 if (_updateStack.itemsToUpdate.count > 0) {
                     for (KKGridViewUpdate *update in _updateStack.itemsToUpdate) {
                         if (update.indexPath.section == indexPath.section) {
-                            //                            Reverse logic
+//                          Twisted logic
                             switch (update.type) {
                                 case KKGridViewUpdateTypeItemInsert:
                                     update.indexPath.index++;
@@ -420,7 +420,6 @@
     
     if (needsAccessoryReload) {
         [UIView animateWithDuration:0.25 animations:^(void) {
-            
             [self reloadContentSize];
             void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
             {
@@ -594,7 +593,7 @@
 
 - (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:[_visibleCells count] + amount];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
         //        TODO: Switch to NSRange intersection-checking
@@ -607,7 +606,8 @@
         [dictionary setObject:obj forKey:indexPath];
     }];
     
-    [_visibleCells removeAllObjects], [_visibleCells setDictionary:dictionary];
+    [_visibleCells removeAllObjects];
+    [_visibleCells setDictionary:dictionary];
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
