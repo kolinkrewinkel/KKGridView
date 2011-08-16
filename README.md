@@ -21,7 +21,7 @@ Other than that, editing and selection are the only things that need work.
 
 ##Motivations
 
-`KKGridView` was created in July 2011 for usage in [StratusApp](http://getstratusapp.com/).  When I discovered that this would be both very difficult and time consuming, I sought out the help of [Giulio Petek](http://twitter.com/GiloTM) and [Jonathan Sterling](http://twitter.com/jonsterling).  Additionally, we brought on [Kyle Hickinson](http://twiter.com/kylehickinson), [Matthias Tretter](http://twitter.com/myell0w), and most recently, [Peter Steinberger](http://twitter.com/steipete).  Luckily, all of my fellow collaborators shared the common opinion that all of the grid views available now are slow, feature-incomplete, and coded in an inextensible fashion.  With this in mind, we set out to create the best grid view component available for iOS to-date.
+`KKGridView` was created in July 2011 for usage in a few of the apps I was working on.  When I discovered that this would be both very difficult and time consuming, I sought out the help of [Giulio Petek](http://twitter.com/GiloTM) and [Jonathan Sterling](http://twitter.com/jonsterling).  Additionally, we brought on [Kyle Hickinson](http://twiter.com/kylehickinson), [Matthias Tretter](http://twitter.com/myell0w), and most recently, [Peter Steinberger](http://twitter.com/steipete).  Luckily, all of my fellow collaborators shared the common opinion that all of the grid views available now are slow, feature-incomplete, and coded in an inextensible fashion.  With this in mind, we set out to create the best grid view component available for iOS to-date.
 
 ##Goals
 
