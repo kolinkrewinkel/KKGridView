@@ -272,12 +272,6 @@
 
 - (void)_layoutAccessories
 {
-    //    if (_staggerForInsertion) {
-    //        [UIView beginAnimations:nil context:NULL];
-    //        [UIView setAnimationDuration:0.25];
-    //        [UIView setAnimationsEnabled:YES];
-    //    }
-    
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
     CGFloat offset = self.contentOffset.y;
     
@@ -342,9 +336,6 @@
         footer.view.frame = f;
         index++;
     }
-    //    if (_staggerForInsertion) {
-    //        [UIView commitAnimations];
-    //    }
 }
 
 - (void)_layoutExtremities
@@ -717,8 +708,6 @@
             break;
     }
     
-    //    point.y -= _headerHeights[indexPath.section];
-    
     self.contentOffset = point;
     
     if (animated)
@@ -893,7 +882,7 @@
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:0.25 animations:^(void) {
-            [self setNeedsLayout];
+            [self _layoutGridView];
         }];
     }
     _allowsMultipleSelection = allowsMultipleSelection;

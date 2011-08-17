@@ -44,7 +44,6 @@ static const NSUInteger kNumSection = 40;
     }
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)];
-    //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Select a cell."]];
     
     kFirstSectionCount = 7;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
@@ -136,22 +135,6 @@ static const NSUInteger kNumSection = 40;
     cell.backgroundColor = [UIColor lightGrayColor];
     
     return cell;
-}
-
-- (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath
-{
-    //    [self.navigationItem setPrompt:[NSString stringWithFormat:@"Selected cell at index: %d in section: %d.", indexPath.index, indexPath.section]];
-}
-
-- (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath
-{
-    //    return [KKIndexPath indexPathForIndex:0 inSection:indexPath.section];
-    return nil;
-}
-
-- (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell forItemAtIndexPath:(KKIndexPath *)indexPath
-{
-    //    NSLog(@"will display cell: %@", indexPath);
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
