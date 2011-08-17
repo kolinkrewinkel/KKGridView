@@ -94,12 +94,13 @@
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
-    _renderQueue = dispatch_queue_create("com.gridviewdemo.kkgridview", NULL);
+    _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
     dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_set_target_queue(_renderQueue, high);
     
     self.alwaysBounceVertical = YES;
-    self.delaysContentTouches = NO;
+    self.delaysContentTouches = YES;
+    self.canCancelContentTouches = YES;
 }
 
 - (id)init
