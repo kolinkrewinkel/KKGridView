@@ -29,24 +29,21 @@
         unsigned delegateRespondsToWillDisplayCell:1;
     } _flags;
     
+    __strong NSMutableArray *_footerViews;
+    __strong NSMutableArray *_headerViews;
+ 
+    BOOL _markedForDisplay;
+    dispatch_queue_t _renderQueue;
+    
     std::vector<CGFloat> _footerHeights;
     std::vector<CGFloat> _headerHeights;
-    
-    NSMutableArray *_footerViews;
-    NSMutableArray *_headerViews;
-    NSArray *_lastVisibleIndexPaths;
-    BOOL _markedForDisplay;
-    NSUInteger _numberOfItems;
-    dispatch_queue_t _renderQueue;
-    __strong NSMutableDictionary *_reusableCells;
-    
     std::vector<CGFloat> _sectionHeights;
     std::vector<NSUInteger> _sectionItemCount;
-    __strong NSMutableDictionary *_visibleCells;
-    NSRange _visibleSections;
     
-    NSMutableSet *_selectedIndexPaths;
-    KKGridViewCell * _lastSelectedCell;
+    __strong NSMutableDictionary *_reusableCells;
+    __strong NSMutableDictionary *_visibleCells;
+    
+    __strong NSMutableSet *_selectedIndexPaths;
     __strong UITapGestureRecognizer *_selectionRecognizer;
     
     BOOL _staggerForInsertion;
@@ -510,8 +507,7 @@
                     }];
                 }];
                 break;
-            }   
-            case KKGridViewAnimationFade: {
+            } case KKGridViewAnimationFade: {
                 cell.alpha = 0.f;
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
@@ -521,13 +517,11 @@
                 }];
                 
                 break;
-            }
-            case KKGridViewAnimationNone: {
+            } case KKGridViewAnimationNone: {
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 break;
-            }
-            case KKGridViewAnimationResize: {
+            } case KKGridViewAnimationResize: {
                 cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
@@ -535,8 +529,7 @@
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 }];
                 break;
-            }
-            case KKGridViewAnimationImplode: {
+            } case KKGridViewAnimationImplode: {
                 cell.alpha = 0.f;
                 cell.transform = CGAffineTransformMakeScale(1.3f, 1.3f);
                 [self addSubview:cell];
@@ -785,7 +778,6 @@
         }
         
         [_selectedIndexPaths addObject:indexPath]; 
-
     }
     
     cell.selected = YES;
