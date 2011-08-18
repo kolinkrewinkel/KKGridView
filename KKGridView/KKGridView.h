@@ -45,6 +45,7 @@ typedef enum {
 @property (nonatomic, strong) UIView *gridHeaderView;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
+@property (nonatomic, strong) UIView *backgroundView;
 
 
 #pragma mark - Initializers

@@ -31,7 +31,7 @@
     
     __strong NSMutableArray *_footerViews;
     __strong NSMutableArray *_headerViews;
- 
+    
     BOOL _markedForDisplay;
     dispatch_queue_t _renderQueue;
     
@@ -86,6 +86,7 @@
 @synthesize gridHeaderView = _gridHeaderView;
 @synthesize numberOfColumns = _numberOfColumns;
 @synthesize numberOfSections = _numberOfSections;
+@synthesize backgroundView = _backgroundView;
 
 #pragma mark - Initialization Methods
 
@@ -377,20 +378,17 @@
                 needsAccessoryReload = YES;
                 [self reloadContentSize];
                 
-                if (_updateStack.itemsToUpdate.count > 0) {
-                    for (KKGridViewUpdate *update in _updateStack.itemsToUpdate) {
-                        if (update.indexPath.section == indexPath.section) {
-//                          Twisted logic
-                            switch (update.type) {
-                                case KKGridViewUpdateTypeItemInsert:
-                                    update.indexPath.index++;
-                                    break;
-                                case KKGridViewUpdateTypeItemDelete:
-                                    update.indexPath.index--;
-                                    break;
-                                default:
-                                    break;
-                            }
+                for (KKGridViewUpdate *update in _updateStack.itemsToUpdate) {
+                    if (update.indexPath.section == indexPath.section) {
+                        switch (update.type) {
+                            case KKGridViewUpdateTypeItemInsert:
+                                update.indexPath.index++;
+                                break;
+                            case KKGridViewUpdateTypeItemDelete:
+                                update.indexPath.index--;
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -486,7 +484,7 @@
         CGRect originalFrame = [self rectForCellAtIndexPath:indexPath];
         cell.frame = originalFrame;
         CGRect transformedFrame = originalFrame;
-
+        
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
@@ -578,7 +576,7 @@
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
-
+                
                 break;
             } case KKGridViewAnimationSlideBottom: {
                 cell.alpha = 0.f;
@@ -591,7 +589,7 @@
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
-
+                
                 break;
             } case KKGridViewAnimationSlideLeft: {
                 cell.alpha = 0.f;                
@@ -604,7 +602,7 @@
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
-
+                
                 break;
             }
             default:
@@ -629,13 +627,10 @@
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
-    NSMutableArray *updates = [NSMutableArray array];
-    
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
-        [updates addObject:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
+        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
     }
     
-    [_updateStack addUpdates:updates];
     [self _layoutGridView];
 }
 
@@ -644,18 +639,21 @@
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:[_visibleCells count] + amount];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
-        //        TODO: Switch to NSRange intersection-checking
         if (indexPath.section == fromPath.section) {
             if (([indexPath compare:fromPath] == NSOrderedSame | [indexPath compare:fromPath] == NSOrderedDescending) ) {
-                
                 indexPath.index++;
             }
         }
         [dictionary setObject:obj forKey:indexPath];
     }];
     
+    
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
+    
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [(KKGridViewCell *)obj setFrame:[self rectForCellAtIndexPath:key]];
+    }];
 }
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
@@ -824,7 +822,7 @@
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
     KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
-
+    
     if (_allowsMultipleSelection) {
         [_selectedIndexPaths addObject:indexPath]; 
     } else {
