@@ -44,9 +44,11 @@
     std::vector<NSUInteger> _sectionItemCount;
     __strong NSMutableDictionary *_visibleCells;
     NSRange _visibleSections;
+    
     NSMutableSet *_selectedIndexPaths;
     KKGridViewCell * _lastSelectedCell;
-    //    BOOL _modifyingItems;
+    __strong UITapGestureRecognizer *_selectionRecognizer;
+    
     BOOL _staggerForInsertion;
     __strong KKGridViewUpdateStack *_updateStack;
 }
@@ -71,6 +73,8 @@
 
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
+
+- (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
 
 @end
 
@@ -101,6 +105,9 @@
     self.alwaysBounceVertical = YES;
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
+    
+    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    [self addGestureRecognizer:_selectionRecognizer];
 }
 
 - (id)init
@@ -764,72 +771,24 @@
 
 #pragma mark - Touch Handling
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (_lastSelectedCell) {
-        _lastSelectedCell.selected = NO;
-        _lastSelectedCell = nil;
-    }
-    [super touchesMoved:touches withEvent:event];
-}
+- (void)_handleSelection:(UITapGestureRecognizer *)recognizer
+{    
+    KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
+    KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch *touch = [touches anyObject];
-    CGPoint location = [touch locationInView:self];
-    KKIndexPath *indexPath = [self indexPathsForItemAtPoint:location];
-    
-    if (indexPath.index == NSNotFound) {
-        [super touchesEnded:touches withEvent:event];
-        return;
-    }
-    
-    if (_flags.delegateRespondsToWillSelectItem)
-    {
-        KKIndexPath *redirectedPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
-        if (redirectedPath != nil && ![redirectedPath isEqual:indexPath])
-        {
-            indexPath = redirectedPath;
-            
-            _lastSelectedCell.selected = NO;
-            _lastSelectedCell = [_visibleCells objectForKey:indexPath];
-            [self _selectItemAtIndexPath:indexPath];
+    if (_allowsMultipleSelection) {
+        [_selectedIndexPaths addObject:indexPath]; 
+    } else {
+        for (id obj in [_selectedIndexPaths allObjects]) {
+            KKGridViewCell *cell = [_visibleCells objectForKey:obj];
+            cell.selected = NO;
         }
-    }
-    
-    if (_flags.delegateRespondsToDidSelectItem) {
-        [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
-    }
-    
-    _lastSelectedCell = nil;
-    
-    [super touchesEnded:touches withEvent:event];
-}
+        
+        [_selectedIndexPaths addObject:indexPath]; 
 
-- (BOOL)touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
-{
-    UITouch *touch = [touches anyObject];
-    if ([touch.view isKindOfClass:[KKGridViewCell class]]) {
-        _lastSelectedCell = (KKGridViewCell *)touch.view;
     }
     
-    KKIndexPath *indexPathToSelect = [self indexPathsForItemAtPoint:[touch locationInView:self]];
-    
-    if (indexPathToSelect.index == NSNotFound) {
-        return YES;
-    }
-    
-    [self _selectItemAtIndexPath:indexPathToSelect];
-    
-    return YES;
-}
-
-- (BOOL)touchesShouldCancelInContentView:(UIView *)view
-{
-    _lastSelectedCell.selected = NO;
-    _lastSelectedCell = nil;
-    
-    return YES;
+    cell.selected = YES;
 }
 
 #pragma mark - Getters
