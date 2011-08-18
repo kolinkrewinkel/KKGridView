@@ -61,7 +61,7 @@
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 
-- (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)indexPath throughIndexPath:(KKIndexPath *)throughPath;
+- (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)indexPath throughIndexPath:(KKIndexPath *)throughPath;
 
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
@@ -470,11 +470,9 @@
 {
     KKIndexPath *indexPath = update.indexPath;
     _markedForDisplay = YES;
+    _staggerForInsertion = YES;
     
-    if (update.type == KKGridViewUpdateTypeItemInsert) {
-        _staggerForInsertion = YES;
-        [self _incrementVisibleCellsByAmount:1 fromIndexPath:indexPath throughIndexPath:[self _lastIndexPathForSection:indexPath.section]];
-    }
+    [self _incrementVisibleCellsByAmount:(update.type == KKGridViewUpdateTypeItemInsert) ? 1 : -1 fromIndexPath:indexPath throughIndexPath:[self _lastIndexPathForSection:indexPath.section]];
     
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     cell.selected = [_selectedIndexPaths containsObject:indexPath];
@@ -487,26 +485,51 @@
         
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
-                cell.alpha = 0.f;
-                cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:0.15 animations:^(void) {
-                    cell.alpha = 0.8f;
-                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
-                } completion:^(BOOL finished) {
-                    [UIView animateWithDuration:0.05 animations:^(void) {
-                        cell.alpha = 0.75f;
+                if (update.type == KKGridViewUpdateTypeItemInsert) {
+                    cell.alpha = 0.f;
+                    cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
+                    [self addSubview:cell];
+                    [self sendSubviewToBack:cell];
+                    [UIView animateWithDuration:0.15 animations:^(void) {
+                        cell.alpha = 0.8f;
+                        cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                    } completion:^(BOOL finished) {
+                        [UIView animateWithDuration:0.05 animations:^(void) {
+                            cell.alpha = 0.75f;
+                            cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+                        } completion:^(BOOL finished) {
+                            [UIView animateWithDuration:0.05 animations:^(void) {
+                                cell.alpha = 1.f;
+                                cell.transform = CGAffineTransformIdentity;
+                                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                                
+                            }];
+                        }];
+                    }];
+                } else if (update.type == KKGridViewUpdateTypeItemDelete) {
+                    [UIView animateWithDuration:0.15 animations:^(void) {
+                        cell.alpha = 0.7f;
                         cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
                     } completion:^(BOOL finished) {
                         [UIView animateWithDuration:0.05 animations:^(void) {
-                            cell.alpha = 1.f;
-                            cell.transform = CGAffineTransformIdentity;
-                            cell.frame = [self rectForCellAtIndexPath:indexPath];
-                            
+                            cell.alpha = 0.8f;
+                            cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+                        } completion:^(BOOL finished) {
+                            [UIView animateWithDuration:0.05 animations:^(void) {
+                                cell.alpha = 0.f;
+                                cell.transform = CGAffineTransformMakeScale(1.5f, 1.5f);
+                                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                                
+                            } completion:^(BOOL finished) {
+                                [cell removeFromSuperview];
+                                cell.transform = CGAffineTransformIdentity;
+                                cell.alpha = 1.f;
+                                [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+                            }];
                         }];
                     }];
-                }];
+
+                }
                 break;
             } case KKGridViewAnimationFade: {
                 cell.alpha = 0.f;
@@ -634,14 +657,23 @@
     [self _layoutGridView];
 }
 
-- (void)_incrementVisibleCellsByAmount:(NSUInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
+- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
+{
+    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
+        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation]];
+    }
+    
+    [self _layoutGridView];
+}
+
+- (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:[_visibleCells count] + amount];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
         if (indexPath.section == fromPath.section) {
             if (([indexPath compare:fromPath] == NSOrderedSame | [indexPath compare:fromPath] == NSOrderedDescending) ) {
-                indexPath.index++;
+                indexPath.index+=amount;
             }
         }
         [dictionary setObject:obj forKey:indexPath];
