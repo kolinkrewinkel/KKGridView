@@ -70,10 +70,10 @@ static const NSUInteger kNumSection = 40;
 
 - (void)addItems:(id)sender
 {
-    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:4 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
+    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
     
     kFirstSectionCount+= [items count];
-    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationSlideTop];
 }
 
 - (void)toggleEditingStyle:(id)sender

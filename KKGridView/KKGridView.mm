@@ -95,6 +95,7 @@
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
+    
     _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
     dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     dispatch_set_target_queue(_renderQueue, high);
@@ -482,8 +483,10 @@
     if (!cell) {
         cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
         [_visibleCells setObject:cell forKey:indexPath];
-        cell.frame = [self rectForCellAtIndexPath:indexPath];
-        
+        CGRect originalFrame = [self rectForCellAtIndexPath:indexPath];
+        cell.frame = originalFrame;
+        CGRect transformedFrame = originalFrame;
+
         switch (update.animation) {
             case KKGridViewAnimationExplode: {
                 cell.alpha = 0.f;
@@ -549,6 +552,59 @@
                         }];
                     }];
                 }];
+                break;
+            } case KKGridViewAnimationSlideTop: {
+                cell.alpha = 0.f;
+                
+                transformedFrame.origin.y -= originalFrame.size.height * .75f;
+                cell.frame = transformedFrame;
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.alpha = 1.f;
+                    cell.frame = originalFrame;
+                }];
+                
+                break;
+            } case KKGridViewAnimationSlideRight: {
+                cell.alpha = 0.f;
+                transformedFrame.origin.x += originalFrame.size.height * .75f;
+                cell.frame = transformedFrame;
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.alpha = 1.f;
+                    cell.frame = originalFrame;
+                }];
+
+                break;
+            } case KKGridViewAnimationSlideBottom: {
+                cell.alpha = 0.f;
+                transformedFrame.origin.y += originalFrame.size.height * .75f;
+                cell.frame = transformedFrame;
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.alpha = 1.f;
+                    cell.frame = originalFrame;
+                }];
+
+                break;
+            } case KKGridViewAnimationSlideLeft: {
+                cell.alpha = 0.f;                
+                transformedFrame.origin.x -= originalFrame.size.height * .75f;
+                cell.frame = transformedFrame;
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView animateWithDuration:0.25 animations:^(void) {
+                    cell.alpha = 1.f;
+                    cell.frame = originalFrame;
+                }];
+
                 break;
             }
             default:
