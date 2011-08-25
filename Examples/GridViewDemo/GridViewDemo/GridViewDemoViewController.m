@@ -87,8 +87,12 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
     
-    kFirstSectionCount-= [items count];
-    [_gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    if (kFirstSectionCount >= [items count]) {
+        kFirstSectionCount-= [items count];
+        [_gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    }else {
+        NSLog(@"Warning: can't remove any more objects here");
+    }
 }
 
 - (void)toggleSelectionStyle:(id)sender
