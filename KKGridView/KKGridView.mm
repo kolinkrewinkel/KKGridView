@@ -864,7 +864,7 @@
             KKGridViewCell *cell = [_visibleCells objectForKey:obj];
             cell.selected = NO;
         }
-
+        [_selectedIndexPaths removeAllObjects];
         [_selectedIndexPaths addObject:indexPath]; 
     }
     
