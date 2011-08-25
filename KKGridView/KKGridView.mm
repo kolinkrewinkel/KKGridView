@@ -15,6 +15,8 @@
 #import <map>
 #import <vector>
 
+#define kKKGridDefaultAnimationDuration 0.25f
+
 @interface KKGridView () {
     struct {
         unsigned dataSourceRespondsToHeightForFooterInSection:1;
@@ -402,7 +404,7 @@
             [self _displayCell:cell atIndexPath:indexPath];
         } else if (_markedForDisplay) {
             if (_staggerForInsertion) {
-                [UIView animateWithDuration:0.25 delay:index > 0 ? 0.1 : 0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration delay:index > 0 ? 0.1 : 0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 } completion:nil];
             } else {
@@ -414,7 +416,7 @@
     [self _cleanupCells];
     
     if (needsAccessoryReload) {
-        [UIView animateWithDuration:0.25 animations:^(void) {
+        [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
             [self reloadContentSize];
             void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
             {
@@ -536,7 +538,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                 }];
                 
@@ -549,7 +551,7 @@
                 cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 }];
                 break;
@@ -582,7 +584,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -595,7 +597,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -608,7 +610,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -621,7 +623,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:0.25 animations:^(void) {
+                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -862,7 +864,7 @@
             KKGridViewCell *cell = [_visibleCells objectForKey:obj];
             cell.selected = NO;
         }
-        
+
         [_selectedIndexPaths addObject:indexPath]; 
     }
     
@@ -919,7 +921,7 @@
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
-        [UIView animateWithDuration:0.25 animations:^(void) {
+        [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
             [self _layoutGridView];
         }];
     }
