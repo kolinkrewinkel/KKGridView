@@ -690,13 +690,20 @@
     }];
 }
 
-- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
+// returns the cell container for reusable cells. creates and adds a container object if non exists yet
+- (NSMutableSet *)_reusableCellSetForIdentifier:(NSString *)identifier
 {
     NSMutableSet *set = [_reusableCells objectForKey:identifier];
     if (!set) {
         [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
         set = [_reusableCells objectForKey:identifier];;
     }
+    return set;
+}
+
+- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
+{
+    NSMutableSet *set = [self _reusableCellSetForIdentifier:identifier];
     [set addObject:cell];
 }
 
@@ -1040,8 +1047,9 @@
         }
     }
     
+    // cells are saved in _reusableCells container to re-use them later on
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        NSMutableSet *set = [_reusableCells objectForKey:cell.reuseIdentifier];
+        NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
         [set addObject:cell];
     }
     
