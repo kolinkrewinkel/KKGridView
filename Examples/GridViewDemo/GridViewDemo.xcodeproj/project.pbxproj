@@ -17,6 +17,7 @@
 		1A530A4413DE962700E6C60B /* GridViewDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */; };
 		1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */; };
 		1A530A5813DE965900E6C60B /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A530A5513DE964D00E6C60B /* libKKGridView.a */; };
+		397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397E3D271406642500C3DEA3 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoViewController.m; sourceTree = "<group>"; };
 		1A530A4613DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GridViewDemoViewController.xib; sourceTree = "<group>"; };
 		1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = KKGridView.xcodeproj; path = ../../KKGridView.xcodeproj; sourceTree = "<group>"; };
+		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */,
 				1A530A5813DE965900E6C60B /* libKKGridView.a in Frameworks */,
 				1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */,
 				1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */,
@@ -72,6 +75,7 @@
 		1A530A1E13DE962700E6C60B = {
 			isa = PBXGroup;
 			children = (
+				397E3D271406642500C3DEA3 /* QuartzCore.framework */,
 				1A530A3313DE962700E6C60B /* GridViewDemo */,
 				1A530A2C13DE962700E6C60B /* Frameworks */,
 				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,

@@ -164,4 +164,20 @@ static const NSUInteger kNumSection = 40;
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
+- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    CATransition *fadeTransition = [CATransition animation];
+    
+    fadeTransition.duration = duration;
+    fadeTransition.type = kCATransitionFade;
+    fadeTransition.removedOnCompletion = YES;
+    fadeTransition.fillMode = kCAFillModeForwards;
+    
+    //  Implicit animations from UIKit / UIView animation needs to be removed
+    for (CALayer *aLayer in _gridView.layer.sublayers)
+        [aLayer removeAllAnimations];
+    
+    [_gridView.layer addAnimation:fadeTransition forKey:@"transition"];
+    
+}
+
 @end
