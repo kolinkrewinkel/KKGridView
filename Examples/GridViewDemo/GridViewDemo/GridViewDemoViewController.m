@@ -17,7 +17,7 @@ static const NSUInteger kNumSection = 40;
     KKGridView *_gridView;
     NSMutableArray *_headerViews;
     NSMutableArray *_footerViews;
-    NSUInteger kFirstSectionCount;
+    NSUInteger firstSectionCount;
 }
 
 
@@ -43,7 +43,7 @@ static const NSUInteger kNumSection = 40;
         [_footerViews addObject:footer];
     }
         
-    kFirstSectionCount = 7;
+    firstSectionCount = 7;
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
     _gridView.cellSize = CGSizeMake(75.f, 75.f);
     _gridView.scrollsToTop = YES;
@@ -79,7 +79,7 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
     
-    kFirstSectionCount+= [items count];
+    firstSectionCount+= [items count];
     [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
 
@@ -87,8 +87,8 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
     
-    if (kFirstSectionCount >= [items count]) {
-        kFirstSectionCount-= [items count];
+    if (firstSectionCount >= [items count]) {
+        firstSectionCount-= [items count];
         [_gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
     }else {
         NSLog(@"Warning: can't remove any more objects here");
@@ -105,7 +105,7 @@ static const NSUInteger kNumSection = 40;
 {
     switch (section) {
         case 0:
-            return kFirstSectionCount;
+            return firstSectionCount;
             break;
         case 1:
             return 15;
