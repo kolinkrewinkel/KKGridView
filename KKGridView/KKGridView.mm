@@ -869,6 +869,10 @@
         [_selectedIndexPaths addObject:indexPath]; 
     }
     
+    if (_flags.delegateRespondsToDidDeselectItem) {
+        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
+    }
+    
     cell.selected = YES;
 }
 
