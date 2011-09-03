@@ -64,15 +64,13 @@ static const NSUInteger kNumSection = 40;
     
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = YES;
-    UIBarButtonItem *fixedSpacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    fixedSpacer.width = 5.f;
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
 
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
     
-    self.toolbarItems = [NSArray arrayWithObjects:add, fixedSpacer, remove, spacer, multiple, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, multiple, nil];
 }
 
 - (void)addItems:(id)sender
@@ -151,6 +149,7 @@ static const NSUInteger kNumSection = 40;
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
     
+    cell.indexPath = indexPath;
     cell.backgroundColor = [UIColor lightGrayColor];
     
     return cell;
@@ -164,7 +163,10 @@ static const NSUInteger kNumSection = 40;
     return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
-- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+- (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+//    Not sure how I feel about this. (@kolinkrewinkel)
+    
     CATransition *fadeTransition = [CATransition animation];
     
     fadeTransition.duration = duration;

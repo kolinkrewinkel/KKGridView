@@ -75,7 +75,6 @@
 		1A530A1E13DE962700E6C60B = {
 			isa = PBXGroup;
 			children = (
-				397E3D271406642500C3DEA3 /* QuartzCore.framework */,
 				1A530A3313DE962700E6C60B /* GridViewDemo */,
 				1A530A2C13DE962700E6C60B /* Frameworks */,
 				1A530A4D13DE964D00E6C60B /* KKGridView.xcodeproj */,
@@ -96,9 +95,10 @@
 		1A530A2C13DE962700E6C60B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1A530A2D13DE962700E6C60B /* UIKit.framework */,
-				1A530A2F13DE962700E6C60B /* Foundation.framework */,
 				1A530A3113DE962700E6C60B /* CoreGraphics.framework */,
+				1A530A2F13DE962700E6C60B /* Foundation.framework */,
+				397E3D271406642500C3DEA3 /* QuartzCore.framework */,
+				1A530A2D13DE962700E6C60B /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -108,10 +108,10 @@
 			children = (
 				1A530A3C13DE962700E6C60B /* GridViewDemoAppDelegate.h */,
 				1A530A3D13DE962700E6C60B /* GridViewDemoAppDelegate.m */,
-				1A530A3F13DE962700E6C60B /* MainWindow.xib */,
 				1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */,
 				1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */,
 				1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */,
+				1A530A3F13DE962700E6C60B /* MainWindow.xib */,
 				1A530A3413DE962700E6C60B /* Supporting Files */,
 			);
 			path = GridViewDemo;
@@ -121,9 +121,9 @@
 			isa = PBXGroup;
 			children = (
 				1A530A3513DE962700E6C60B /* GridViewDemo-Info.plist */,
+				1A530A3B13DE962700E6C60B /* GridViewDemo-Prefix.pch */,
 				1A530A3613DE962700E6C60B /* InfoPlist.strings */,
 				1A530A3913DE962700E6C60B /* main.m */,
-				1A530A3B13DE962700E6C60B /* GridViewDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";

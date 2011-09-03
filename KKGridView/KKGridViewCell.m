@@ -14,6 +14,7 @@
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
+@synthesize indexPath = _indexPath;
 
 
 #pragma mark - Class Methods
@@ -27,7 +28,6 @@
 {
     NSString *cellID = [self cellIdentifier];
     KKGridViewCell *cell = (KKGridViewCell *)[gridView dequeueReusableCellWithIdentifier:cellID];
-    
     if (cell == nil) {
         cell = [[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID];
     }
@@ -80,12 +80,23 @@
     }];
 }
 
+- (void)setIndexPath:(KKIndexPath *)indexPath
+{
+    _indexPath = [indexPath copy];
+    [self setNeedsDisplay];
+}
+
 #pragma mark - Drawing
 
 - (void)layoutSubviews
 {
     _selectedBackgroundView.frame = self.bounds;
     [super layoutSubviews];
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    [[NSString stringWithFormat:@"{%d, %d}", self.indexPath.section, self.indexPath.index] drawInRect:rect withFont:[UIFont boldSystemFontOfSize:12.f]];
 }
 
 #pragma mark - Subclassers

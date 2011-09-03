@@ -15,7 +15,7 @@
 #import <map>
 #import <vector>
 
-#define kKKGridDefaultAnimationDuration 0.25f
+#define KKGridDefaultAnimationDuration 0.25f
 
 @interface KKGridView () {
     struct {
@@ -54,7 +54,6 @@
 
 - (void)_sharedInitialization;
 - (void)_reloadIntegers;
-- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
 - (void)_respondToBoundsChange;
 
 - (void)_cleanupCells;
@@ -63,10 +62,14 @@
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 
+- (CGFloat)_heightForSection:(NSUInteger)section;
+
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)indexPath throughIndexPath:(KKIndexPath *)throughPath;
 
-- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
+- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
+- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
+- (NSMutableSet *)_reusableCellSetForIdentifier:(NSString *)identifier;
 
 - (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)indexPaths;
 
@@ -148,19 +151,39 @@
     return self;
 }
 
-#pragma mark - Metrics + Layout
+#pragma mark - Metrics
 
-- (void)layoutSubviews
+- (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
 {
-    [self _layoutGridView];
-    [super layoutSubviews];
+    CGRect rect = CGRectZero;
+    CGFloat yPosition = _cellPadding.height + _gridHeaderView.frame.size.height;
+    CGFloat xPosition = _cellPadding.width;
+    for (NSUInteger section = 0; section < indexPath.section; section++) {
+        if (_sectionHeights.size() > 0) {
+            yPosition += _sectionHeights[section];
+        } else {
+            yPosition += [self _heightForSection:section];
+        }
+    }
+    
+    if (indexPath.section < _headerHeights.size()) {
+        yPosition += _headerHeights[indexPath.section];
+    }
+    
+    NSInteger row = floor(indexPath.index / _numberOfColumns);
+    NSInteger column = indexPath.index - (row * _numberOfColumns);
+    
+    yPosition += (row * (_cellSize.height + _cellPadding.height));
+    xPosition += (column * (_cellSize.width + _cellPadding.width));
+    
+    rect.size = _cellSize;
+    rect.origin.y = yPosition;
+    rect.origin.x = xPosition;
+    
+    return rect;
 }
 
-- (void)_respondToBoundsChange
-{
-    [self reloadData];
-    [self setNeedsLayout];
-}
+#pragma mark - Setters
 
 - (void)setFrame:(CGRect)frame
 {
@@ -178,6 +201,14 @@
     if (_renderQueue != NULL && !CGSizeEqualToSize(bounds.size, oldBounds.size)) {
         [self _respondToBoundsChange];
     }
+}
+
+#pragma mark - Basic Layout Methods
+
+- (void)layoutSubviews
+{
+    [self _layoutGridView];
+    [super layoutSubviews];
 }
 
 - (void)_layoutGridView
@@ -229,55 +260,7 @@
     return height;
 }
 
-- (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
-{
-    CGRect rect = CGRectZero;
-    CGFloat yPosition = _cellPadding.height + _gridHeaderView.frame.size.height;
-    CGFloat xPosition = _cellPadding.width;
-    for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_sectionHeights.size() > 0) {
-            yPosition += _sectionHeights[section];
-        } else {
-            yPosition += [self _heightForSection:section];
-        }
-    }
-    
-    if (indexPath.section < _headerHeights.size()) {
-        yPosition += _headerHeights[indexPath.section];
-    }
-    
-    NSInteger row = floor(indexPath.index / _numberOfColumns);
-    NSInteger column = indexPath.index - (row * _numberOfColumns);
-    
-    yPosition += (row * (_cellSize.height + _cellPadding.height));
-    xPosition += (column * (_cellSize.width + _cellPadding.width));
-    
-    rect.size = _cellSize;
-    rect.origin.y = yPosition;
-    rect.origin.x = xPosition;
-    
-    return rect;
-}
-
-#pragma mark - Internal Layout Methods
-
-- (void)_cleanupCells
-{
-    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-    
-    NSArray *visible = [_visibleCells allValues];
-    NSArray *keys = [_visibleCells allKeys];
-    
-    NSUInteger loopCount = 0;
-    for (KKGridViewCell *cell in visible) {
-        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
-            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-        }
-        loopCount++;
-    }
-}
+#pragma mark - Private Layout Methods
 
 - (void)_layoutAccessories
 {
@@ -403,20 +386,14 @@
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath];
         } else if (_markedForDisplay) {
-            if (_staggerForInsertion) {
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration delay:index > 0 ? 0.1 : 0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                } completion:nil];
-            } else {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];   
-            }
+            cell.frame = [self rectForCellAtIndexPath:indexPath];   
         }
         index++;
     }
     [self _cleanupCells];
     
     if (needsAccessoryReload) {
-        [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+        [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
             [self reloadContentSize];
             void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
             {
@@ -444,13 +421,32 @@
     }
 }
 
-- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
+
+- (void)_cleanupCells
 {
-    KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-    [_visibleCells setObject:cell forKey:indexPath];
-    cell.frame = [self rectForCellAtIndexPath:indexPath];
-    return cell;
+    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
+    
+    NSArray *visible = [_visibleCells allValues];
+    NSArray *keys = [_visibleCells allKeys];
+    
+    NSUInteger loopCount = 0;
+    for (KKGridViewCell *cell in visible) {
+        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
+            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+        }
+        loopCount++;
+    }
 }
+
+- (void)_respondToBoundsChange
+{
+    [self reloadData];
+    [self setNeedsLayout];
+}
+
+#pragma mark - Cell Management
 
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath
 {
@@ -463,10 +459,39 @@
     [self sendSubviewToBack:cell];
 }
 
+- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
+{
+    NSMutableSet *set = [self _reusableCellSetForIdentifier:identifier];
+    [set addObject:cell];
+}
+
+- (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
+{
+    KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
+    [_visibleCells setObject:cell forKey:indexPath];
+    cell.frame = [self rectForCellAtIndexPath:indexPath];
+    return cell;
+}
+
+// returns the cell container for reusable cells. creates and adds a container object if non exists yet
+- (NSMutableSet *)_reusableCellSetForIdentifier:(NSString *)identifier
+{
+    NSMutableSet *set = [_reusableCells objectForKey:identifier];
+    if (!set) {
+        [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
+        set = [_reusableCells objectForKey:identifier];;
+    }
+    return set;
+}
+
+#pragma mark - Private Getters
+
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section
 {
     return [KKIndexPath indexPathForIndex:[_dataSource gridView:self numberOfItemsInSection:section] inSection:section];
 }
+
+#pragma mark - Update Handling
 
 - (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)visiblePaths
 {
@@ -530,7 +555,7 @@
                             }];
                         }];
                     }];
-
+                    
                 }
                 break;
             } case KKGridViewAnimationFade: {
@@ -538,7 +563,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                 }];
                 
@@ -551,7 +576,7 @@
                 cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 }];
                 break;
@@ -584,7 +609,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -597,7 +622,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -610,7 +635,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -623,50 +648,19 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
-                
                 break;
             }
             default:
                 break;
         }
-        
     }
 }
 
-#pragma mark --
-
-- (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
-{
-    for (KKIndexPath *indexPath in [_visibleCells allKeys]) {
-        if ([_visibleCells objectForKey:indexPath] == cell)
-            return indexPath;
-    }
-    
-    return [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
-}
-
-
-- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
-{
-    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
-        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
-    }
-    
-    [self _layoutGridView];
-}
-
-- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
-{
-    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
-        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation]];
-    }
-    
-    [self _layoutGridView];
-}
+#pragma mark - Update Helpers
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
@@ -685,27 +679,65 @@
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
     
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [(KKGridViewCell *)obj setFrame:[self rectForCellAtIndexPath:key]];
-    }];
-}
-
-// returns the cell container for reusable cells. creates and adds a container object if non exists yet
-- (NSMutableSet *)_reusableCellSetForIdentifier:(NSString *)identifier
-{
-    NSMutableSet *set = [_reusableCells objectForKey:identifier];
-    if (!set) {
-        [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
-        set = [_reusableCells objectForKey:identifier];;
+    __block NSTimeInterval delay = 0.05;
+    __block NSUInteger count = 0;
+    
+    NSArray *keys = [_visibleCells allKeys];
+    for (KKGridViewCell *cell in [_visibleCells allValues]) {
+        [UIView animateWithDuration:KKGridDefaultAnimationDuration delay:(count) * delay options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+            cell.frame = [self rectForCellAtIndexPath:[keys objectAtIndex:count]];
+        } completion:nil];
+        count++;
     }
-    return set;
 }
 
-- (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
+#pragma mark - Public Getters
+
+- (KKIndexPath *)indexPathForCell:(KKGridViewCell *)cell
 {
-    NSMutableSet *set = [self _reusableCellSetForIdentifier:identifier];
-    [set addObject:cell];
+    for (KKIndexPath *indexPath in [_visibleCells allKeys]) {
+        if ([_visibleCells objectForKey:indexPath] == cell)
+            return indexPath;
+    }
+    
+    return [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
+
+#pragma mark - Item Editing
+
+- (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
+{
+    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
+        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation]];
+    }
+    
+    [self _layoutGridView];
+}
+
+- (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
+{
+    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
+        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
+    }
+    
+    [self _layoutGridView];
+}
+
+- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
+{
+    for (KKIndexPath *path in indexPaths) {
+        KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        if (cell) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:path];
+        }
+        
+        cell = [self _loadCellAtVisibleIndexPath:path];
+        [self _displayCell:cell atIndexPath:path];
+    }
+}
+
+#pragma mark -
 
 - (void)reloadContentSize
 {
@@ -928,7 +960,7 @@
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
-        [UIView animateWithDuration:kKKGridDefaultAnimationDuration animations:^(void) {
+        [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
             [self _layoutGridView];
         }];
     }
@@ -1055,20 +1087,6 @@
     
     [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_visibleCells removeAllObjects];
-}
-
-- (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
-{
-    for (KKIndexPath *path in indexPaths) {
-        KKGridViewCell *cell = [_visibleCells objectForKey:path];
-        if (cell) {
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:path];
-        }
-        
-        cell = [self _loadCellAtVisibleIndexPath:path];
-        [self _displayCell:cell atIndexPath:path];
-    }
 }
 
 @end

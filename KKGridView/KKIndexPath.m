@@ -26,22 +26,27 @@
 - (NSComparisonResult)compare:(id)object
 {
     KKIndexPath *otherIndexPath = (KKIndexPath *)object;
-    if (self.index == otherIndexPath.index && self.section == otherIndexPath.section) {
+    
+//  Identical comparison
+    if (otherIndexPath.section == self.section && otherIndexPath.index == self.index) {
         return NSOrderedSame;
     }
     
+//  Sectional comparison
     if (otherIndexPath.section > self.section) {
         return NSOrderedAscending;
     } else if (otherIndexPath.section < self.section) {
         return NSOrderedDescending;
     }
     
+//  Inter-section index comparison
     if (otherIndexPath.index > self.index) {
         return NSOrderedAscending;
     } else if (otherIndexPath.index < self.index) {
         return NSOrderedDescending;
     }
     
+//  No result could be found (this should never happen, kept in to keep the compiler happy)
     return NSOrderedSame;
 }
 
@@ -54,6 +59,7 @@
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath 
 {
     if ((self = [super init])) {
+//      Simple name change/assignment..
         self.index = indexPath.row;
         self.section = indexPath.section;
     }
@@ -69,12 +75,8 @@
 
 - (BOOL)isEqual:(id)object
 {
-    KKIndexPath *indexPath = (KKIndexPath *)object;
-    if (indexPath.index == self.index && indexPath.section == self.section) {
-        return YES;
-    }
-    
-    return NO;
+    KKIndexPath *indexPath = (KKIndexPath *)object;    
+    return (indexPath.index == self.index && indexPath.section == self.section);
 }
 
 - (NSUInteger)hash {
@@ -89,7 +91,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"Index: %i; Section: %i", _index, _section];
+    return [NSString stringWithFormat:@"%@ {Index: %i; Section: %i}", NSStringFromClass([self class]), _index, _section];
 }
 
 @end

@@ -6,9 +6,10 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "Definitions.h"
 
 @class KKGridView;
+@class KKIndexPath;
 
 @interface KKGridViewCell : UIView
 
@@ -24,6 +25,7 @@
 #pragma mark - Properties
 
 @property (nonatomic, copy) NSString *reuseIdentifier;
+@property (nonatomic, copy) KKIndexPath *indexPath;
 @property (nonatomic) BOOL selected;
 @property (nonatomic, strong) UIView *selectedBackgroundView;
 
