@@ -79,6 +79,8 @@
 
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
 
+- (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
+
 @end
 
 @implementation KKGridView
@@ -399,27 +401,19 @@
     if (needsAccessoryReload) {
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
             [self reloadContentSize];
-            void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
-            {
-                aux.view.frame = CGRectMake(0.f, pos, self.bounds.size.width, h);
-                aux->stickPoint = pos;
-                aux->section = sec;
-            };
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
                 KKGridViewHeader *header = [_headerViews objectAtIndex:section];
-                
-                CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-                configureAuxiliaryView(header, section,position, _headerHeights[section]);
-            }
-            for (NSUInteger section = 0; section < _numberOfSections; section++) {
                 KKGridViewFooter *footer = [_footerViews objectAtIndex:section];
+
+                CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
                 
                 CGFloat footerHeight = _footerHeights[section];
-                CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-                configureAuxiliaryView(footer, section, position, footerHeight);
+                CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
+                
+                [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
+                [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
             }
-            
         }];
         
     }
@@ -907,6 +901,10 @@
         [_selectedIndexPaths addObject:indexPath]; 
     }
     
+    if (_flags.delegateRespondsToDidDeselectItem) {
+        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
+    }
+    
     cell.selected = YES;
 }
 
@@ -1041,13 +1039,6 @@
         }
     };
     
-    void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
-    {
-        aux.view.frame = CGRectMake(0.f, pos, self.bounds.size.width, h);
-        aux->stickPoint = pos;
-        aux->section = sec;
-    };
-    
     if (_flags.dataSourceRespondsToViewForHeaderInSection && _flags.dataSourceRespondsToHeightForHeaderInSection) {
         clearAuxiliaryViews(_headerViews);
         
@@ -1057,7 +1048,7 @@
             [_headerViews addObject:header];
             
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            configureAuxiliaryView(header, section,position, _headerHeights[section]);
+            [self _configureAuxiliaryView:header inSection:section withStickPoint:position height:_headerHeights[section]];
             
             [self addSubview:header.view];
         }
@@ -1073,7 +1064,7 @@
             
             CGFloat footerHeight = _footerHeights[section];
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-            configureAuxiliaryView(footer, section, position, footerHeight);
+            [self _configureAuxiliaryView:footer inSection:section withStickPoint:position height:footerHeight];
             
             [self addSubview:footer.view];
         }
@@ -1094,6 +1085,13 @@
 - (void)dealloc
 {
     dispatch_release(_renderQueue);
+}
+
+- (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
+{
+    headerOrFooter.view.frame = CGRectMake(0.f, stickPoint, self.bounds.size.width, height);
+    headerOrFooter->stickPoint = stickPoint;
+    headerOrFooter->section = section;
 }
 
 @end
