@@ -15,7 +15,8 @@
 #import <map>
 #import <vector>
 
-#define KKGridDefaultAnimationDuration 0.25f
+#define KKGridViewDefaultAnimationDuration 0.25f
+#define KKGridViewDefaultAnimationStaggerInterval 0.025
 
 @interface KKGridView () {
     struct {
@@ -385,15 +386,18 @@
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath];
+            cell.indexPath = indexPath;
+
         } else if (_markedForDisplay) {
-            cell.frame = [self rectForCellAtIndexPath:indexPath];   
+            cell.frame = [self rectForCellAtIndexPath:indexPath];
+            cell.indexPath = indexPath;
         }
         index++;
     }
     [self _cleanupCells];
     
     if (needsAccessoryReload) {
-        [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
             [self reloadContentSize];
             void (^configureAuxiliaryView)(KKGridViewViewInfo *,NSUInteger,CGFloat,CGFloat) = ^(KKGridViewViewInfo *aux, NSUInteger sec, CGFloat pos, CGFloat h)
             {
@@ -563,7 +567,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                 }];
                 
@@ -576,7 +580,7 @@
                 cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 }];
                 break;
@@ -609,7 +613,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -622,7 +626,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -635,7 +639,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -648,7 +652,7 @@
                 [self addSubview:cell];
                 [self sendSubviewToBack:cell];
                 
-                [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
                     cell.alpha = 1.f;
                     cell.frame = originalFrame;
                 }];
@@ -664,6 +668,7 @@
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
+    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:[_visibleCells count] + amount];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
@@ -675,20 +680,15 @@
         [dictionary setObject:obj forKey:indexPath];
     }];
     
-    
     [_visibleCells removeAllObjects];
-    [_visibleCells setDictionary:dictionary];
+    [_visibleCells setDictionary:dictionary];    
     
-    __block NSTimeInterval delay = 0.05;
-    __block NSUInteger count = 0;
-    
-    NSArray *keys = [_visibleCells allKeys];
-    for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        [UIView animateWithDuration:KKGridDefaultAnimationDuration delay:(count) * delay options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-            cell.frame = [self rectForCellAtIndexPath:[keys objectAtIndex:count]];
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:KKGridViewDefaultAnimationStaggerInterval options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+            KKGridViewCell *cell = (KKGridViewCell *)obj;
+            cell.frame = [self rectForCellAtIndexPath:key];
         } completion:nil];
-        count++;
-    }
+    }];
 }
 
 #pragma mark - Public Getters
@@ -960,7 +960,7 @@
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
-        [UIView animateWithDuration:KKGridDefaultAnimationDuration animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^(void) {
             [self _layoutGridView];
         }];
     }
@@ -1087,6 +1087,13 @@
     
     [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_visibleCells removeAllObjects];
+}
+
+#pragma mark - Memory Management
+
+- (void)dealloc
+{
+    dispatch_release(_renderQueue);
 }
 
 @end
