@@ -69,13 +69,14 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
+    UIBarButtonItem *forceLayout = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:_gridView action:@selector(_layoutGridView)];
     
-    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, multiple, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, forceLayout, spacer, multiple, nil];
 }
 
 - (void)addItems:(id)sender
 {
-    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
+    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], nil];
     
     firstSectionCount+= [items count];
     [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];

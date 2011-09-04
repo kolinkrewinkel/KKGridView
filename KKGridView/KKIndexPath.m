@@ -26,26 +26,22 @@
 - (NSComparisonResult)compare:(id)object
 {
     KKIndexPath *otherIndexPath = (KKIndexPath *)object;
-    
 //  Identical comparison
     if (otherIndexPath.section == self.section && otherIndexPath.index == self.index) {
         return NSOrderedSame;
     }
-    
 //  Sectional comparison
     if (otherIndexPath.section > self.section) {
         return NSOrderedAscending;
     } else if (otherIndexPath.section < self.section) {
         return NSOrderedDescending;
     }
-    
 //  Inter-section index comparison
     if (otherIndexPath.index > self.index) {
         return NSOrderedAscending;
     } else if (otherIndexPath.index < self.index) {
         return NSOrderedDescending;
     }
-    
 //  No result could be found (this should never happen, kept in to keep the compiler happy)
     return NSOrderedSame;
 }
