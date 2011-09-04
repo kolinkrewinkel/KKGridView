@@ -361,10 +361,10 @@
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
                 [self _performUpdate:update withVisiblePaths:visiblePaths];
-//                NSLog(@"%@", _updateStack.itemsToUpdate);
+                //                NSLog(@"%@", _updateStack.itemsToUpdate);
                 [_updateStack removeUpdateForIndexPath:indexPath];
-//                NSLog(@"%@", _updateStack.itemsToUpdate);
-
+                //                NSLog(@"%@", _updateStack.itemsToUpdate);
+                
                 needsAccessoryReload = YES;
                 [self reloadContentSize];
                 
@@ -391,7 +391,7 @@
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath];
             cell.indexPath = indexPath;
-
+            
         } else if (_markedForDisplay) {
             cell.frame = [self rectForCellAtIndexPath:indexPath];
             cell.indexPath = indexPath;
@@ -407,7 +407,7 @@
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
                 KKGridViewHeader *header = [_headerViews objectAtIndex:section];
                 KKGridViewFooter *footer = [_footerViews objectAtIndex:section];
-
+                
                 CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
                 
                 CGFloat footerHeight = _footerHeights[section];
@@ -505,159 +505,160 @@
     if (!cell) {
         cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
         [_visibleCells setObject:cell forKey:indexPath];
-        CGRect originalFrame = [self rectForCellAtIndexPath:indexPath];
-        cell.frame = originalFrame;
-        CGRect transformedFrame = originalFrame;
-        
-        switch (update.animation) {
-            case KKGridViewAnimationExplode: {
-                if (update.type == KKGridViewUpdateTypeItemInsert) {
-                    cell.alpha = 0.f;
-                    cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
-                    [self addSubview:cell];
-                    [self sendSubviewToBack:cell];
-                    
-                    [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                        cell.alpha = 0.8f;
-                        cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
-                    } completion:^(BOOL finished) {
-                        [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                            cell.alpha = 0.75f;
-                            cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
-                        } completion:^(BOOL finished) {
-                            [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                                cell.alpha = 1.f;
-                                cell.transform = CGAffineTransformIdentity;
-                                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                                
-                            } completion:nil];
-                        }];
-                    }];
-                    
-                } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                    [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                        cell.alpha = 0.7f;
+    }
+    
+    CGRect originalFrame = [self rectForCellAtIndexPath:indexPath];
+    cell.frame = originalFrame;
+    CGRect transformedFrame = originalFrame;
+    
+    switch (update.animation) {
+        case KKGridViewAnimationExplode: {
+            if (update.type == KKGridViewUpdateTypeItemInsert) {
+                cell.alpha = 0.f;
+                cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                    cell.alpha = 0.8f;
+                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+                        cell.alpha = 0.75f;
                         cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
                     } completion:^(BOOL finished) {
-                        [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                            cell.alpha = 0.8f;
-                            cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
-                        } completion:^(BOOL finished) {
-                            [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                                cell.alpha = 0.f;
-                                cell.transform = CGAffineTransformMakeScale(1.5f, 1.5f);
-                                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                                
-                            } completion:^(BOOL finished) {
-                                [cell removeFromSuperview];
-                                cell.transform = CGAffineTransformIdentity;
-                                cell.alpha = 1.f;
-                                [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-                            }];
-                        }];
-                    }];
-                    
-                }
-                break;
-            } case KKGridViewAnimationFade: {
-                cell.alpha = 0.f;
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 1.f;
-                } completion:nil];
-                
-                break;
-            } case KKGridViewAnimationNone: {
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                break;
-            } case KKGridViewAnimationResize: {
-                cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                } completion:nil];
-                break;
-            } case KKGridViewAnimationImplode: {
-                cell.alpha = 0.f;
-                cell.transform = CGAffineTransformMakeScale(1.3f, 1.3f);
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 0.8f;
-                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
-                } completion:^(BOOL finished) {
-                    [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                        cell.alpha = 0.75f;
-                        cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
-                    } completion:^(BOOL finished) {
-                        [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                        [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
                             cell.alpha = 1.f;
                             cell.transform = CGAffineTransformIdentity;
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
                             
                         } completion:nil];
                     }];
                 }];
-                break;
-            } case KKGridViewAnimationSlideTop: {
-                cell.alpha = 0.f;
                 
-                transformedFrame.origin.y -= originalFrame.size.height * .75f;
-                cell.frame = transformedFrame;
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
+            } else if (update.type == KKGridViewUpdateTypeItemDelete) {
+                [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                    cell.alpha = 0.7f;
+                    cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                        cell.alpha = 0.8f;
+                        cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
+                    } completion:^(BOOL finished) {
+                        [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                            cell.alpha = 0.f;
+                            cell.transform = CGAffineTransformMakeScale(1.5f, 1.5f);
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
+                            
+                        } completion:^(BOOL finished) {
+                            [cell removeFromSuperview];
+                            cell.transform = CGAffineTransformIdentity;
+                            cell.alpha = 1.f;
+                            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+                        }];
+                    }];
+                }];
                 
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 1.f;
-                    cell.frame = originalFrame;
-                } completion:nil];
-                
-                break;
-            } case KKGridViewAnimationSlideRight: {
-                cell.alpha = 0.f;
-                transformedFrame.origin.x += originalFrame.size.height * .75f;
-                cell.frame = transformedFrame;
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 1.f;
-                    cell.frame = originalFrame;
-                } completion:nil];
-                
-                break;
-            } case KKGridViewAnimationSlideBottom: {
-                cell.alpha = 0.f;
-                transformedFrame.origin.y += originalFrame.size.height * .75f;
-                cell.frame = transformedFrame;
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 1.f;
-                    cell.frame = originalFrame;
-                } completion:nil];
-                
-                break;
-            } case KKGridViewAnimationSlideLeft: {
-                cell.alpha = 0.f;                
-                transformedFrame.origin.x -= originalFrame.size.height * .75f;
-                cell.frame = transformedFrame;
-                [self addSubview:cell];
-                [self sendSubviewToBack:cell];
-                
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-                    cell.alpha = 1.f;
-                    cell.frame = originalFrame;
-                } completion:nil];
-                break;
             }
-            default:
-                break;
+            break;
+        } case KKGridViewAnimationFade: {
+            cell.alpha = 0.f;
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 1.f;
+            } completion:nil];
+            
+            break;
+        } case KKGridViewAnimationNone: {
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            break;
+        } case KKGridViewAnimationResize: {
+            cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+            } completion:nil];
+            break;
+        } case KKGridViewAnimationImplode: {
+            cell.alpha = 0.f;
+            cell.transform = CGAffineTransformMakeScale(1.3f, 1.3f);
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 0.8f;
+                cell.transform = CGAffineTransformMakeScale(0.8f, 0.8f);
+            } completion:^(BOOL finished) {
+                [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                    cell.alpha = 0.75f;
+                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                } completion:^(BOOL finished) {
+                    [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                        cell.alpha = 1.f;
+                        cell.transform = CGAffineTransformIdentity;
+                        
+                    } completion:nil];
+                }];
+            }];
+            break;
+        } case KKGridViewAnimationSlideTop: {
+            cell.alpha = 0.f;
+            
+            transformedFrame.origin.y -= originalFrame.size.height * .75f;
+            cell.frame = transformedFrame;
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 1.f;
+                cell.frame = originalFrame;
+            } completion:nil];
+            
+            break;
+        } case KKGridViewAnimationSlideRight: {
+            cell.alpha = 0.f;
+            transformedFrame.origin.x += originalFrame.size.height * .75f;
+            cell.frame = transformedFrame;
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 1.f;
+                cell.frame = originalFrame;
+            } completion:nil];
+            
+            break;
+        } case KKGridViewAnimationSlideBottom: {
+            cell.alpha = 0.f;
+            transformedFrame.origin.y += originalFrame.size.height * .75f;
+            cell.frame = transformedFrame;
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 1.f;
+                cell.frame = originalFrame;
+            } completion:nil];
+            
+            break;
+        } case KKGridViewAnimationSlideLeft: {
+            cell.alpha = 0.f;                
+            transformedFrame.origin.x -= originalFrame.size.height * .75f;
+            cell.frame = transformedFrame;
+            [self addSubview:cell];
+            [self sendSubviewToBack:cell];
+            
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+                cell.alpha = 1.f;
+                cell.frame = originalFrame;
+            } completion:nil];
+            break;
         }
+        default:
+            break;
     }
 }
 
@@ -665,12 +666,12 @@
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-//    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
+    //    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
         if (indexPath.section == fromPath.section) {
-            if (( [indexPath compare:fromPath] == NSOrderedDescending | [indexPath compare:throughPath] == NSOrderedSame)) {
+            if ([indexPath compare:fromPath] == NSOrderedDescending | [indexPath compare:throughPath] == NSOrderedSame) {
                 indexPath.index+=amount;
             }
         }
@@ -680,19 +681,12 @@
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
     
-    
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:KKGridViewDefaultAnimationStaggerInterval options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
             KKGridViewCell *cell = (KKGridViewCell *)obj;
             cell.frame = [self rectForCellAtIndexPath:key];
         } completion:nil];
     }];
-    
-    NSMutableArray *set = [[NSMutableArray alloc] init];
-    for (KKIndexPath *indexPath in [[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)]) {
-        [set addObject:indexPath];
-    }
-    NSLog(@"\n ********************** %@ \n **********************", set);
 }
 
 #pragma mark - Public Getters
