@@ -660,13 +660,21 @@
         default:
             break;
     }
+    
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+            KKGridViewCell *cell = (KKGridViewCell *)obj;
+            cell.frame = [self rectForCellAtIndexPath:key];
+        } completion:nil];
+    }];
+
 }
 
 #pragma mark - Update Helpers
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-    //    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
+//    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
@@ -681,12 +689,12 @@
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
     
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-            KKGridViewCell *cell = (KKGridViewCell *)obj;
-            cell.frame = [self rectForCellAtIndexPath:key];
-        } completion:nil];
-    }];
+//    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+//        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+//            KKGridViewCell *cell = (KKGridViewCell *)obj;
+//            cell.frame = [self rectForCellAtIndexPath:key];
+//        } completion:nil];
+//    }];
 }
 
 #pragma mark - Public Getters
