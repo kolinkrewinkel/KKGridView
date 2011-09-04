@@ -46,22 +46,22 @@
     return NO;
 }
 
-- (BOOL)removeUpdateForIndexPath:(KKIndexPath *)indexPath
+- (void)removeUpdateForIndexPath:(KKIndexPath *)indexPath
 {
-    [_itemsToUpdate removeObject:[self updateForIndexPath:indexPath]];
-    
-    return YES;
+    KKGridViewUpdate *update = [self updateForIndexPath:indexPath];
+    [_itemsToUpdate removeObject:update];
 }
 
 - (void)_sortItems
 {
-    [_itemsToUpdate sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"indexPath" ascending:NO]]];
+    [_itemsToUpdate sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"indexPath" ascending:YES]]];
 }
 
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath
 {   
     NSPredicate *sameIndexPath = [NSPredicate predicateWithFormat:@"indexPath = %@", indexPath];
-    return [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] lastObject];
+//    NSLog(@"%@", [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] lastObject]);
+    return [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] objectAtIndex:0];
 }
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath

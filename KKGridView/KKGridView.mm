@@ -362,7 +362,10 @@
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
                 [self _performUpdate:update withVisiblePaths:visiblePaths];
+//                NSLog(@"%@", _updateStack.itemsToUpdate);
                 [_updateStack removeUpdateForIndexPath:indexPath];
+//                NSLog(@"%@", _updateStack.itemsToUpdate);
+
                 needsAccessoryReload = YES;
                 [self reloadContentSize];
                 
@@ -662,7 +665,7 @@
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
+//    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:[_visibleCells count] + amount];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;

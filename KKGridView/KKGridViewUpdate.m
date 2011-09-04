@@ -38,4 +38,15 @@
     return [NSString stringWithFormat:@"KKGridViewUpdate - IndexPath: %@, Type: %d, Section Update: %i", _indexPath, _type, _sectionUpdate];
 }
 
+- (BOOL)isEqual:(id)object
+{
+    KKGridViewUpdate *update = (KKGridViewUpdate *)object;
+    return ([_indexPath isEqual:update.indexPath] && _sectionUpdate == update.sectionUpdate && _type == update.type && _animation == update.animation);
+}
+
+- (NSUInteger)hash
+{
+    return _indexPath.hash * self.animation;
+}
+
 @end
