@@ -356,6 +356,9 @@
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
+    if (_markedForDisplay) {
+        //        NSLog(@"%@", visiblePaths);
+    }
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
@@ -389,12 +392,33 @@
         
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
-            [self _displayCell:cell atIndexPath:indexPath];
+            if (!_staggerForInsertion) {
+                [self _displayCell:cell atIndexPath:indexPath];
+            } else {
+                cell.frame = [self rectForCellAtIndexPath:[KKIndexPath indexPathForIndex:indexPath.index - 1 inSection:0]];
+                [self addSubview:cell];
+                [self sendSubviewToBack:cell];
+                
+                [UIView beginAnimations:[NSString stringWithFormat:@"%@", indexPath] context:NULL];
+                [UIView setAnimationDuration:0.25];
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                [UIView commitAnimations];
+            }
+            cell.indexPath = indexPath;
+        } else if (_markedForDisplay) {
             cell.indexPath = indexPath;
             
-        } else if (_markedForDisplay) {
+            if (indexPath.section == 0 && indexPath.index == 2) {
+                NSLog(@"%@", _visibleCells);
+            }
+            
+            if (_staggerForInsertion) {
+                [UIView beginAnimations:[NSString stringWithFormat:@"%@", indexPath] context:NULL];
+                [UIView setAnimationDuration:0.25];
+            }
             cell.frame = [self rectForCellAtIndexPath:indexPath];
-            cell.indexPath = indexPath;
+            [UIView commitAnimations];
+            
         }
         index++;
     }
@@ -521,7 +545,7 @@
                 
                 [UIView animateWithDuration:0.15 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
                     cell.alpha = 0.8f;
-                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
                 } completion:^(BOOL finished) {
                     [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
                         cell.alpha = 0.75f;
@@ -594,7 +618,7 @@
             } completion:^(BOOL finished) {
                 [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                     cell.alpha = 0.75f;
-                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.f);
+                    cell.transform = CGAffineTransformMakeScale(1.1f, 1.1f);
                 } completion:^(BOOL finished) {
                     [UIView animateWithDuration:0.05 delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                         cell.alpha = 1.f;
@@ -661,40 +685,42 @@
             break;
     }
     
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-            KKGridViewCell *cell = (KKGridViewCell *)obj;
-            cell.frame = [self rectForCellAtIndexPath:key];
-        } completion:nil];
-    }];
-
+    //    Use "actualframe" property for checking
+    
+    //    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+    //        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+    //            KKGridViewCell *cell = (KKGridViewCell *)obj;
+    //            cell.frame = [self rectForCellAtIndexPath:key];
+    //        } completion:nil];
+    //    }];
 }
 
 #pragma mark - Update Helpers
 
 - (void)_incrementVisibleCellsByAmount:(NSInteger)amount fromIndexPath:(KKIndexPath *)fromPath throughIndexPath:(KKIndexPath *)throughPath
 {
-//    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
+    //    NSLog(@"********************* \n Called. From: %@ Through:%@ \n *********************", fromPath, throughPath);
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
+        
         if (indexPath.section == fromPath.section) {
-            if ([indexPath compare:fromPath] == NSOrderedDescending | [indexPath compare:throughPath] == NSOrderedSame) {
-                indexPath.index+=amount;
+            
+            if ([indexPath compare:fromPath] == NSOrderedSame | [indexPath compare:fromPath] == NSOrderedDescending | [indexPath compare:throughPath] == NSOrderedSame) {
+                KKIndexPath *newPath = [indexPath copy];
+                newPath.index+=amount;
+                [dictionary setObject:obj forKey:newPath];
             }
+        } else {
+            [dictionary setObject:obj forKey:indexPath];
+            
         }
-        [dictionary setObject:obj forKey:indexPath];
     }];
+    
+    NSLog(@"%@", [dictionary objectForKey:[KKIndexPath indexPathForIndex:2 inSection:0]]);
     
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
-    
-//    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-//        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
-//            KKGridViewCell *cell = (KKGridViewCell *)obj;
-//            cell.frame = [self rectForCellAtIndexPath:key];
-//        } completion:nil];
-//    }];
 }
 
 #pragma mark - Public Getters

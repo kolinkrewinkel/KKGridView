@@ -64,8 +64,8 @@ static const NSUInteger kNumSection = 40;
     
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = YES;
+    
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
@@ -89,7 +89,7 @@ static const NSUInteger kNumSection = 40;
     if (firstSectionCount >= [items count]) {
         firstSectionCount-= [items count];
         [_gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
-    }else {
+    } else {
         NSLog(@"Warning: can't remove any more objects here");
     }
 }
