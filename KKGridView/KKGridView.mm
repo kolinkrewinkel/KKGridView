@@ -51,6 +51,9 @@
     
     BOOL _staggerForInsertion;
     __strong KKGridViewUpdateStack *_updateStack;
+    
+    BOOL _readyForDisplay;
+    __strong NSMutableArray *_renderBlocks;
 }
 
 - (void)_sharedInitialization;
@@ -104,10 +107,9 @@
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
+    _renderBlocks = [[NSMutableArray alloc] init];
     
     _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
-    dispatch_queue_t high = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
-    dispatch_set_target_queue(_renderQueue, high);
     
     self.alwaysBounceVertical = YES;
     self.delaysContentTouches = YES;
@@ -115,6 +117,8 @@
     
     _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
     [self addGestureRecognizer:_selectionRecognizer];
+    
+    _readyForDisplay = YES;
 }
 
 - (id)init
@@ -216,13 +220,20 @@
 
 - (void)_layoutGridView
 {
-    dispatch_sync(_renderQueue, ^(void) {
+    dispatch_block_t renderBlock = ^(void) {
         [self _layoutVisibleCells];
         [self _layoutAccessories];
         [self _layoutExtremities];
         _markedForDisplay = NO;
         _staggerForInsertion = NO;
-    });
+    };
+    
+    [_renderBlocks addObject:renderBlock];
+
+    if (_readyForDisplay) {
+        dispatch_sync(_renderQueue, [_renderBlocks objectAtIndex:0]);
+        [_renderBlocks removeObjectAtIndex:0];
+    }
 }
 
 #pragma mark - Calculation
@@ -356,17 +367,14 @@
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
-    if (_markedForDisplay) {
-        //        NSLog(@"%@", visiblePaths);
-    }
+
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
+                _readyForDisplay = NO;
                 [self _performUpdate:update withVisiblePaths:visiblePaths];
-                //                NSLog(@"%@", _updateStack.itemsToUpdate);
                 [_updateStack removeUpdateForIndexPath:indexPath];
-                //                NSLog(@"%@", _updateStack.itemsToUpdate);
                 
                 needsAccessoryReload = YES;
                 [self reloadContentSize];
@@ -408,13 +416,12 @@
         } else if (_markedForDisplay) {
             cell.indexPath = indexPath;
             
-            if (indexPath.section == 0 && indexPath.index == 2) {
-                NSLog(@"%@", _visibleCells);
-            }
-            
             if (_staggerForInsertion) {
                 [UIView beginAnimations:[NSString stringWithFormat:@"%@", indexPath] context:NULL];
                 [UIView setAnimationDuration:0.25];
+                [UIView setAnimationDelegate:self];
+//                [UIView setAnimationDidStopSelector:@selector()];
+                
             }
             cell.frame = [self rectForCellAtIndexPath:indexPath];
             [UIView commitAnimations];
@@ -444,7 +451,6 @@
         
     }
 }
-
 
 - (void)_cleanupCells
 {
@@ -556,7 +562,10 @@
                             cell.transform = CGAffineTransformIdentity;
                             cell.frame = [self rectForCellAtIndexPath:indexPath];
                             
-                        } completion:nil];
+                        } completion:^(BOOL finished) {
+                            _readyForDisplay = YES;
+                            [self _layoutGridView];
+                        }];
                     }];
                 }];
                 
@@ -717,7 +726,6 @@
         }
     }];
     
-    NSLog(@"%@", [dictionary objectForKey:[KKIndexPath indexPathForIndex:2 inSection:0]]);
     
     [_visibleCells removeAllObjects];
     [_visibleCells setDictionary:dictionary];
@@ -751,7 +759,6 @@
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
         [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
     }
-    
     [self _layoutGridView];
 }
 
