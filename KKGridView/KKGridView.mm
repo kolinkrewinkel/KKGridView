@@ -229,11 +229,11 @@
         _staggerForInsertion = NO;
     };
     
-    [_renderBlocks addObject:renderBlock];
+    [_renderBlocks insertObject:renderBlock atIndex:0];
     
     if (_readyForDisplay) {
-        dispatch_sync(_renderQueue, [_renderBlocks objectAtIndex:0]);
-        [_renderBlocks removeObjectAtIndex:0];
+        dispatch_sync(_renderQueue, [_renderBlocks lastObject]);
+        [_renderBlocks removeLastObject];
     }
 }
 
@@ -389,18 +389,18 @@
                 [self reloadContentSize];
                 
                 for (KKGridViewUpdate *update in _updateStack.itemsToUpdate) {
-                    if (update.indexPath.section == indexPath.section) {
-                        switch (update.type) {
-                            case KKGridViewUpdateTypeItemInsert:
-                                update.indexPath.index++;
-                                break;
-                            case KKGridViewUpdateTypeItemDelete:
-                                update.indexPath.index--;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+//                    if (update.indexPath.section == indexPath.section) {
+//                        switch (update.type) {
+//                            case KKGridViewUpdateTypeItemInsert:
+//                                update.indexPath.index--;
+//                                break;
+//                            case KKGridViewUpdateTypeItemDelete:
+//                                update.indexPath.index++;
+//                                break;
+//                            default:
+//                                break;
+//                        }
+//                    }
                 }
             }
         }
