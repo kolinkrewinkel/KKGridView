@@ -81,6 +81,7 @@
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
 
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
+- (void)_markReady:(BOOL)ready layout:(BOOL)layout;
 
 - (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
 
@@ -229,10 +230,18 @@
     };
     
     [_renderBlocks addObject:renderBlock];
-
+    
     if (_readyForDisplay) {
         dispatch_sync(_renderQueue, [_renderBlocks objectAtIndex:0]);
         [_renderBlocks removeObjectAtIndex:0];
+    }
+}
+
+- (void)_markReady:(BOOL)ready layout:(BOOL)layout
+{
+    _readyForDisplay = ready;
+    if (layout) {
+        [self _layoutGridView];
     }
 }
 
@@ -367,7 +376,7 @@
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
-
+    
     for (KKIndexPath *indexPath in visiblePaths) {
         if (_updateStack.itemsToUpdate.count > 0) {
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
@@ -420,7 +429,7 @@
                 [UIView beginAnimations:[NSString stringWithFormat:@"%@", indexPath] context:NULL];
                 [UIView setAnimationDuration:0.25];
                 [UIView setAnimationDelegate:self];
-//                [UIView setAnimationDidStopSelector:@selector()];
+                //                [UIView setAnimationDidStopSelector:@selector()];
                 
             }
             cell.frame = [self rectForCellAtIndexPath:indexPath];
@@ -563,8 +572,7 @@
                             cell.frame = [self rectForCellAtIndexPath:indexPath];
                             
                         } completion:^(BOOL finished) {
-                            _readyForDisplay = YES;
-                            [self _layoutGridView];
+                            [self _markReady:YES layout:YES];
                         }];
                     }];
                 }];
@@ -588,6 +596,7 @@
                             cell.transform = CGAffineTransformIdentity;
                             cell.alpha = 1.f;
                             [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+                            [self _markReady:YES layout:YES];
                         }];
                     }];
                 }];
@@ -601,12 +610,15 @@
             
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.alpha = 1.f;
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             
             break;
         } case KKGridViewAnimationNone: {
             [self addSubview:cell];
             [self sendSubviewToBack:cell];
+            [self _markReady:YES layout:YES];
             break;
         } case KKGridViewAnimationResize: {
             cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
@@ -614,7 +626,9 @@
             [self sendSubviewToBack:cell];
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             break;
         } case KKGridViewAnimationImplode: {
             cell.alpha = 0.f;
@@ -633,7 +647,9 @@
                         cell.alpha = 1.f;
                         cell.transform = CGAffineTransformIdentity;
                         
-                    } completion:nil];
+                    } completion:^(BOOL finished) {
+                        [self _markReady:YES layout:YES];
+                    }];
                 }];
             }];
             break;
@@ -648,7 +664,9 @@
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.alpha = 1.f;
                 cell.frame = originalFrame;
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             
             break;
         } case KKGridViewAnimationSlideRight: {
@@ -661,7 +679,9 @@
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.alpha = 1.f;
                 cell.frame = originalFrame;
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             
             break;
         } case KKGridViewAnimationSlideBottom: {
@@ -674,7 +694,9 @@
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.alpha = 1.f;
                 cell.frame = originalFrame;
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             
             break;
         } case KKGridViewAnimationSlideLeft: {
@@ -687,7 +709,9 @@
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
                 cell.alpha = 1.f;
                 cell.frame = originalFrame;
-            } completion:nil];
+            } completion:^(BOOL finished) {
+                [self _markReady:YES layout:YES];
+            }];
             break;
         }
         default:
