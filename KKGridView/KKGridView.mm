@@ -230,11 +230,11 @@
         _staggerForInsertion = NO;
     };
     
-    [_renderBlocks insertObject:renderBlock atIndex:0];
+//    [_renderBlocks insertObject:renderBlock atIndex:0];
     
     if (_readyForDisplay) {
-        dispatch_sync(_renderQueue, [_renderBlocks lastObject]);
-        [_renderBlocks removeLastObject];
+        dispatch_sync(_renderQueue, renderBlock);
+//        [_renderBlocks removeLastObject];
     }
 }
 
@@ -425,6 +425,8 @@
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
+            NSLog(@"%@", indexPath);
+//            NSLog(@"%@", _visibleCells);
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             cell.indexPath = indexPath;
         } else if (_markedForDisplay) {
@@ -514,7 +516,7 @@
     }
     
     [self addSubview:cell];
-    [self insertSubview:cell belowSubview:[_headerViews lastObject]];
+    [self bringSubviewToFront:cell];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
