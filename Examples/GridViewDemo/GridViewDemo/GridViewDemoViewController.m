@@ -76,7 +76,7 @@ static const NSUInteger kNumSection = 40;
 
 - (void)addItems:(id)sender
 {
-    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:2 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
+    NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:2 inSection:0], nil];
     
     firstSectionCount+= [items count];
     [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];

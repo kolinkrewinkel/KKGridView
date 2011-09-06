@@ -49,6 +49,11 @@
 - (void)removeUpdateForIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewUpdate *update = [self updateForIndexPath:indexPath];
+    [self removeUpdate:update];
+}
+
+- (void)removeUpdate:(KKGridViewUpdate *)update
+{
     [_itemsToUpdate removeObject:update];
 }
 

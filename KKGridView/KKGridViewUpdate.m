@@ -11,6 +11,7 @@
 @implementation KKGridViewUpdate
 
 @synthesize animation = _animation;
+@synthesize animating = _animating;
 @synthesize indexPath = _indexPath;
 @synthesize sectionUpdate = _sectionUpdate;
 @synthesize type = _type;

@@ -24,6 +24,7 @@ typedef enum {
 @property (nonatomic, copy) KKIndexPath * indexPath;
 @property (nonatomic) BOOL sectionUpdate;
 @property (nonatomic) KKGridViewUpdateType type;
+@property (nonatomic) BOOL animating;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;

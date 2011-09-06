@@ -18,5 +18,6 @@
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath;
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath;
 - (void)removeUpdateForIndexPath:(KKIndexPath *)indexPath;
+- (void)removeUpdate:(KKGridViewUpdate *)update;
 
 @end
