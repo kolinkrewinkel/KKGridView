@@ -83,4 +83,16 @@
     return NO;
 }
 
+- (KKIndexPath *)nextUpdateFromIndexPath:(KKIndexPath *)indexPath fallbackPath:(KKIndexPath *)fallback;
+{
+    [self _sortItems];
+    NSUInteger index = [_itemsToUpdate indexOfObject:[self updateForIndexPath:indexPath]];
+    if ([_itemsToUpdate count] > (index + 1)) {
+        KKGridViewUpdate *update = [_itemsToUpdate objectAtIndex:index + 1];
+        return update.indexPath;
+    }
+    
+    return fallback;
+}
+
 @end

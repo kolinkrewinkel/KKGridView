@@ -19,5 +19,6 @@
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath;
 - (void)removeUpdateForIndexPath:(KKIndexPath *)indexPath;
 - (void)removeUpdate:(KKGridViewUpdate *)update;
+- (KKIndexPath *)nextUpdateFromIndexPath:(KKIndexPath *)indexPath fallbackPath:(KKIndexPath *)fallback;
 
 @end
