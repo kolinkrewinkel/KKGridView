@@ -12,7 +12,6 @@
 #import "KKGridViewUpdate.h"
 #import "KKGridViewUpdateStack.h"
 #import "KKGridViewCell.h"
-#import "NSMutableDictionary+KKDebug.h"
 #import <map>
 #import <vector>
 
@@ -433,15 +432,10 @@
             if (_staggerForInsertion) {
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
-                    cell.backgroundColor = [UIColor yellowColor];
-                } completion:^(BOOL finished) {
-                    
-                }];
+                } completion:nil];
             } else {
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
-        } else {
-            cell.backgroundColor = [UIColor redColor];
         }
         
         
@@ -506,7 +500,6 @@
         update.animating = YES;
     }
     
-    cell.backgroundColor = [UIColor greenColor];
     switch (animation) {
         case KKGridViewAnimationExplode: {
             cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
@@ -518,7 +511,7 @@
     }
     
     [self addSubview:cell];
-    [self bringSubviewToFront:cell];
+    [self sendSubviewToBack:cell];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
@@ -591,7 +584,6 @@
     
     CGRect originalFrame = [self rectForCellAtIndexPath:indexPath];
     cell.frame = originalFrame;
-    cell.backgroundColor = [UIColor greenColor];
     CGRect transformedFrame = originalFrame;
     
     switch (update.animation) {
