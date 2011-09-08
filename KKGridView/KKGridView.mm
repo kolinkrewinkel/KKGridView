@@ -12,6 +12,7 @@
 #import "KKGridViewUpdate.h"
 #import "KKGridViewUpdateStack.h"
 #import "KKGridViewCell.h"
+#import "NSMutableDictionary+KKDebug.h"
 #import <map>
 #import <vector>
 
@@ -222,18 +223,18 @@
 
 - (void)_layoutGridView
 {
-    dispatch_block_t renderBlock = ^(void) {
+//    dispatch_block_t renderBlock = ^(void) {
         [self _layoutVisibleCells];
         [self _layoutAccessories];
         [self _layoutExtremities];
         _markedForDisplay = NO;
         _staggerForInsertion = NO;
-    };
+//    };
     
 //    [_renderBlocks insertObject:renderBlock atIndex:0];
     
     if (_readyForDisplay) {
-        dispatch_sync(_renderQueue, renderBlock);
+//        dispatch_sync(_renderQueue, renderBlock);
 //        [_renderBlocks removeLastObject];
     }
 }
@@ -417,7 +418,7 @@
                 [replacement setObject:cell forKey:keyPath];
             }];
             [_visibleCells removeAllObjects];
-            [_visibleCells setDictionary:replacement];
+            [_visibleCells addEntriesFromDictionary:replacement];
         }
         
         // Routine
@@ -425,14 +426,12 @@
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
-            NSLog(@"%@", indexPath);
-//            NSLog(@"%@", _visibleCells);
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             cell.indexPath = indexPath;
         } else if (_markedForDisplay) {
             cell.indexPath = indexPath;
             if (_staggerForInsertion) {
-                [UIView animateWithDuration:5 animations:^{
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                     cell.backgroundColor = [UIColor yellowColor];
                 } completion:^(BOOL finished) {
@@ -474,19 +473,17 @@
 - (void)_cleanupCells
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-    
-    NSArray *visible = [_visibleCells allValues];
-    NSArray *keys = [_visibleCells allKeys];
-    
-    NSUInteger loopCount = 0;
-    for (KKGridViewCell *cell in visible) {
+
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        KKGridViewCell *cell = (KKGridViewCell *)obj;
+        KKIndexPath *indexPath = (KKIndexPath *)key;
         if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
             [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:[keys objectAtIndex:loopCount]];
+            [_visibleCells removeObjectForKey:indexPath];
             [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
         }
-        loopCount++;
-    }
+
+    }];
 }
 
 - (void)_respondToBoundsChange
@@ -502,6 +499,11 @@
     if (_flags.delegateRespondsToWillDisplayCell)
     {
         [self.gridDelegate gridView:self willDisplayCell:cell forItemAtIndexPath:indexPath];
+    }
+    
+    if ([_updateStack hasUpdateForIndexPath:indexPath]) {
+        KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
+        update.animating = YES;
     }
     
     cell.backgroundColor = [UIColor greenColor];
@@ -524,7 +526,9 @@
                 cell.transform = CGAffineTransformMakeScale(1.f, 1.f);
                 cell.alpha = 1.f;
             } completion:^(BOOL finished) {
-                
+                if ([_updateStack hasUpdateForIndexPath:indexPath])
+                    [_updateStack removeUpdateForIndexPath:indexPath];
+                NSLog(@"%@", _visibleCells);
             }];
             break;
         }    

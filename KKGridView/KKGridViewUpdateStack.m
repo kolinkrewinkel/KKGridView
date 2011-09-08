@@ -75,7 +75,7 @@
         return NO;
     
     for (KKGridViewUpdate *update in _itemsToUpdate) {
-        if ([update.indexPath isEqual:indexPath]) {
+        if ([update.indexPath isEqual:indexPath] && !update.animating) {
             return YES;
         }
     }

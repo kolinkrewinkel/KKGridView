@@ -9,4 +9,5 @@
     #import <QuartzCore/QuartzCore.h>
     #import <UIKit/UIKit.h>
     #import "Definitions.h"
+    #import "NSMutableDictionary+KKDebug.h"
 #endif
