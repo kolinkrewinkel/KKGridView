@@ -402,9 +402,7 @@
             animation = update.animation;
             NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
             
-            [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-                KKIndexPath *keyPath = (KKIndexPath *)key;
-                KKGridViewCell *cell = (KKGridViewCell *)obj;
+            [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
                 if (keyPath.section == indexPath.section) {
                     if (([indexPath compare:keyPath] == NSOrderedSame | [indexPath compare:keyPath] == NSOrderedAscending) && ([[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedDescending | [[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedSame)) {
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
@@ -468,15 +466,12 @@
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
 
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-        KKGridViewCell *cell = (KKGridViewCell *)obj;
-        KKIndexPath *indexPath = (KKIndexPath *)key;
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {
         if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
             [cell removeFromSuperview];
             [_visibleCells removeObjectForKey:indexPath];
             [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
         }
-
     }];
 }
 
