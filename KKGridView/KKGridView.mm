@@ -480,7 +480,6 @@
         [_visibleCells removeObjectForKey:path];
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
     }
-    [cellToRemove release];
 }
 
 - (void)_respondToBoundsChange
