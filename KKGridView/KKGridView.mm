@@ -466,13 +466,21 @@
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
 
+    NSMutableArray *cellToRemove = [[NSMutableArray alloc] init];
+    
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {
         if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:indexPath];
-            [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+            [cellToRemove addObject:indexPath];
         }
     }];
+    
+    for (KKIndexPath *path in cellToRemove) {
+        KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        [cell removeFromSuperview];
+        [_visibleCells removeObjectForKey:path];
+        [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
+    }
+    [cellToRemove release];
 }
 
 - (void)_respondToBoundsChange
