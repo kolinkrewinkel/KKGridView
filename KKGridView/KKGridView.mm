@@ -476,9 +476,9 @@
     
     for (KKIndexPath *path in cellToRemove) {
         KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
         [cell removeFromSuperview];
         [_visibleCells removeObjectForKey:path];
-        [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
     }
 }
 
@@ -1012,6 +1012,10 @@
         }
         [_selectedIndexPaths removeAllObjects];
         [_selectedIndexPaths addObject:indexPath]; 
+        
+        if (_flags.delegateRespondsToDidSelectItem) {
+            [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
+        }
     }
     
     if (_flags.delegateRespondsToDidDeselectItem) {
