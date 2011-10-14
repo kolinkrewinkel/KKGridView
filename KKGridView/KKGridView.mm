@@ -118,6 +118,7 @@
     self.canCancelContentTouches = YES;
     
     _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    _selectionRecognizer.delegate = self;
     [self addGestureRecognizer:_selectionRecognizer];
     
     _readyForDisplay = YES;
@@ -158,6 +159,29 @@
     }
     
     return self;
+}
+
+#pragma mark - UIGextureREcognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    // test if our control subview is on-screen
+    if (_gridHeaderView) {
+        if (_gridHeaderView.superview != nil) {
+            if ([touch.view isDescendantOfView:_gridHeaderView]) {
+                // we touched our control surface
+                return NO; // ignore the touch
+            }
+        }
+    }
+    if (_gridFooterView) {
+        if (_gridFooterView.superview != nil) {
+            if ([touch.view isDescendantOfView:_gridFooterView]) {
+                // we touched our control surface
+                return NO; // ignore the touch
+            }
+        }
+    }
+    return YES; // handle the touch
 }
 
 #pragma mark - Metrics
@@ -222,19 +246,19 @@
 
 - (void)_layoutGridView
 {
-//    dispatch_block_t renderBlock = ^(void) {
-        [self _layoutVisibleCells];
-        [self _layoutAccessories];
-        [self _layoutExtremities];
-        _markedForDisplay = NO;
-        _staggerForInsertion = NO;
-//    };
+    //    dispatch_block_t renderBlock = ^(void) {
+    [self _layoutVisibleCells];
+    [self _layoutAccessories];
+    [self _layoutExtremities];
+    _markedForDisplay = NO;
+    _staggerForInsertion = NO;
+    //    };
     
-//    [_renderBlocks insertObject:renderBlock atIndex:0];
+    //    [_renderBlocks insertObject:renderBlock atIndex:0];
     
     if (_readyForDisplay) {
-//        dispatch_sync(_renderQueue, renderBlock);
-//        [_renderBlocks removeLastObject];
+        //        dispatch_sync(_renderQueue, renderBlock);
+        //        [_renderBlocks removeLastObject];
     }
 }
 
@@ -465,7 +489,7 @@
 - (void)_cleanupCells
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-
+    
     NSMutableArray *cellToRemove = [[NSMutableArray alloc] init];
     
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {

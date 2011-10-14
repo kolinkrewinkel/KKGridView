@@ -32,7 +32,7 @@ typedef enum {
 
 @protocol KKGridViewDataSource, KKGridViewDelegate;
 
-@interface KKGridView : UIScrollView
+@interface KKGridView : UIScrollView <UIGestureRecognizerDelegate>
 
 #pragma mark - Properties
 
