@@ -891,6 +891,13 @@
         newContentSize.height += _heightForSection;
     }
     
+    if (_gridHeaderView) {
+        newContentSize.height += _gridHeaderView.frame.size.height;
+    }
+    if (_gridFooterView) {
+        newContentSize.height += _gridFooterView.frame.size.height;
+    }
+    
     [super setContentSize:newContentSize];
 }
 
