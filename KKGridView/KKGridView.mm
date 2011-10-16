@@ -164,24 +164,13 @@
 #pragma mark - UIGextureREcognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-    // test if our control subview is on-screen
-    if (_gridHeaderView) {
-        if (_gridHeaderView.superview != nil) {
-            if ([touch.view isDescendantOfView:_gridHeaderView]) {
-                // we touched our control surface
-                return NO; // ignore the touch
-            }
-        }
+    
+    if ([touch.view isKindOfClass:[UIControl class]])
+    {
+        return NO;
     }
-    if (_gridFooterView) {
-        if (_gridFooterView.superview != nil) {
-            if ([touch.view isDescendantOfView:_gridFooterView]) {
-                // we touched our control surface
-                return NO; // ignore the touch
-            }
-        }
-    }
-    return YES; // handle the touch
+    
+    return YES;
 }
 
 #pragma mark - Metrics
