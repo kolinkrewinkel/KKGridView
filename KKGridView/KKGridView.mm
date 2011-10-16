@@ -1021,28 +1021,32 @@
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
-    KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
     
-    if (_allowsMultipleSelection) {
-        [_selectedIndexPaths addObject:indexPath]; 
-    } else {
-        for (id obj in [_selectedIndexPaths allObjects]) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:obj];
-            cell.selected = NO;
-        }
-        [_selectedIndexPaths removeAllObjects];
-        [_selectedIndexPaths addObject:indexPath]; 
+    if (indexPath.section != NSNotFound && indexPath.index != NSNotFound) 
+    {
+        KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
         
-        if (_flags.delegateRespondsToDidSelectItem) {
-            [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
+        if (_allowsMultipleSelection) {
+            [_selectedIndexPaths addObject:indexPath]; 
+        } else {
+            for (id obj in [_selectedIndexPaths allObjects]) {
+                KKGridViewCell *cell = [_visibleCells objectForKey:obj];
+                cell.selected = NO;
+            }
+            [_selectedIndexPaths removeAllObjects];
+            [_selectedIndexPaths addObject:indexPath]; 
+            
+            if (_flags.delegateRespondsToDidSelectItem) {
+                [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
+            }
         }
+        
+        if (_flags.delegateRespondsToDidDeselectItem) {
+            [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
+        }
+        
+        cell.selected = YES;
     }
-    
-    if (_flags.delegateRespondsToDidDeselectItem) {
-        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
-    }
-    
-    cell.selected = YES;
 }
 
 #pragma mark - Getters
