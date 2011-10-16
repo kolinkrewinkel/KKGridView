@@ -118,6 +118,7 @@
     self.canCancelContentTouches = YES;
     
     _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    _selectionRecognizer.delegate = self;
     [self addGestureRecognizer:_selectionRecognizer];
     
     _readyForDisplay = YES;
@@ -158,6 +159,18 @@
     }
     
     return self;
+}
+
+#pragma mark - UIGextureREcognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    
+    if ([touch.view isKindOfClass:[UIControl class]])
+    {
+        return NO;
+    }
+    
+    return YES;
 }
 
 #pragma mark - Metrics
@@ -222,19 +235,19 @@
 
 - (void)_layoutGridView
 {
-//    dispatch_block_t renderBlock = ^(void) {
-        [self _layoutVisibleCells];
-        [self _layoutAccessories];
-        [self _layoutExtremities];
-        _markedForDisplay = NO;
-        _staggerForInsertion = NO;
-//    };
+    //    dispatch_block_t renderBlock = ^(void) {
+    [self _layoutVisibleCells];
+    [self _layoutAccessories];
+    [self _layoutExtremities];
+    _markedForDisplay = NO;
+    _staggerForInsertion = NO;
+    //    };
     
-//    [_renderBlocks insertObject:renderBlock atIndex:0];
+    //    [_renderBlocks insertObject:renderBlock atIndex:0];
     
     if (_readyForDisplay) {
-//        dispatch_sync(_renderQueue, renderBlock);
-//        [_renderBlocks removeLastObject];
+        //        dispatch_sync(_renderQueue, renderBlock);
+        //        [_renderBlocks removeLastObject];
     }
 }
 
@@ -465,7 +478,7 @@
 - (void)_cleanupCells
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-
+    
     NSMutableArray *cellToRemove = [[NSMutableArray alloc] init];
     
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {
@@ -867,6 +880,13 @@
         newContentSize.height += _heightForSection;
     }
     
+    if (_gridHeaderView) {
+        newContentSize.height += _gridHeaderView.frame.size.height;
+    }
+    if (_gridFooterView) {
+        newContentSize.height += _gridFooterView.frame.size.height;
+    }
+    
     [super setContentSize:newContentSize];
 }
 
@@ -1001,28 +1021,32 @@
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
-    KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
     
-    if (_allowsMultipleSelection) {
-        [_selectedIndexPaths addObject:indexPath]; 
-    } else {
-        for (id obj in [_selectedIndexPaths allObjects]) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:obj];
-            cell.selected = NO;
-        }
-        [_selectedIndexPaths removeAllObjects];
-        [_selectedIndexPaths addObject:indexPath]; 
+    if (indexPath.section != NSNotFound && indexPath.index != NSNotFound) 
+    {
+        KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
         
-        if (_flags.delegateRespondsToDidSelectItem) {
-            [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
+        if (_allowsMultipleSelection) {
+            [_selectedIndexPaths addObject:indexPath]; 
+        } else {
+            for (id obj in [_selectedIndexPaths allObjects]) {
+                KKGridViewCell *cell = [_visibleCells objectForKey:obj];
+                cell.selected = NO;
+            }
+            [_selectedIndexPaths removeAllObjects];
+            [_selectedIndexPaths addObject:indexPath]; 
+            
+            if (_flags.delegateRespondsToDidSelectItem) {
+                [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
+            }
         }
+        
+        if (_flags.delegateRespondsToDidDeselectItem) {
+            [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
+        }
+        
+        cell.selected = YES;
     }
-    
-    if (_flags.delegateRespondsToDidDeselectItem) {
-        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
-    }
-    
-    cell.selected = YES;
 }
 
 #pragma mark - Getters
