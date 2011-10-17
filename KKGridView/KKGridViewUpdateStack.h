@@ -6,7 +6,7 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridView.h"
+#import <KKGridView/KKGridView.h>
 
 @class KKGridViewUpdate;
 @interface KKGridViewUpdateStack : NSObject

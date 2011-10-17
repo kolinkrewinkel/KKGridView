@@ -6,8 +6,8 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewCell.h"
-#import "KKGridView.h"
+#import <KKGridView/KKGridViewCell.h>
+#import <KKGridView/KKGridView.h>
 
 @implementation KKGridViewCell
 
