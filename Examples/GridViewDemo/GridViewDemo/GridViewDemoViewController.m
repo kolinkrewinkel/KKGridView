@@ -8,8 +8,9 @@
 
 #import "GridViewDemoViewController.h"
 #import <QuartzCore/QuartzCore.h>
-#import "KKGridViewCell.h"
-#import "KKIndexPath.h"
+#import <KKGridView/KKGridView.h>
+#import <KKGridView/KKGridViewCell.h>
+#import <KKGridView/KKIndexPath.h>
 
 static const NSUInteger kNumSection = 40;
 
