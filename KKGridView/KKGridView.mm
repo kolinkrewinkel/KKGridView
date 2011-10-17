@@ -1003,6 +1003,11 @@
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
     KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
     
+    if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
+    {
+        return;
+    }
+    
     if (_allowsMultipleSelection) {
         [_selectedIndexPaths addObject:indexPath]; 
     } else {
