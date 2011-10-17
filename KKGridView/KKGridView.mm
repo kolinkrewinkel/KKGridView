@@ -6,12 +6,12 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridView.h"
-#import "KKGridViewViewInfo.h"
-#import "KKIndexPath.h"
-#import "KKGridViewUpdate.h"
-#import "KKGridViewUpdateStack.h"
-#import "KKGridViewCell.h"
+#import <KKGridView/KKGridView.h>
+#import <KKGridView/KKGridViewViewInfo.h>
+#import <KKGridView/KKIndexPath.h>
+#import <KKGridView/KKGridViewUpdate.h>
+#import <KKGridView/KKGridViewUpdateStack.h>
+#import <KKGridView/KKGridViewCell.h>
 #import <map>
 #import <vector>
 

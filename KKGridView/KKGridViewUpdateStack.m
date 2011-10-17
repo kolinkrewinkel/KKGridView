@@ -6,8 +6,8 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewUpdateStack.h"
-#import "KKGridViewUpdate.h"
+#import <KKGridView/KKGridViewUpdateStack.h>
+#import <KKGridView/KKGridViewUpdate.h>
 
 @interface KKGridViewUpdateStack ()
 

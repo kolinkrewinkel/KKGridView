@@ -6,10 +6,9 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewCell.h"
-#import "Definitions.h"
-#import "KKIndexPath.h"
-#import "KKGridViewViewInfo.h"
+#import <KKGridView/KKGridViewCell.h>
+#import <KKGridView/KKIndexPath.h>
+#import <KKGridView/Definitions.h>
 
 typedef enum {
     KKGridViewScrollPositionNone,        

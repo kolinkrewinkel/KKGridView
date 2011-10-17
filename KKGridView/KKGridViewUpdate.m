@@ -6,7 +6,7 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import "KKGridViewUpdate.h"
+#import <KKGridView/KKGridViewUpdate.h>
 
 @implementation KKGridViewUpdate
 

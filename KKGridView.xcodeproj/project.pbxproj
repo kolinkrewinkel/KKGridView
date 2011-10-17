@@ -19,7 +19,7 @@
 		1A3F1B7113E34A62006747A3 /* KKGridViewUpdateStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3F1B6F13E34A61006747A3 /* KKGridViewUpdateStack.m */; };
 		1A3F1B7413E34CF8006747A3 /* KKGridViewUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3F1B7213E34CF8006747A3 /* KKGridViewUpdate.h */; };
 		1A3F1B7513E34CF8006747A3 /* KKGridViewUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3F1B7313E34CF8006747A3 /* KKGridViewUpdate.m */; };
-		1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5F356613DD02CD00A38A3E /* Definitions.h */; };
+		1A5F356713DD02CD00A38A3E /* Definitions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A5F356613DD02CD00A38A3E /* Definitions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A61BE1213DCAF1F00AB4243 /* Foundation.framework */; };
 		1AD5397A13DF7A060071EFDC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397913DF7A060071EFDC /* CoreFoundation.framework */; };
 		1AD5397C13DF7E690071EFDC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397B13DF7E690071EFDC /* QuartzCore.framework */; };
@@ -257,11 +257,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = "/../BuildProductsPath/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -275,10 +276,11 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = "/../BuildProductsPath/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 			};
 			name = Release;
 		};
