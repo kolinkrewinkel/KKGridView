@@ -8,6 +8,7 @@
 
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKIndexPath.h>
+#import <KKGridView/Definitions.h>
 
 typedef enum {
     KKGridViewScrollPositionNone,        
