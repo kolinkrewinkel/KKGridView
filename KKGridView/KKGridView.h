@@ -7,7 +7,6 @@
 //
 
 #import "KKGridViewCell.h"
-#import "Definitions.h"
 #import "KKIndexPath.h"
 
 typedef enum {
