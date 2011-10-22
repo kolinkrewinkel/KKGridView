@@ -110,7 +110,8 @@
     [self sendSubviewToBack:_selectedBackgroundView];
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
-////        
+
+
     if (_selected) {
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;

@@ -388,6 +388,7 @@
 {    
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
+//    BOOL updatedAnyVisibleCell = NO;
     NSUInteger index = 0;
     
     for (KKIndexPath *indexPath in visiblePaths) {
@@ -416,6 +417,7 @@
             }];
             [_visibleCells removeAllObjects];
             [_visibleCells addEntriesFromDictionary:replacement];
+            [self reloadContentSizet];
         }
         
         // Routine
