@@ -70,6 +70,11 @@ typedef enum {
 
 - (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition;
 
+#pragma mark - Selection
+
+- (void)selectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+- (void)deselectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+
 @end
 
 #pragma mark - KKGridViewDataSource

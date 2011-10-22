@@ -51,9 +51,6 @@
     
     BOOL _staggerForInsertion;
     __strong KKGridViewUpdateStack *_updateStack;
-    
-    BOOL _readyForDisplay;
-    __strong NSMutableArray *_renderBlocks;
 }
 
 - (void)_sharedInitialization;
@@ -80,8 +77,6 @@
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
 
 - (void)_performUpdate:(KKGridViewUpdate *)update withVisiblePaths:(NSArray *)indexPaths;
-- (void)_markReady:(BOOL)ready layout:(BOOL)layout;
-- (void)_refreshReadyStatusLayoutIfNecessary:(BOOL)layout;
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section;
 
 - (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
@@ -102,26 +97,6 @@
 @synthesize backgroundView = _backgroundView;
 
 #pragma mark - Initialization Methods
-
-- (void)_sharedInitialization
-{
-    _reusableCells = [[NSMutableDictionary alloc] init];
-    _visibleCells = [[NSMutableDictionary alloc] init];
-    _selectedIndexPaths = [[NSMutableSet alloc] init];
-    _updateStack = [[KKGridViewUpdateStack alloc] init];
-    _renderBlocks = [[NSMutableArray alloc] init];
-    
-    _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
-    
-    self.alwaysBounceVertical = YES;
-    self.delaysContentTouches = YES;
-    self.canCancelContentTouches = YES;
-    
-    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
-    [self addGestureRecognizer:_selectionRecognizer];
-    
-    _readyForDisplay = YES;
-}
 
 - (id)init
 {
@@ -158,6 +133,23 @@
     }
     
     return self;
+}
+
+- (void)_sharedInitialization
+{
+    _reusableCells = [[NSMutableDictionary alloc] init];
+    _visibleCells = [[NSMutableDictionary alloc] init];
+    _selectedIndexPaths = [[NSMutableSet alloc] init];
+    _updateStack = [[KKGridViewUpdateStack alloc] init];
+    
+    _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
+    
+    self.alwaysBounceVertical = YES;
+    self.delaysContentTouches = YES;
+    self.canCancelContentTouches = YES;
+    
+    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    [self addGestureRecognizer:_selectionRecognizer];
 }
 
 #pragma mark - Metrics
@@ -212,7 +204,7 @@
     }
 }
 
-#pragma mark - Basic Layout Methods
+#pragma mark - Root Layout Methods
 
 - (void)layoutSubviews
 {
@@ -222,40 +214,11 @@
 
 - (void)_layoutGridView
 {
-//    dispatch_block_t renderBlock = ^(void) {
-        [self _layoutVisibleCells];
-        [self _layoutAccessories];
-        [self _layoutExtremities];
-        _markedForDisplay = NO;
-        _staggerForInsertion = NO;
-//    };
-    
-//    [_renderBlocks insertObject:renderBlock atIndex:0];
-    
-    if (_readyForDisplay) {
-//        dispatch_sync(_renderQueue, renderBlock);
-//        [_renderBlocks removeLastObject];
-    }
-}
-
-- (void)_markReady:(BOOL)ready layout:(BOOL)layout
-{
-    _readyForDisplay = ready;
-    if (layout) {
-        [self _layoutGridView];
-    }
-}
-
-- (void)_refreshReadyStatusLayoutIfNecessary:(BOOL)layout
-{
-    BOOL anythingAnimating = NO;
-    for (KKGridViewUpdate *update in _updateStack.itemsToUpdate) {
-        if (update.animating) {
-            anythingAnimating = YES;
-        }
-    }
-    
-    [self _markReady:!anythingAnimating layout:layout];
+    [self _layoutVisibleCells];
+    [self _layoutAccessories];
+    [self _layoutExtremities];
+    _markedForDisplay = NO;
+    _staggerForInsertion = NO;
 }
 
 #pragma mark - Calculation
@@ -388,7 +351,7 @@
 {    
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
-//    BOOL updatedAnyVisibleCell = NO;
+    //    BOOL updatedAnyVisibleCell = NO;
     NSUInteger index = 0;
     
     for (KKIndexPath *indexPath in visiblePaths) {
@@ -417,7 +380,7 @@
             }];
             [_visibleCells removeAllObjects];
             [_visibleCells addEntriesFromDictionary:replacement];
-            [self reloadContentSizet];
+            [self reloadContentSize];
         }
         
         // Routine
@@ -467,7 +430,7 @@
 - (void)_cleanupCells
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-
+    
     NSMutableArray *cellToRemove = [[NSMutableArray alloc] init];
     
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {
@@ -575,7 +538,6 @@
     update.animating = YES;
     _markedForDisplay = YES;
     _staggerForInsertion = YES;
-    [self _refreshReadyStatusLayoutIfNecessary:NO];
     
     [self _incrementVisibleCellsByAmount:(update.type == KKGridViewUpdateTypeItemInsert) ? 1 : -1 fromIndexPath:indexPath throughIndexPath:[self _lastIndexPathForSection:indexPath.section]];
     
@@ -613,7 +575,6 @@
                             
                         } completion:^(BOOL finished) {
                             [_updateStack removeUpdate:update];
-                            [self _refreshReadyStatusLayoutIfNecessary:YES];
                         }];
                     }];
                 }];
@@ -638,7 +599,6 @@
                             cell.alpha = 1.f;
                             [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
                             [_updateStack removeUpdate:update];
-                            [self _refreshReadyStatusLayoutIfNecessary:YES];
                         }];
                     }];
                 }];
@@ -654,7 +614,6 @@
                 cell.alpha = 1.f;
             } completion:^(BOOL finished) {
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             
             break;
@@ -662,7 +621,6 @@
             [self addSubview:cell];
             [self sendSubviewToBack:cell];
             [_updateStack removeUpdate:update];
-            [self _refreshReadyStatusLayoutIfNecessary:YES];
             break;
         } case KKGridViewAnimationResize: {
             cell.frame = CGRectInset(cell.frame, cell.bounds.size.width * .25f, cell.bounds.size.width * .25f);
@@ -672,7 +630,6 @@
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             } completion:^(BOOL finished) {
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             break;
         } case KKGridViewAnimationImplode: {
@@ -694,7 +651,6 @@
                         
                     } completion:^(BOOL finished) {
                         [_updateStack removeUpdate:update];
-                        [self _refreshReadyStatusLayoutIfNecessary:YES];
                     }];
                 }];
             }];
@@ -712,7 +668,6 @@
                 cell.frame = originalFrame;
             } completion:^(BOOL finished) {
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             
             break;
@@ -729,7 +684,6 @@
             } completion:^(BOOL finished) {
                 update.animating = NO;
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             
             break;
@@ -745,7 +699,6 @@
                 cell.frame = originalFrame;
             } completion:^(BOOL finished) {
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             
             break;
@@ -761,7 +714,6 @@
                 cell.frame = originalFrame;
             } completion:^(BOOL finished) {
                 [_updateStack removeUpdate:update];
-                [self _refreshReadyStatusLayoutIfNecessary:YES];
             }];
             break;
         }
@@ -957,6 +909,43 @@
     return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
 
+#pragma mark - Selection
+// Public
+
+- (void)selectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
+{
+    if (!indexPaths)
+        return;
+    
+    if (animated) {
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:KKGridViewDefaultAnimationDuration];
+    }
+    for (KKIndexPath *indexPath in indexPaths) {
+        [self _selectItemAtIndexPath:indexPath];
+    }
+    if (animated)
+        [UIView commitAnimations];
+}
+
+- (void)deselectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
+{
+    if (!indexPaths)
+        return;
+    
+    if (animated) {
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:KKGridViewDefaultAnimationDuration];
+    }
+    for (KKIndexPath *indexPath in indexPaths) {
+        [self _deselectItemAtIndexPath:indexPath];
+    }
+    if (animated)
+        [UIView commitAnimations];
+}
+
+// Private
+
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -974,6 +963,9 @@
         
         [_selectedIndexPaths addObject:indexPath];
         cell.selected = YES;
+    }
+    if (_flags.delegateRespondsToDidDeselectItem) {
+        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
     }
 }
 
@@ -1003,34 +995,11 @@
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
-    KKGridViewCell *cell = (KKGridViewCell *)[_visibleCells objectForKey:indexPath];
     
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
-    {
         return;
-    }
-    
-    if (_allowsMultipleSelection) {
-        [_selectedIndexPaths addObject:indexPath]; 
-    } else {
-        for (id obj in [_selectedIndexPaths allObjects]) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:obj];
-            cell.selected = NO;
-        }
-        
-        [_selectedIndexPaths removeAllObjects];
-        [_selectedIndexPaths addObject:indexPath]; 
-        
-        if (_flags.delegateRespondsToDidSelectItem) {
-            [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
-        }
-    }
-    
-    if (_flags.delegateRespondsToDidDeselectItem) {
-        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
-    }
-    
-    cell.selected = YES;
+
+    [self _selectItemAtIndexPath:indexPath];
 }
 
 #pragma mark - Getters
