@@ -351,11 +351,10 @@
 {    
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
-    //    BOOL updatedAnyVisibleCell = NO;
     NSUInteger index = 0;
     
     for (KKIndexPath *indexPath in visiblePaths) {
-        // Updates
+        //      Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
         if ([_updateStack hasUpdateForIndexPath:indexPath]) {
             needsAccessoryReload = YES;
@@ -378,12 +377,11 @@
                 }
                 [replacement setObject:cell forKey:keyPath];
             }];
-            [_visibleCells removeAllObjects];
-            [_visibleCells addEntriesFromDictionary:replacement];
+            [_visibleCells setDictionary:replacement];
             [self reloadContentSize];
         }
         
-        // Routine
+        //      Routine
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
         if (!cell) {
@@ -393,7 +391,7 @@
         } else if (_markedForDisplay) {
             cell.indexPath = indexPath;
             if (_staggerForInsertion) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
                 } completion:nil];
             } else {
@@ -486,9 +484,7 @@
                 cell.transform = CGAffineTransformMakeScale(1.f, 1.f);
                 cell.alpha = 1.f;
             } completion:^(BOOL finished) {
-                if ([_updateStack hasUpdateForIndexPath:indexPath])
-                    [_updateStack removeUpdateForIndexPath:indexPath];
-                NSLog(@"%@", _visibleCells);
+                [_updateStack removeUpdateForIndexPath:indexPath];
             }];
             break;
         }    
@@ -821,7 +817,7 @@
         newContentSize.height += _heightForSection;
     }
     
-    [super setContentSize:newContentSize];
+    self.contentSize = newContentSize;
 }
 
 - (void)_reloadIntegers
@@ -998,7 +994,7 @@
     
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
         return;
-
+    
     [self _selectItemAtIndexPath:indexPath];
 }
 

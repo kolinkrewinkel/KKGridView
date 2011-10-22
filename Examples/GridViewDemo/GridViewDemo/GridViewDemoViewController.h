@@ -8,5 +8,5 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate>
+@interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate, UISearchBarDelegate>
 @end

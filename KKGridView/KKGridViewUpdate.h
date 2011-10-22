@@ -25,6 +25,7 @@ typedef enum {
 @property (nonatomic) BOOL sectionUpdate;
 @property (nonatomic) KKGridViewUpdateType type;
 @property (nonatomic) BOOL animating;
+@property (nonatomic) CFTimeInterval timestamp;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;

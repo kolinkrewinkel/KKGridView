@@ -21,7 +21,6 @@ static const NSUInteger kNumSection = 40;
     NSUInteger firstSectionCount;
 }
 
-
 #pragma mark - View lifecycle
 
 - (void)loadView
@@ -53,9 +52,12 @@ static const NSUInteger kNumSection = 40;
     _gridView.backgroundColor = [UIColor whiteColor];
     _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, self.view.bounds.size.width, 50.f)];
-    headerView.backgroundColor = [UIColor darkGrayColor];
-    _gridView.gridHeaderView = headerView;
+    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 44.f)];
+    searchBar.barStyle = UIBarStyleBlackTranslucent;
+    searchBar.delegate = self;
+    searchBar.showsCancelButton = YES;
+    searchBar.userInteractionEnabled = NO;
+    _gridView.gridHeaderView = searchBar;
     
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
     footerView.backgroundColor = [UIColor darkGrayColor];
@@ -74,6 +76,15 @@ static const NSUInteger kNumSection = 40;
     
     self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, forceLayout, spacer, multiple, nil];
 }
+
+#pragma mark - UISearchBarDelegate
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    [searchBar resignFirstResponder];
+}
+
+#pragma mark - KKGridView Senders
 
 - (void)addItems:(id)sender
 {
@@ -100,6 +111,8 @@ static const NSUInteger kNumSection = 40;
     _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:_gridView.allowsMultipleSelection ? @"Disable Multiple Selection" : @"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
 }
+
+#pragma mark - KKGridViewDataSource
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
@@ -155,6 +168,8 @@ static const NSUInteger kNumSection = 40;
     return cell;
 }
 
+#pragma mark - UIViewController
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
@@ -165,21 +180,16 @@ static const NSUInteger kNumSection = 40;
 
 - (void) willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-//    Not sure how I feel about this. (@kolinkrewinkel)
-    
     CATransition *fadeTransition = [CATransition animation];
-    
     fadeTransition.duration = duration;
     fadeTransition.type = kCATransitionFade;
     fadeTransition.removedOnCompletion = YES;
     fadeTransition.fillMode = kCAFillModeForwards;
     
-    //  Implicit animations from UIKit / UIView animation needs to be removed
     for (CALayer *aLayer in _gridView.layer.sublayers)
         [aLayer removeAllAnimations];
     
     [_gridView.layer addAnimation:fadeTransition forKey:@"transition"];
-    
 }
 
 @end

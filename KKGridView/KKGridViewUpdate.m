@@ -14,6 +14,7 @@
 @synthesize animating = _animating;
 @synthesize indexPath = _indexPath;
 @synthesize sectionUpdate = _sectionUpdate;
+@synthesize timestamp = _timestamp;
 @synthesize type = _type;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation

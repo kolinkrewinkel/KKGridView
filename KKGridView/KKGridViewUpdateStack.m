@@ -55,6 +55,7 @@
 - (void)removeUpdate:(KKGridViewUpdate *)update
 {
     [_itemsToUpdate removeObject:update];
+    NSLog(@"%@", _itemsToUpdate);
 }
 
 - (void)_sortItems
