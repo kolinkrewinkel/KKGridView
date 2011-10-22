@@ -11,9 +11,11 @@
 
 @implementation KKGridViewCell
 
+@synthesize backgroundView = _backgroundView;
+@synthesize contentView = _contentView;
+@synthesize selectedBackgroundView = _selectedBackgroundView;
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
-@synthesize selectedBackgroundView = _selectedBackgroundView;
 @synthesize indexPath = _indexPath;
 
 
@@ -29,7 +31,7 @@
     NSString *cellID = [self cellIdentifier];
     KKGridViewCell *cell = (KKGridViewCell *)[gridView dequeueReusableCellWithIdentifier:cellID];
     if (cell == nil) {
-        cell = [[self alloc] initWithFrame:(CGRect){CGPointZero,gridView.cellSize} reuseIdentifier:cellID];
+        cell = [[self alloc] initWithFrame:(CGRect){CGPointZero, gridView.cellSize} reuseIdentifier:cellID];
     }
     
     return cell;
@@ -42,11 +44,20 @@
     if ((self = [super initWithFrame:frame])) {
         self.reuseIdentifier = reuseIdentifier;
         
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        _contentView.backgroundColor = [UIColor whiteColor];
+        [self addSubview:_contentView];
+        
+        _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        _backgroundView.backgroundColor = [UIColor whiteColor];
+        [self addSubview:_backgroundView];
+        
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _selectedBackgroundView.backgroundColor = [UIColor blueColor];
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
+        [self bringSubviewToFront:_contentView];
     }
     
     return self;
@@ -68,15 +79,17 @@
         _selectedBackgroundView.hidden = !selected;
     }
     
-    [self setNeedsDisplay];
+    [self layoutSubviews];        
+
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [UIView animateWithDuration:0.2 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-        self.selected = selected;
+    [UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+        _selected = selected;
+        _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
     } completion:^(BOOL finished) {
-        _selectedBackgroundView.hidden = !selected;
+        [self layoutSubviews];        
     }];
 }
 
@@ -86,17 +99,29 @@
     [self setNeedsDisplay];
 }
 
-#pragma mark - Drawing
+#pragma mark - Layout
 
 - (void)layoutSubviews
 {
+    _contentView.frame = self.bounds;
+    _backgroundView.frame = self.bounds;
     _selectedBackgroundView.frame = self.bounds;
+    
+    [self sendSubviewToBack:_selectedBackgroundView];
+    [self sendSubviewToBack:_backgroundView];
+    [self bringSubviewToFront:_contentView];
+////        
+    if (_selected) {
+        _contentView.backgroundColor = [UIColor clearColor];
+        _contentView.opaque = NO;
+    } else {
+        _contentView.backgroundColor = [UIColor lightGrayColor];
+    }
+    
+    _selectedBackgroundView.hidden = !_selected;
+    _backgroundView.hidden = _selected;
+    
     [super layoutSubviews];
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    [[NSString stringWithFormat:@"{%d, %d}", self.indexPath.section, self.indexPath.index] drawInRect:rect withFont:[UIFont boldSystemFontOfSize:12.f]];
 }
 
 #pragma mark - Subclassers

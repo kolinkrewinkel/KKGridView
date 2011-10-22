@@ -150,7 +150,7 @@ static const NSUInteger kNumSection = 40;
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    cell.backgroundColor = [UIColor lightGrayColor];
+    cell.contentView.backgroundColor = [UIColor lightGrayColor];
     
     return cell;
 }

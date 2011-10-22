@@ -22,8 +22,10 @@
 
 #pragma mark - Properties
 
-@property (nonatomic, copy) NSString *reuseIdentifier;
+@property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, copy) KKIndexPath *indexPath;
+@property (nonatomic, copy) NSString *reuseIdentifier;
 @property (nonatomic) BOOL selected;
 @property (nonatomic, strong) UIView *selectedBackgroundView;
 
