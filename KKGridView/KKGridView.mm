@@ -35,7 +35,6 @@
     NSMutableArray *_headerViews;
     
     BOOL _markedForDisplay;
-    dispatch_queue_t _renderQueue;
     
     std::vector<CGFloat> _footerHeights;
     std::vector<CGFloat> _headerHeights;
@@ -139,9 +138,7 @@
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
-    
-    _renderQueue = dispatch_queue_create("com.kkgridview.kkgridview", NULL);
-    
+        
     self.alwaysBounceVertical = YES;
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
@@ -186,7 +183,7 @@
 {
     CGRect oldFrame = self.frame;
     [super setFrame:frame];
-    if (_renderQueue != NULL && !CGSizeEqualToSize(frame.size, oldFrame.size)) {
+    if (!CGSizeEqualToSize(frame.size, oldFrame.size)) {
         [self _respondToBoundsChange];
     }
 }
@@ -195,7 +192,7 @@
 {
     CGRect oldBounds = self.bounds;
     [super setBounds:bounds];
-    if (_renderQueue != NULL && !CGSizeEqualToSize(bounds.size, oldBounds.size)) {
+    if (!CGSizeEqualToSize(bounds.size, oldBounds.size)) {
         [self _respondToBoundsChange];
     }
 }
@@ -974,11 +971,6 @@
 }
 
 #pragma mark - Memory Management
-
-- (void)dealloc
-{
-    dispatch_release(_renderQueue);
-}
 
 - (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
 {
