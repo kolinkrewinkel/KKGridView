@@ -367,7 +367,7 @@
             
             [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
                 if (keyPath.section == indexPath.section) {
-                    if (([indexPath compare:keyPath] == NSOrderedSame | [indexPath compare:keyPath] == NSOrderedAscending) && ([[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedDescending | [[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedSame)) {
+                    if (([indexPath compare:keyPath] == NSOrderedSame || [indexPath compare:keyPath] == NSOrderedAscending) && ([[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedDescending || [[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedSame)) {
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
                             keyPath.index++;
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
@@ -735,7 +735,7 @@
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
         KKIndexPath *indexPath = (KKIndexPath *)key;
         if (indexPath.section == fromPath.section) {
-            if ([indexPath compare:fromPath] == NSOrderedSame | [indexPath compare:fromPath] == NSOrderedDescending | [indexPath compare:throughPath] == NSOrderedSame) {
+            if ([indexPath compare:fromPath] == NSOrderedSame || [indexPath compare:fromPath] == NSOrderedDescending || [indexPath compare:throughPath] == NSOrderedSame) {
                 indexPath.index+=amount;
                 [dictionary setObject:obj forKey:indexPath];
             }
