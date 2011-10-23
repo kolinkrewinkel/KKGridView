@@ -32,7 +32,7 @@
     NSString *cellID = [self cellIdentifier];
     KKGridViewCell *cell = (KKGridViewCell *)[gridView dequeueReusableCellWithIdentifier:cellID];
     if (cell == nil) {
-        cell = [[self alloc] initWithFrame:(CGRect){CGPointZero, gridView.cellSize} reuseIdentifier:cellID];
+        cell = [[self alloc] initWithFrame:(CGRect){ .size = gridView.cellSize } reuseIdentifier:cellID];
     }
     
     return cell;

@@ -154,32 +154,29 @@
 
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
 {
-    CGRect rect = CGRectZero;
-    CGFloat yPosition = _cellPadding.height + _gridHeaderView.frame.size.height;
-    CGFloat xPosition = _cellPadding.width;
+    CGPoint point = CGPointZero;
+    point.y = _cellPadding.height + _gridHeaderView.frame.size.height;
+    point.x = _cellPadding.width;
+    
     for (NSUInteger section = 0; section < indexPath.section; section++) {
         if (_sectionHeights.size() > 0) {
-            yPosition += _sectionHeights[section];
+            point.y += _sectionHeights[section];
         } else {
-            yPosition += [self _heightForSection:section];
+            point.y += [self _heightForSection:section];
         }
     }
     
     if (indexPath.section < _headerHeights.size()) {
-        yPosition += _headerHeights[indexPath.section];
+        point.y += _headerHeights[indexPath.section];
     }
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
     NSInteger column = indexPath.index - (row * _numberOfColumns);
     
-    yPosition += (row * (_cellSize.height + _cellPadding.height));
-    xPosition += (column * (_cellSize.width + _cellPadding.width));
+    point.y += (row * (_cellSize.height + _cellPadding.height));
+    point.x += (column * (_cellSize.width + _cellPadding.width));
     
-    rect.size = _cellSize;
-    rect.origin.y = yPosition;
-    rect.origin.x = xPosition;
-    
-    return rect;
+    return (CGRect){ point, _cellSize };
 }
 
 #pragma mark - Setters
@@ -678,19 +675,21 @@
     }
     
     CGPoint point = CGPointZero;
+    CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
+    CGFloat boundsHeight = self.bounds.size.height;
     
     switch (scrollPosition) {
         case KKGridViewScrollPositionTop:
-            point.y = CGRectGetMinY([self rectForCellAtIndexPath:indexPath]);
+            point.y = CGRectGetMinY(cellRect);
             break;
         case KKGridViewScrollPositionBottom:
-            point.y = CGRectGetMaxY([self rectForCellAtIndexPath:indexPath]) - self.bounds.size.height;
+            point.y = CGRectGetMaxY(cellRect) - boundsHeight;
             break;
         case KKGridViewScrollPositionMiddle:
-            point.y = CGRectGetMaxY([self rectForCellAtIndexPath:indexPath]) - (self.bounds.size.height * .5f);
+            point.y = CGRectGetMaxY(cellRect) - (boundsHeight * .5f);
             break;
         case KKGridViewScrollPositionNone:
-            [self scrollRectToVisible:[self rectForCellAtIndexPath:indexPath] animated:animated];
+            [self scrollRectToVisible:cellRect animated:animated];
             return;
             break;
         default:
