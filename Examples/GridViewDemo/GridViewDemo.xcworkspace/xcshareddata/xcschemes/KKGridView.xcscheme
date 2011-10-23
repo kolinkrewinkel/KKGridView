@@ -13,20 +13,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AE1176D1453EA2600093C29"
-               BuildableName = "GridImages.bundle"
-               BlueprintName = "GridImages"
-               ReferencedContainer = "container:../../KKGridView.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1A61BE0E13DCAF1F00AB4243"
                BuildableName = "libKKGridView.a"
                BlueprintName = "KKGridView"
