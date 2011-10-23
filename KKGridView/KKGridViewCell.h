@@ -12,6 +12,21 @@
 @class KKGridView;
 @class KKIndexPath;
 
+typedef enum {
+    KKGridViewCellAccessoryTypeNone, // Blank
+    KKGridViewCellAccessoryTypeUnread, // Blue bullet
+    KKGridViewCellAccessoryTypeNew, // New badge (ala Newsstand/Sonora)
+    KKGridViewCellAccessoryTypeDelete, // customish deletion
+    KKGridViewCellAccessoryTypeInfo, // Info button
+    KKGridViewCellAccessoryTypeBadgeExclamatory, // Messages app style error
+    KKGridViewCellAccessoryTypeBadgeNumeric // SpringBoard numeric badge
+} KKGridViewCellAccessoryType;
+
+typedef enum {
+    KKGridViewCellAppearanceStyleAppleDefault, // Ripped from UIKit
+    KKGridViewCellAppearanceStyleChristianDalonzo // @chrisdalonzo
+} KKGridViewCellAppearanceStyle;
+
 @interface KKGridViewCell : UIView
 
 #pragma mark - Class Methods
@@ -32,6 +47,7 @@
 @property (nonatomic) BOOL selected;
 @property (nonatomic, strong) UIView *selectedBackgroundView;
 @property (nonatomic) BOOL editing;
+@property (nonatomic) KKGridViewCellAccessoryType accessoryType;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;

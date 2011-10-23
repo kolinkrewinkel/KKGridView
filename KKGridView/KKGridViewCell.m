@@ -9,15 +9,19 @@
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKGridView.h>
 
-@implementation KKGridViewCell
+@implementation KKGridViewCell {
+    UIButton *_badgeView;
+    NSString *_badgeText;
+}
 
+@synthesize accessoryType = _accessoryType;
 @synthesize backgroundView = _backgroundView;
 @synthesize contentView = _contentView;
 @synthesize editing = _editing;
-@synthesize selectedBackgroundView = _selectedBackgroundView;
+@synthesize indexPath = _indexPath;
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
-@synthesize indexPath = _indexPath;
+@synthesize selectedBackgroundView = _selectedBackgroundView;
 
 
 #pragma mark - Class Methods
@@ -59,12 +63,27 @@
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
         [self bringSubviewToFront:_contentView];
+        
+        self.accessoryType = KKGridViewCellAccessoryTypeBadgeExclamatory;
     }
     
     return self;
 }
 
 #pragma mark - Setters
+
+- (void)setAccessoryType:(KKGridViewCellAccessoryType)accessoryType
+{
+    _accessoryType = accessoryType;
+    [self setNeedsLayout];
+}
+
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
+{
+    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
+        self.editing = editing;
+    }];
+}
 
 - (void)setSelected:(BOOL)selected
 {
@@ -94,13 +113,6 @@
     }];
 }
 
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated
-{
-    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
-        self.editing = editing;
-    }];
-}
-
 #pragma mark - Layout
 
 - (void)layoutSubviews
@@ -124,7 +136,35 @@
     _selectedBackgroundView.hidden = !_selected;
     _backgroundView.hidden = _selected;
     
-    [super layoutSubviews];
+    switch (self.accessoryType) {
+        case KKGridViewCellAccessoryTypeNone:
+            _badgeView = nil;
+            break;
+        case KKGridViewCellAccessoryTypeNew:
+            break;
+        case KKGridViewCellAccessoryTypeInfo:
+            break;
+        case KKGridViewCellAccessoryTypeDelete:
+            break;
+        case KKGridViewCellAccessoryTypeBadgeExclamatory:
+            if (!_badgeView) {
+                _badgeView = [[UIButton alloc] init];
+                [_badgeView setTitle:@"!" forState:UIControlStateNormal];
+                NSArray *bundle = [NSBundle allBundles];
+                NSLog(@"%@", bundle);
+                [_badgeView setBackgroundImage:[UIImage imageNamed:@"AppleBadgeExclamatory.png"] forState:UIControlStateNormal];
+                [_contentView addSubview:_badgeView];
+            }
+            
+            _badgeView.frame = CGRectMake(self.bounds.size.width - (29.f + 5.f), -5.f, 29.f, 31.f);
+            break;
+        case KKGridViewCellAccessoryTypeUnread:
+            break;
+        case KKGridViewCellAccessoryTypeBadgeNumeric:
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark - Subclassers

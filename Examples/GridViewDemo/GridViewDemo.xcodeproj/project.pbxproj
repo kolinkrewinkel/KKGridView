@@ -17,6 +17,7 @@
 		1A530A4413DE962700E6C60B /* GridViewDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */; };
 		1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */; };
 		1A72A97A1453B450002546F8 /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A72A9791453B450002546F8 /* libKKGridView.a */; };
+		1AE1177B1453EB0E00093C29 /* GridImages.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE1177A1453EB0E00093C29 /* GridImages.bundle */; };
 		397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397E3D271406642500C3DEA3 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoViewController.m; sourceTree = "<group>"; };
 		1A530A4613DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GridViewDemoViewController.xib; sourceTree = "<group>"; };
 		1A72A9791453B450002546F8 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKKGridView.a; path = "../../../../Library/Developer/Xcode/DerivedData/GridViewDemo-cxzgamgrcpvappbjlxrfhossofwy/Build/Products/Debug-iphoneos/libKKGridView.a"; sourceTree = "<group>"; };
+		1AE1177A1453EB0E00093C29 /* GridImages.bundle */ = {isa = PBXFileReference; lastKnownFileType = file; name = GridImages.bundle; path = ../../build/Release/GridImages.bundle; sourceTree = "<group>"; };
 		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -44,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AE1177B1453EB0E00093C29 /* GridImages.bundle in Frameworks */,
 				1A72A97A1453B450002546F8 /* libKKGridView.a in Frameworks */,
 				397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */,
 				1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */,
@@ -58,6 +61,7 @@
 		1A530A1E13DE962700E6C60B = {
 			isa = PBXGroup;
 			children = (
+				1AE1177A1453EB0E00093C29 /* GridImages.bundle */,
 				1A530A3313DE962700E6C60B /* GridViewDemo */,
 				1A530A2C13DE962700E6C60B /* Frameworks */,
 				1A530A2A13DE962700E6C60B /* Products */,

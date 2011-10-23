@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>GridImages.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>KKGridView.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -13,6 +18,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>1A61BE0E13DCAF1F00AB4243</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>1AE1176D1453EA2600093C29</key>
 		<dict>
 			<key>primary</key>
 			<true/>

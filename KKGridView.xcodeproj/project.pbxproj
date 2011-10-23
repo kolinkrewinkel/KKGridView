@@ -25,6 +25,13 @@
 		1A72A9761453AE42002546F8 /* KKGridViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A72A9741453AE42002546F8 /* KKGridViewController.m */; };
 		1AD5397A13DF7A060071EFDC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397913DF7A060071EFDC /* CoreFoundation.framework */; };
 		1AD5397C13DF7E690071EFDC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397B13DF7E690071EFDC /* QuartzCore.framework */; };
+		1AE1176F1453EA2600093C29 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD5397913DF7A060071EFDC /* CoreFoundation.framework */; };
+		1AE117751453EA2600093C29 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117731453EA2600093C29 /* InfoPlist.strings */; };
+		1AE1177D1453EB2C00093C29 /* AppleBadgeExclamatory@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117681453E93300093C29 /* AppleBadgeExclamatory@2x.png */; };
+		1AE1177E1453EB2C00093C29 /* AppleBadgeExclamatory.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117691453E93300093C29 /* AppleBadgeExclamatory.png */; };
+		1AE1177F1453EB2C00093C29 /* AppleBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117661453E89400093C29 /* AppleBadge.png */; };
+		1AE117801453EB2C00093C29 /* AppleBadge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117671453E89400093C29 /* AppleBadge@2x.png */; };
+		1AE117811453EC1D00093C29 /* GridImages.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE1176E1453EA2600093C29 /* GridImages.bundle */; };
 		FC53DF8313E629FE000767B1 /* KKGridViewViewInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */; };
 		FC53DF8413E629FE000767B1 /* KKGridViewViewInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */; };
 /* End PBXBuildFile section */
@@ -50,6 +57,14 @@
 		1A72A9741453AE42002546F8 /* KKGridViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewController.m; sourceTree = "<group>"; };
 		1AD5397913DF7A060071EFDC /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1AD5397B13DF7E690071EFDC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1AE117661453E89400093C29 /* AppleBadge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppleBadge.png; sourceTree = "<group>"; };
+		1AE117671453E89400093C29 /* AppleBadge@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppleBadge@2x.png"; sourceTree = "<group>"; };
+		1AE117681453E93300093C29 /* AppleBadgeExclamatory@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppleBadgeExclamatory@2x.png"; sourceTree = "<group>"; };
+		1AE117691453E93300093C29 /* AppleBadgeExclamatory.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppleBadgeExclamatory.png; sourceTree = "<group>"; };
+		1AE1176E1453EA2600093C29 /* GridImages.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GridImages.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AE117721453EA2600093C29 /* GridImages-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GridImages-Info.plist"; sourceTree = "<group>"; };
+		1AE117741453EA2600093C29 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1AE117761453EA2700093C29 /* GridImages-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GridImages-Prefix.pch"; sourceTree = "<group>"; };
 		FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewViewInfo.h; sourceTree = "<group>"; };
 		FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewViewInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -59,11 +74,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AE117811453EC1D00093C29 /* GridImages.bundle in Frameworks */,
 				1AD5397A13DF7A060071EFDC /* CoreFoundation.framework in Frameworks */,
 				1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */,
 				1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */,
 				1AD5397C13DF7E690071EFDC /* QuartzCore.framework in Frameworks */,
 				1A32AD8213DCDF1D00E8CC7C /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1AE1176B1453EA2600093C29 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1176F1453EA2600093C29 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				1A61BE1413DCAF1F00AB4243 /* KKGridView */,
+				1AE117701453EA2600093C29 /* GridImages */,
 				1A61BE1113DCAF1F00AB4243 /* Frameworks */,
 				1A61BE1013DCAF1F00AB4243 /* Products */,
 			);
@@ -85,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */,
+				1AE1176E1453EA2600093C29 /* GridImages.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -104,6 +130,7 @@
 		1A61BE1413DCAF1F00AB4243 /* KKGridView */ = {
 			isa = PBXGroup;
 			children = (
+				1AE117641453E89400093C29 /* Images */,
 				1A32AD8313DCDFB200E8CC7C /* KKGridView.h */,
 				1A32AD8413DCDFB200E8CC7C /* KKGridView.mm */,
 				1A32AD8713DCDFC200E8CC7C /* KKGridViewCell.h */,
@@ -128,6 +155,43 @@
 			children = (
 				1A5F356613DD02CD00A38A3E /* Definitions.h */,
 				1A61BE1613DCAF1F00AB4243 /* KKGridView-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AE117641453E89400093C29 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				1AE117651453E89400093C29 /* Apple */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		1AE117651453E89400093C29 /* Apple */ = {
+			isa = PBXGroup;
+			children = (
+				1AE117681453E93300093C29 /* AppleBadgeExclamatory@2x.png */,
+				1AE117691453E93300093C29 /* AppleBadgeExclamatory.png */,
+				1AE117661453E89400093C29 /* AppleBadge.png */,
+				1AE117671453E89400093C29 /* AppleBadge@2x.png */,
+			);
+			path = Apple;
+			sourceTree = "<group>";
+		};
+		1AE117701453EA2600093C29 /* GridImages */ = {
+			isa = PBXGroup;
+			children = (
+				1AE117711453EA2600093C29 /* Supporting Files */,
+			);
+			path = GridImages;
+			sourceTree = "<group>";
+		};
+		1AE117711453EA2600093C29 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AE117721453EA2600093C29 /* GridImages-Info.plist */,
+				1AE117731453EA2600093C29 /* InfoPlist.strings */,
+				1AE117761453EA2700093C29 /* GridImages-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -170,6 +234,23 @@
 			productReference = 1A61BE0F13DCAF1F00AB4243 /* libKKGridView.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		1AE1176D1453EA2600093C29 /* GridImages */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AE117771453EA2700093C29 /* Build configuration list for PBXNativeTarget "GridImages" */;
+			buildPhases = (
+				1AE1176A1453EA2600093C29 /* Sources */,
+				1AE1176B1453EA2600093C29 /* Frameworks */,
+				1AE1176C1453EA2600093C29 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GridImages;
+			productName = GridImages;
+			productReference = 1AE1176E1453EA2600093C29 /* GridImages.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -192,9 +273,25 @@
 			projectRoot = "";
 			targets = (
 				1A61BE0E13DCAF1F00AB4243 /* KKGridView */,
+				1AE1176D1453EA2600093C29 /* GridImages */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1AE1176C1453EA2600093C29 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AE1177D1453EB2C00093C29 /* AppleBadgeExclamatory@2x.png in Resources */,
+				1AE1177E1453EB2C00093C29 /* AppleBadgeExclamatory.png in Resources */,
+				1AE1177F1453EB2C00093C29 /* AppleBadge.png in Resources */,
+				1AE117801453EB2C00093C29 /* AppleBadge@2x.png in Resources */,
+				1AE117751453EA2600093C29 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A61BE0B13DCAF1F00AB4243 /* Sources */ = {
@@ -211,7 +308,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1AE1176A1453EA2600093C29 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1AE117731453EA2600093C29 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AE117741453EA2600093C29 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1A61BE1A13DCAF1F00AB4243 /* Debug */ = {
@@ -292,6 +407,44 @@
 			};
 			name = Release;
 		};
+		1AE117781453EA2700093C29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GridImages/GridImages-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "GridImages/GridImages-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		1AE117791453EA2700093C29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "GridImages/GridImages-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				INFOPLIST_FILE = "GridImages/GridImages-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -312,6 +465,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		1AE117771453EA2700093C29 /* Build configuration list for PBXNativeTarget "GridImages" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE117781453EA2700093C29 /* Debug */,
+				1AE117791453EA2700093C29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
