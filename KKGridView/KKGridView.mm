@@ -154,9 +154,10 @@
 
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
 {
-    CGPoint point = CGPointZero;
-    point.y = _cellPadding.height + _gridHeaderView.frame.size.height;
-    point.x = _cellPadding.width;
+    CGPoint point = { 
+        _cellPadding.width,
+        _cellPadding.height + _gridHeaderView.frame.size.height,
+    };
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
         if (_sectionHeights.size() > 0) {
@@ -285,7 +286,7 @@
     
     NSUInteger index = 0;
     for (KKGridViewFooter *footer in _footerViews) {
-        CGRect f = [footer.view frame];
+        CGRect f = footer.view.frame;
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = footer->stickPoint;
         // height of current section without height of footerView itself
@@ -327,17 +328,15 @@
 - (void)_layoutExtremities
 {
     if (_gridHeaderView != nil) {
-        CGRect headerRect = _gridHeaderView.frame;
-        headerRect.origin = CGPointZero;
-        headerRect.size.width = self.bounds.size.width;
-        _gridHeaderView.frame = headerRect;
+        CGSize headerSize = _gridHeaderView.frame.size;
+        headerSize.width = self.bounds.size.width;
+        _gridHeaderView.frame = (CGRect) { .size = headerSize };
     }
     
     // layout gridFooterView
     if (_gridFooterView != nil) {
         CGRect footerRect = _gridFooterView.frame;
-        footerRect.origin.x = 0.0;
-        footerRect.origin.y  = self.contentSize.height - footerRect.size.height;
+        footerRect.origin = (CGPoint) { .y = self.contentSize.height - footerRect.size.height };
         footerRect.size.width = self.bounds.size.width;
         _gridFooterView.frame = footerRect;
     }
@@ -674,19 +673,20 @@
         [UIView setAnimationDuration:0.3];
     }
     
-    CGPoint point = CGPointZero;
+    CGFloat verticalOffset = 0.0;
+    
     CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
     CGFloat boundsHeight = self.bounds.size.height;
     
     switch (scrollPosition) {
         case KKGridViewScrollPositionTop:
-            point.y = CGRectGetMinY(cellRect);
+            verticalOffset = CGRectGetMinY(cellRect);
             break;
         case KKGridViewScrollPositionBottom:
-            point.y = CGRectGetMaxY(cellRect) - boundsHeight;
+            verticalOffset = CGRectGetMaxY(cellRect) - boundsHeight;
             break;
         case KKGridViewScrollPositionMiddle:
-            point.y = CGRectGetMaxY(cellRect) - (boundsHeight * .5f);
+            verticalOffset = CGRectGetMaxY(cellRect) - (boundsHeight * .5f);
             break;
         case KKGridViewScrollPositionNone:
             [self scrollRectToVisible:cellRect animated:animated];
@@ -696,7 +696,7 @@
             break;
     }
     
-    self.contentOffset = point;
+    self.contentOffset = (CGPoint) { .y = verticalOffset };
     
     if (animated)
         [UIView commitAnimations];
