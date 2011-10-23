@@ -32,8 +32,8 @@
         unsigned delegateRespondsToWillDisplayCell:1;
     } _flags;
     
-    __strong NSMutableArray *_footerViews;
-    __strong NSMutableArray *_headerViews;
+    NSMutableArray *_footerViews;
+    NSMutableArray *_headerViews;
     
     BOOL _markedForDisplay;
     dispatch_queue_t _renderQueue;
@@ -43,14 +43,14 @@
     std::vector<CGFloat> _sectionHeights;
     std::vector<NSUInteger> _sectionItemCount;
     
-    __strong NSMutableDictionary *_reusableCells;
-    __strong NSMutableDictionary *_visibleCells;
+    NSMutableDictionary *_reusableCells;
+    NSMutableDictionary *_visibleCells;
     
-    __strong NSMutableSet *_selectedIndexPaths;
-    __strong UITapGestureRecognizer *_selectionRecognizer;
+    NSMutableSet *_selectedIndexPaths;
+    UITapGestureRecognizer *_selectionRecognizer;
     
     BOOL _staggerForInsertion;
-    __strong KKGridViewUpdateStack *_updateStack;
+    KKGridViewUpdateStack *_updateStack;
 }
 
 - (void)_sharedInitialization;
