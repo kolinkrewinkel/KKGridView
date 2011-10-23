@@ -312,8 +312,10 @@
                     f.origin.y = sectionTwoY + sectionTwoHeight;
                 }
             }
+            
+            // move footer view to right below scroller
             [footer.view removeFromSuperview];
-            [self insertSubview:footer.view aboveSubview:[[_visibleCells allValues] objectAtIndex:0]];
+            [self insertSubview:footer.view atIndex:self.subviews.count - 1];
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
