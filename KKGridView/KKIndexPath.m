@@ -48,8 +48,7 @@
 
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
-    __autoreleasing id retVal = [[[self class] alloc] initWithIndex:index section:section];
-    return retVal;
+    return [[self alloc] initWithIndex:index section:section];
 }
 
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath 
@@ -65,8 +64,7 @@
 
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath 
 {
-    __autoreleasing id retVal = [[[self class] alloc] initWithNSIndexPath:indexPath];
-    return retVal;
+    return [[self alloc] initWithNSIndexPath:indexPath];
 }
 
 - (BOOL)isEqual:(id)object
