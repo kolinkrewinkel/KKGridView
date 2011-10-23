@@ -13,6 +13,7 @@
 
 @synthesize backgroundView = _backgroundView;
 @synthesize contentView = _contentView;
+@synthesize editing = _editing;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
@@ -93,10 +94,11 @@
     }];
 }
 
-- (void)setIndexPath:(KKIndexPath *)indexPath
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    _indexPath = [indexPath copy];
-    [self setNeedsDisplay];
+    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
+        self.editing = editing;
+    }];
 }
 
 #pragma mark - Layout

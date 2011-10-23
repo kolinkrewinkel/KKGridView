@@ -147,7 +147,7 @@ static const NSUInteger kNumSection = 40;
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
 {
-    return 35.f;
+    return 25.f;
 }
 
 - (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section

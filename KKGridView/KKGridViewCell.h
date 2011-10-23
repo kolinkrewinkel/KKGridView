@@ -6,6 +6,9 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
+// For quick reference:
+// UITableViewCell
+
 @class KKGridView;
 @class KKIndexPath;
 
@@ -28,8 +31,10 @@
 @property (nonatomic, copy) NSString *reuseIdentifier;
 @property (nonatomic) BOOL selected;
 @property (nonatomic, strong) UIView *selectedBackgroundView;
+@property (nonatomic) BOOL editing;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated;
 
 #pragma mark - Subclassers
 

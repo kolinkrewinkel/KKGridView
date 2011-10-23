@@ -15,7 +15,6 @@
 #import <map>
 #import <vector>
 
-#define KKGridViewDefaultAnimationDuration 0.25f
 #define KKGridViewDefaultAnimationStaggerInterval 0.025
 
 @interface KKGridView () {
@@ -315,7 +314,8 @@
                     f.origin.y = sectionTwoY + sectionTwoHeight;
                 }
             }
-            [self bringSubviewToFront:footer.view];
+            [footer.view removeFromSuperview];
+            [self insertSubview:footer.view aboveSubview:[[_visibleCells allValues] objectAtIndex:0]];
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;

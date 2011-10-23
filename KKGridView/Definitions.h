@@ -8,10 +8,9 @@
 
 #import <AvailabilityInternal.h>
 
-// Constants
-
-
 // Defines
+
+#define KKGridViewDefaultAnimationDuration 0.25
 
 // Macros
 
