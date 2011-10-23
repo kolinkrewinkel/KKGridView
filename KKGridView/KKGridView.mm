@@ -148,6 +148,13 @@
     
     _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
     [self addGestureRecognizer:_selectionRecognizer];
+    
+//    Set up defaults
+    self.cellSize = CGSizeMake(75.f, 75.f);
+    self.scrollsToTop = YES;
+    self.cellPadding = CGSizeMake(4.f, 4.f);
+    self.allowsMultipleSelection = NO;
+    self.backgroundColor = [UIColor whiteColor];
 }
 
 #pragma mark - Metrics

@@ -15,7 +15,6 @@
 static const NSUInteger kNumSection = 40;
 
 @implementation GridViewDemoViewController {
-    KKGridView *_gridView;
     NSMutableArray *_headerViews;
     NSMutableArray *_footerViews;
     NSUInteger firstSectionCount;
@@ -44,27 +43,18 @@ static const NSUInteger kNumSection = 40;
     }
         
     firstSectionCount = 7;
-    _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
-    _gridView.cellSize = CGSizeMake(75.f, 75.f);
-    _gridView.scrollsToTop = YES;
-    _gridView.cellPadding = CGSizeMake(4.f, 4.f);
-    _gridView.allowsMultipleSelection = NO;
-    _gridView.backgroundColor = [UIColor whiteColor];
-    _gridView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 44.f)];
     searchBar.barStyle = UIBarStyleBlackTranslucent;
     searchBar.delegate = self;
     searchBar.showsCancelButton = YES;
     searchBar.userInteractionEnabled = NO;
-    _gridView.gridHeaderView = searchBar;
+    self.gridView.gridHeaderView = searchBar;
     
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
     footerView.backgroundColor = [UIColor darkGrayColor];
-    _gridView.gridFooterView = footerView;
-    
-    self.view = _gridView;
-    
+    self.gridView.gridFooterView = footerView;
+        
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = YES;
     
@@ -72,7 +62,7 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
-    UIBarButtonItem *forceLayout = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:_gridView action:@selector(_layoutGridView)];
+    UIBarButtonItem *forceLayout = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self.gridView action:@selector(_layoutGridView)];
     
     self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, forceLayout, spacer, multiple, nil];
 }
@@ -91,7 +81,7 @@ static const NSUInteger kNumSection = 40;
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:2 inSection:0], nil];
     
     firstSectionCount+= [items count];
-    [_gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+    [self.gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
 
 - (void)removeItems:(id)sender
@@ -100,7 +90,7 @@ static const NSUInteger kNumSection = 40;
     
     if (firstSectionCount >= [items count]) {
         firstSectionCount-= [items count];
-        [_gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
+        [self.gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
     } else {
         NSLog(@"Warning: can't remove any more objects here");
     }
@@ -108,8 +98,8 @@ static const NSUInteger kNumSection = 40;
 
 - (void)toggleSelectionStyle:(id)sender
 {
-    _gridView.allowsMultipleSelection = !_gridView.allowsMultipleSelection;
-    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:_gridView.allowsMultipleSelection ? @"Disable Multiple Selection" : @"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
+    self.gridView.allowsMultipleSelection = !self.gridView.allowsMultipleSelection;
+    [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:self.gridView.allowsMultipleSelection ? @"Disable Multiple Selection" : @"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
 }
 
 #pragma mark - KKGridViewDataSource
@@ -186,10 +176,10 @@ static const NSUInteger kNumSection = 40;
     fadeTransition.removedOnCompletion = YES;
     fadeTransition.fillMode = kCAFillModeForwards;
     
-    for (CALayer *aLayer in _gridView.layer.sublayers)
+    for (CALayer *aLayer in self.gridView.layer.sublayers)
         [aLayer removeAllAnimations];
     
-    [_gridView.layer addAnimation:fadeTransition forKey:@"transition"];
+    [self.gridView.layer addAnimation:fadeTransition forKey:@"transition"];
 }
 
 @end

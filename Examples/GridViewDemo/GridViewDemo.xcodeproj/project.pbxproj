@@ -16,8 +16,8 @@
 		1A530A4113DE962700E6C60B /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A3F13DE962700E6C60B /* MainWindow.xib */; };
 		1A530A4413DE962700E6C60B /* GridViewDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */; };
 		1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */; };
+		1A72A97A1453B450002546F8 /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A72A9791453B450002546F8 /* libKKGridView.a */; };
 		397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397E3D271406642500C3DEA3 /* QuartzCore.framework */; };
-		FC026C01144C075700393CEB /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FC026C00144C075700393CEB /* libKKGridView.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,8 +35,8 @@
 		1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridViewDemoViewController.h; sourceTree = "<group>"; };
 		1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoViewController.m; sourceTree = "<group>"; };
 		1A530A4613DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GridViewDemoViewController.xib; sourceTree = "<group>"; };
+		1A72A9791453B450002546F8 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKKGridView.a; path = "../../../../Library/Developer/Xcode/DerivedData/GridViewDemo-cxzgamgrcpvappbjlxrfhossofwy/Build/Products/Debug-iphoneos/libKKGridView.a"; sourceTree = "<group>"; };
 		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		FC026C00144C075700393CEB /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKKGridView.a; path = "../Debug-iphonesimulator/libKKGridView.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC026C01144C075700393CEB /* libKKGridView.a in Frameworks */,
+				1A72A97A1453B450002546F8 /* libKKGridView.a in Frameworks */,
 				397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */,
 				1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */,
 				1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */,
@@ -77,7 +77,7 @@
 		1A530A2C13DE962700E6C60B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FC026C00144C075700393CEB /* libKKGridView.a */,
+				1A72A9791453B450002546F8 /* libKKGridView.a */,
 				1A530A3113DE962700E6C60B /* CoreGraphics.framework */,
 				1A530A2F13DE962700E6C60B /* Foundation.framework */,
 				397E3D271406642500C3DEA3 /* QuartzCore.framework */,
@@ -264,6 +264,10 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/GridViewDemo-cxzgamgrcpvappbjlxrfhossofwy/Build/Products/Debug-iphoneos\"",
+				);
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-all_load",
@@ -286,6 +290,10 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../../../Library/Developer/Xcode/DerivedData/GridViewDemo-cxzgamgrcpvappbjlxrfhossofwy/Build/Products/Debug-iphoneos\"",
+				);
 				OTHER_LDFLAGS = (
 					"-lstdc++",
 					"-all_load",

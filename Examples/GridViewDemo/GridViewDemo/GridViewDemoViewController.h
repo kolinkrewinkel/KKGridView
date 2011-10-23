@@ -6,7 +6,7 @@
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <KKGridView/KKGridViewController.h>
 
-@interface GridViewDemoViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate, UISearchBarDelegate>
+@interface GridViewDemoViewController : KKGridViewController <UISearchBarDelegate>
 @end
