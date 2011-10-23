@@ -367,7 +367,13 @@
             
             [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
                 if (keyPath.section == indexPath.section) {
-                    if (([indexPath compare:keyPath] == NSOrderedSame || [indexPath compare:keyPath] == NSOrderedAscending) && ([[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedDescending || [[self _lastIndexPathForSection:indexPath.section] compare:keyPath] == NSOrderedSame)) {
+                    NSComparisonResult pathComparison = [indexPath compare:keyPath];
+                    NSComparisonResult lastPathComparison = [[self _lastIndexPathForSection:indexPath.section] compare:keyPath];
+                    
+                    BOOL indexPathIsLessOrEqual = pathComparison == NSOrderedSame || pathComparison == NSOrderedAscending;
+                    BOOL lastPathIsGreatorOrEqual = lastPathComparison == NSOrderedDescending || lastPathComparison == NSOrderedSame;
+                    
+                    if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual) {
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
                             keyPath.index++;
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
