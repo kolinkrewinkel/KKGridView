@@ -9,4 +9,9 @@
 #import <KKGridView/KKGridViewController.h>
 
 @interface GridViewDemoViewController : KKGridViewController <UISearchBarDelegate>
+
+@property (nonatomic) NSUInteger firstSectionCount;
+@property (nonatomic, strong) NSMutableArray *footerViews;
+@property (nonatomic, strong) NSMutableArray *headerViews;
+
 @end

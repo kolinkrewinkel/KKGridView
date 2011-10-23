@@ -14,11 +14,16 @@
 
 static const NSUInteger kNumSection = 40;
 
-@implementation GridViewDemoViewController {
-    NSMutableArray *_headerViews;
-    NSMutableArray *_footerViews;
-    NSUInteger firstSectionCount;
-}
+@interface GridViewDemoViewController ()
+
+- (void)_setupGridView;
+
+@end
+
+@implementation GridViewDemoViewController
+@synthesize firstSectionCount = _firstSectionCount;
+@synthesize footerViews = _footerViews;
+@synthesize headerViews = _headerViews;
 
 #pragma mark - View lifecycle
 
@@ -41,8 +46,8 @@ static const NSUInteger kNumSection = 40;
         footer.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
         [_footerViews addObject:footer];
     }
-        
-    firstSectionCount = 7;
+    
+    _firstSectionCount = 7;
     
     UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 44.f)];
     searchBar.barStyle = UIBarStyleBlackTranslucent;
@@ -54,7 +59,7 @@ static const NSUInteger kNumSection = 40;
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
     footerView.backgroundColor = [UIColor darkGrayColor];
     self.gridView.gridFooterView = footerView;
-        
+    
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = YES;
     
@@ -65,6 +70,59 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *forceLayout = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self.gridView action:@selector(_layoutGridView)];
     
     self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, forceLayout, spacer, multiple, nil];
+    
+    [self _setupGridView];
+}
+
+- (void)_setupGridView
+{
+    __block typeof(self) selfRef = self;
+
+    [self.gridView setNumberOfItemsInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
+        switch (section) {
+            case 0:
+                return selfRef.firstSectionCount;
+                break;
+            case 1:
+                return 15;
+                break;
+            case 2:
+                return 10;
+                break;
+            case 3:
+                return 5;
+                break;
+            default:
+                return (section % 2) ? 4 : 7;
+                break;
+        }
+    }];
+    
+    [self.gridView setNumberOfSectionsBlock:^(KKGridView *gridView) {
+        return kNumSection; 
+    }];
+    
+
+    [self.gridView setHeightForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
+        return 25.f;
+    }];
+    
+    [self.gridView setHeightForHeaderInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
+        return 25.f;
+    }];
+    [self.gridView setCellBlock:^(KKGridView *gridView, KKIndexPath *indexPath) {
+        KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
+        cell.contentView.backgroundColor = [UIColor lightGrayColor];
+        
+        return cell; 
+    }];
+    [self.gridView setViewForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
+        return [selfRef.footerViews objectAtIndex:section]; 
+    }];
+    [self.gridView setViewForHeaderInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
+        return [selfRef.headerViews objectAtIndex:section];
+    }];
+    
 }
 
 #pragma mark - UISearchBarDelegate
@@ -80,7 +138,7 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:2 inSection:0], nil];
     
-    firstSectionCount+= [items count];
+    _firstSectionCount+= [items count];
     [self.gridView insertItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
 }
 
@@ -88,8 +146,8 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:1 inSection:0], [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1], nil];
     
-    if (firstSectionCount >= [items count]) {
-        firstSectionCount-= [items count];
+    if (_firstSectionCount >= [items count]) {
+        _firstSectionCount-= [items count];
         [self.gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
     } else {
         NSLog(@"Warning: can't remove any more objects here");
@@ -100,62 +158,6 @@ static const NSUInteger kNumSection = 40;
 {
     self.gridView.allowsMultipleSelection = !self.gridView.allowsMultipleSelection;
     [self.navigationItem setRightBarButtonItem:[[UIBarButtonItem alloc] initWithTitle:self.gridView.allowsMultipleSelection ? @"Disable Multiple Selection" : @"Enable Multiple Selection" style:UIBarButtonItemStyleBordered target:self action:@selector(toggleEditingStyle:)] animated:YES];
-}
-
-#pragma mark - KKGridViewDataSource
-
-- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
-{
-    switch (section) {
-        case 0:
-            return firstSectionCount;
-            break;
-        case 1:
-            return 15;
-            break;
-        case 2:
-            return 10;
-            break;
-        case 3:
-            return 5;
-            break;
-        default:
-            return (section % 2) ? 4 : 7;
-            break;
-    }
-}
-
-- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
-{
-    return 25.f;
-}
-
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
-{
-    return [_headerViews objectAtIndex:section];
-}
-
-- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
-{
-    return 25.f;
-}
-
-- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section
-{
-    return [_footerViews objectAtIndex:section];
-}
-
-- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
-{
-    return kNumSection;
-}
-
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
-{
-    KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    cell.contentView.backgroundColor = [UIColor lightGrayColor];
-    
-    return cell;
 }
 
 #pragma mark - UIViewController

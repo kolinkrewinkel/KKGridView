@@ -31,7 +31,6 @@
 		1AE1177E1453EB2C00093C29 /* AppleBadgeExclamatory.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117691453E93300093C29 /* AppleBadgeExclamatory.png */; };
 		1AE1177F1453EB2C00093C29 /* AppleBadge.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117661453E89400093C29 /* AppleBadge.png */; };
 		1AE117801453EB2C00093C29 /* AppleBadge@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AE117671453E89400093C29 /* AppleBadge@2x.png */; };
-		1AE117811453EC1D00093C29 /* GridImages.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE1176E1453EA2600093C29 /* GridImages.bundle */; };
 		FC53DF8313E629FE000767B1 /* KKGridViewViewInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */; };
 		FC53DF8413E629FE000767B1 /* KKGridViewViewInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */; };
 /* End PBXBuildFile section */
@@ -74,7 +73,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AE117811453EC1D00093C29 /* GridImages.bundle in Frameworks */,
 				1AD5397A13DF7A060071EFDC /* CoreFoundation.framework in Frameworks */,
 				1A32AD8113DCDF1D00E8CC7C /* CoreGraphics.framework in Frameworks */,
 				1A61BE1313DCAF1F00AB4243 /* Foundation.framework in Frameworks */,
@@ -473,6 +471,7 @@
 				1AE117791453EA2700093C29 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

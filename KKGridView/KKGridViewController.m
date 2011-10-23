@@ -16,7 +16,7 @@
 - (void)loadView
 {
     [super loadView];
-    _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds dataSource:self delegate:self];
+    _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds];
     _gridView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     self.view = _gridView;
 }
