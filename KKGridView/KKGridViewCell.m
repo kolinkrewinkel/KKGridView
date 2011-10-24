@@ -9,11 +9,18 @@
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKGridView.h>
 
+@interface KKGridViewCell ()
+
+- (UIImage *)_defaultBlueBackgroundRendition;
+
+@end
+
 @implementation KKGridViewCell {
     UIButton *_badgeView;
     NSString *_badgeText;
 }
 
+@synthesize accessoryPosition = _accessoryPosition;
 @synthesize accessoryType = _accessoryType;
 @synthesize backgroundView = _backgroundView;
 @synthesize contentView = _contentView;
@@ -58,13 +65,11 @@
         [self addSubview:_backgroundView];
         
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-        _selectedBackgroundView.backgroundColor = [UIColor blueColor];
+        _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
         [self bringSubviewToFront:_contentView];
-        
-        self.accessoryType = KKGridViewCellAccessoryTypeBadgeExclamatory;
     }
     
     return self;
@@ -98,9 +103,14 @@
     } else {
         _selectedBackgroundView.hidden = !selected;
     }
-    
+    for (UIView *view in _contentView.subviews) {
+        if ([view respondsToSelector:@selector(setSelected:)]) {
+            UIButton *assumedButton = (UIButton *)view;
+            assumedButton.selected = selected;
+        }
+    }
     [self layoutSubviews];        
-
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
@@ -124,8 +134,8 @@
     [self sendSubviewToBack:_selectedBackgroundView];
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
-
-
+    
+    
     if (_selected) {
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
@@ -146,25 +156,148 @@
             break;
         case KKGridViewCellAccessoryTypeDelete:
             break;
-        case KKGridViewCellAccessoryTypeBadgeExclamatory:
+        case KKGridViewCellAccessoryTypeBadgeExclamatory: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setTitle:@"!" forState:UIControlStateNormal];
-                NSArray *bundle = [NSBundle allBundles];
-                NSLog(@"%@", bundle);
-                [_badgeView setBackgroundImage:[UIImage imageNamed:@"AppleBadgeExclamatory.png"] forState:UIControlStateNormal];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"failure-btn" ofType:@"png"]] forState:UIControlStateNormal];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"failure-btn-press" ofType:@"png"]] forState:UIControlStateSelected];
+                [_badgeView setShowsTouchWhenHighlighted:NO];
+                
                 [_contentView addSubview:_badgeView];
             }
+            CGPoint point = CGPointZero;
+            switch (_accessoryPosition) {
+                case KKGridViewCellAccessoryPositionTopRight:
+                    point = CGPointMake(self.bounds.size.width - 29.f, 0.f);
+                    break;
+                case KKGridViewCellAccessoryPositionTopLeft:
+                    point = CGPointZero;
+                    break;
+                case KKGridViewCellAccessoryPositionBottomLeft:
+                    point = CGPointMake(0.f, (self.bounds.size.height - 29.f));
+                    break;
+                case KKGridViewCellAccessoryPositionBottomRight:
+                    point = CGPointMake(self.bounds.size.width - 29.f, (self.bounds.size.height - 29.f));
+                    break;
+                default:
+                    break;
+            }
             
-            _badgeView.frame = CGRectMake(self.bounds.size.width - (29.f + 5.f), -5.f, 29.f, 31.f);
+            _badgeView.frame = (CGRect){point, CGSizeMake(29.f, 29.f)};
+            [_contentView bringSubviewToFront:_badgeView];
             break;
-        case KKGridViewCellAccessoryTypeUnread:
+        } case KKGridViewCellAccessoryTypeUnread: {
+            if (!_badgeView) {
+                _badgeView = [[UIButton alloc] init];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIUnreadIndicator" ofType:@"png"]] forState:UIControlStateNormal];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIUnreadIndicatorPressed" ofType:@"png"]] forState:UIControlStateSelected];
+                [_contentView addSubview:_badgeView];
+            }
+            CGPoint point = CGPointZero;
+            switch (_accessoryPosition) {
+                case KKGridViewCellAccessoryPositionTopRight:
+                    point = CGPointMake(self.bounds.size.width - 16.f, 3.f);
+                    break;
+                case KKGridViewCellAccessoryPositionTopLeft:
+                    point = CGPointMake(3.f, 3.f);
+                    break;
+                case KKGridViewCellAccessoryPositionBottomLeft:
+                    point = CGPointMake(0.f, (self.bounds.size.height - 16.f));
+                    break;
+                case KKGridViewCellAccessoryPositionBottomRight:
+                    point = CGPointMake(self.bounds.size.width - 16.f, (self.bounds.size.height - 16.f));
+                    break;
+                default:
+                    break;
+            }
+            
+            _badgeView.frame = (CGRect){point, CGSizeMake(13.f, 13.f)};
+            [_contentView bringSubviewToFront:_badgeView];
+            
             break;
-        case KKGridViewCellAccessoryTypeBadgeNumeric:
+        } case KKGridViewCellAccessoryTypeReadPartial: {
+            if (!_badgeView) {
+                _badgeView = [[UIButton alloc] init];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIUnreadIndicatorPartial" ofType:@"png"]] forState:UIControlStateNormal];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIUnreadIndicatorPartialPressed" ofType:@"png"]] forState:UIControlStateSelected];
+                [_contentView addSubview:_badgeView];
+            }
+            CGPoint point = CGPointZero;
+            switch (_accessoryPosition) {
+                case KKGridViewCellAccessoryPositionTopRight:
+                    point = CGPointMake(self.bounds.size.width - 16.f, 3.f);
+                    break;
+                case KKGridViewCellAccessoryPositionTopLeft:
+                    point = CGPointMake(3.f, 3.f);
+                    break;
+                case KKGridViewCellAccessoryPositionBottomLeft:
+                    point = CGPointMake(0.f, (self.bounds.size.height - 16.f));
+                    break;
+                case KKGridViewCellAccessoryPositionBottomRight:
+                    point = CGPointMake(self.bounds.size.width - 16.f, (self.bounds.size.height - 16.f));
+                    break;
+                default:
+                    break;
+            }
+            
+            _badgeView.frame = (CGRect){point, CGSizeMake(13.f, 13.f)};
+            [_contentView bringSubviewToFront:_badgeView];
             break;
-        default:
+        } case KKGridViewCellAccessoryTypeBadgeNumeric: {
+            if (!_badgeView) {
+                _badgeView = [[UIButton alloc] init];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"failure-btn" ofType:@"png"]] forState:UIControlStateNormal];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"failure-btn-press" ofType:@"png"]] forState:UIControlStateSelected];
+                [_badgeView setShowsTouchWhenHighlighted:NO];
+                [_contentView addSubview:_badgeView];
+            }
+            CGPoint point = CGPointZero;
+            switch (_accessoryPosition) {
+                case KKGridViewCellAccessoryPositionTopRight:
+                    point = CGPointMake(self.bounds.size.width - 29.f, 0.f);
+                    break;
+                case KKGridViewCellAccessoryPositionTopLeft:
+                    point = CGPointZero;
+                    break;
+                case KKGridViewCellAccessoryPositionBottomLeft:
+                    point = CGPointMake(0.f, (self.bounds.size.height - 29.f));
+                    break;
+                case KKGridViewCellAccessoryPositionBottomRight:
+                    point = CGPointMake(self.bounds.size.width - 29.f, (self.bounds.size.height - 29.f));
+                    break;
+                default:
+                    break;
+            }
+            
+            _badgeView.frame = (CGRect){point, CGSizeMake(29.f, 29.f)};
+            [_contentView bringSubviewToFront:_badgeView];
+            break;
+        } default:
             break;
     }
+}
+
+- (UIImage *)_defaultBlueBackgroundRendition
+{
+    UIGraphicsBeginImageContextWithOptions(self.bounds.size, YES, [UIScreen mainScreen].scale);
+    CGColorSpaceRef baseSpace = CGColorSpaceCreateDeviceRGB();
+    static const CGFloat colors [] = { 
+        0.063f, 0.459f, 0.949f, 1.0f, 
+        0.028f, 0.26f, 0.877f, 1.0f
+    };
+    
+    CGGradientRef gradient = CGGradientCreateWithColorComponents(baseSpace, colors, NULL, 2);
+    CGColorSpaceRelease(baseSpace), baseSpace = NULL;
+    
+    CGPoint startPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMinY(self.bounds));
+    CGPoint endPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds));
+    
+    CGContextDrawLinearGradient(UIGraphicsGetCurrentContext(), gradient, startPoint, endPoint, 0);
+    
+    CGGradientRelease(gradient), gradient = NULL;
+    UIImage *rendition = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return rendition;
 }
 
 #pragma mark - Subclassers

@@ -77,7 +77,7 @@ static const NSUInteger kNumSection = 40;
 - (void)_setupGridView
 {
     __block typeof(self) selfRef = self;
-
+    
     [self.gridView setNumberOfItemsInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
         switch (section) {
             case 0:
@@ -102,7 +102,7 @@ static const NSUInteger kNumSection = 40;
         return kNumSection; 
     }];
     
-
+    
     [self.gridView setHeightForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
         return 25.f;
     }];
@@ -112,6 +112,15 @@ static const NSUInteger kNumSection = 40;
     }];
     [self.gridView setCellBlock:^(KKGridView *gridView, KKIndexPath *indexPath) {
         KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
+        if (indexPath.index % 2) {
+            cell.accessoryType = KKGridViewCellAccessoryTypeUnread;
+//            cell.accessoryPosition = KKGridViewCellAccessoryPositionTopRight;
+        } else {
+            cell.accessoryType = KKGridViewCellAccessoryTypeReadPartial;
+        }
+        cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
+
+        
         cell.contentView.backgroundColor = [UIColor lightGrayColor];
         
         return cell; 
