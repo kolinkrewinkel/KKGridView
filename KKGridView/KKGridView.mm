@@ -365,6 +365,8 @@
             NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
             
             [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
+                BOOL set = YES;
+                
                 if (keyPath.section == indexPath.section) {
                     NSComparisonResult pathComparison = [indexPath compare:keyPath];
                     NSComparisonResult lastPathComparison = [[self _lastIndexPathForSection:indexPath.section] compare:keyPath];
@@ -376,11 +378,18 @@
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
                             keyPath.index++;
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                            keyPath.index--;
+                            if (pathComparison == NSOrderedSame) {
+                                set = NO;
+                                [cell removeFromSuperview];
+//                                TODO: increment other updates to actual make this work.. just like the old imp. I believe this will help.
+                            } else {
+                                keyPath.index--;
+                            }
                         }
                     }
                 }
-                [replacement setObject:cell forKey:keyPath];
+                if (set)
+                    [replacement setObject:cell forKey:keyPath];
             }];
             [_visibleCells setDictionary:replacement];
             [self reloadContentSize];
