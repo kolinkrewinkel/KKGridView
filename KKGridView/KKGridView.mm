@@ -351,10 +351,12 @@
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
-    
+    NSUInteger decrementOtherCellsByAmountRelative = 0;
+//    Use this to set frames of cells already hypothetically traversed; messed up by deletion model.
     for (KKIndexPath *indexPath in visiblePaths) {
         //      Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
+        __block BOOL updateCell = YES;
         if ([_updateStack hasUpdateForIndexPath:indexPath]) {
             needsAccessoryReload = YES;
             _markedForDisplay = YES;
@@ -380,36 +382,64 @@
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                             if (pathComparison == NSOrderedSame) {
                                 set = NO;
-                                [cell removeFromSuperview];
-//                                TODO: increment other updates to actual make this work.. just like the old imp. I believe this will help.
-                            } else {
-                                keyPath.index--;
+                                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
+                                    cell.alpha = 0.f;
+                                } completion:^(BOOL finished) {
+                                    [cell removeFromSuperview];
+                                }];
+                                [_updateStack removeUpdate:update];
+                                updateCell = NO;
                             }
                         }
                     }
                 }
-                if (set)
-                    [replacement setObject:cell forKey:keyPath];
+                if (set) {
+                    if (update.type == KKGridViewUpdateTypeItemInsert) {     
+                        [replacement setObject:cell forKey:keyPath];
+                    } else if (update.type == KKGridViewUpdateTypeItemDelete) {
+                        [replacement setObject:cell forKey:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
+                    }
+                }
             }];
             [_visibleCells setDictionary:replacement];
             [self reloadContentSize];
         }
         
-        //      Routine
-        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        cell.selected = [_selectedIndexPaths containsObject:indexPath];
-        if (!cell) {
-            cell = [self _loadCellAtVisibleIndexPath:indexPath];
-            [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
-            cell.indexPath = indexPath;
-        } else if (_markedForDisplay) {
-            cell.indexPath = indexPath;
-            if (_staggerForInsertion) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
+        if (updateCell) {
+            //      Routine
+            KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+            cell.selected = [_selectedIndexPaths containsObject:indexPath];
+            if (!cell) {
+                cell = [self _loadCellAtVisibleIndexPath:indexPath];
+                [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
+                cell.indexPath = indexPath;
+            } else if (_markedForDisplay) {
+                cell.indexPath = indexPath;
+                if (_staggerForInsertion) {
+                    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
+                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    } completion:nil];
+                } else {
                     cell.frame = [self rectForCellAtIndexPath:indexPath];
-                } completion:nil];
-            } else {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                }
+            }
+        } else {
+            KKIndexPath *replacement = [KKIndexPath indexPathForIndex:indexPath.index - 1 inSection:indexPath.section];
+            KKGridViewCell *cell = [_visibleCells objectForKey:replacement];
+            cell.selected = [_selectedIndexPaths containsObject:replacement];
+            if (!cell) {
+                cell = [self _loadCellAtVisibleIndexPath:replacement];
+                [self _displayCell:cell atIndexPath:replacement withAnimation:animation];
+                cell.indexPath = replacement;
+            } else if (_markedForDisplay) {
+                cell.indexPath = replacement;
+                if (_staggerForInsertion) {
+                    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
+                        cell.frame = [self rectForCellAtIndexPath:replacement];
+                    } completion:nil];
+                } else {
+                    cell.frame = [self rectForCellAtIndexPath:replacement];
+                }
             }
         }
         
