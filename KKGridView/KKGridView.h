@@ -81,6 +81,7 @@ typedef enum {
 
 - (void)reloadContentSize;
 - (void)reloadData;
+- (void)reloadDataAnimated;
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
