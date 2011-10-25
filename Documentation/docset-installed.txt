@@ -1,0 +1,4 @@
+Documentation set was installed to Xcode!
+
+Path: /Users/kxkdesign/Library/Developer/Shared/Documentation/DocSets/com.kolinkrewinkel.KKGridView.docset
+Time: 2011-10-25 05:06:43 +0000
