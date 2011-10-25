@@ -77,19 +77,24 @@ typedef enum {
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath;
 - (NSArray *)visibleIndexPaths;
 
-#pragma mark - Data
+#pragma mark - Reloading
 
 - (void)reloadContentSize;
 - (void)reloadData;
-- (void)reloadDataAnimated;
+
+#pragma mark - Items
+
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;
+- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition;
+
+#pragma mark - Unimplemented
+
 //- (void)insertSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
 
-- (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition;
 
 #pragma mark - Selection
 
