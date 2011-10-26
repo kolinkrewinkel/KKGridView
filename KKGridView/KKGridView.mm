@@ -384,6 +384,7 @@
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
     NSUInteger decrementOtherCellsByAmountRelative = 0;
+    __block NSUInteger sectionDecremented = NSUIntegerMax;
     //    Use this to set frames of cells already hypothetically traversed; messed up by deletion model.
     for (KKIndexPath *indexPath in visiblePaths) {
         //      Updates
@@ -419,6 +420,7 @@
                                 } completion:^(BOOL finished) {
                                     [cell removeFromSuperview];
                                 }];
+                                sectionDecremented = indexPath.section;
                                 [_updateStack removeUpdate:update];
                                 updateCell = NO;
                             }
@@ -429,14 +431,16 @@
                     if (update.type == KKGridViewUpdateTypeItemInsert) {     
                         [replacement setObject:cell forKey:keyPath];
                     } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                        [replacement setObject:cell forKey:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
+                        [replacement setObject:cell forKey:[KKIndexPath indexPathForIndex:keyPath.section == indexPath.section ? keyPath.index - 1 : keyPath.index inSection:keyPath.section]];
                     }
                 }
             }];
             [_visibleCells setDictionary:replacement];
             [self reloadContentSize];
         }
-        
+        if (sectionDecremented < indexPath.section) {
+            sectionDecremented = NSUIntegerMax;
+        }
         KKIndexPath *replacement = [KKIndexPath indexPathForIndex:indexPath.index - decrementOtherCellsByAmountRelative inSection:indexPath.section];
         KKGridViewCell *cell = [_visibleCells objectForKey:replacement];
         cell.selected = [_selectedIndexPaths containsObject:replacement];
