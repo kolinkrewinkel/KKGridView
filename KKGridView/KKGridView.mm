@@ -516,8 +516,9 @@
 
 - (void)_performRemainingUpdatesModelOnly
 {
-    if (_updateStack.itemsToUpdate.count > 0) {
-        [_updateStack.itemsToUpdate removeAllObjects];
+    NSArray *filteredArray = [_updateStack.itemsToUpdate filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"animating == NO"]];
+    if (filteredArray.count > 0) {
+        [_updateStack.itemsToUpdate removeObjectsInArray:filteredArray];
         CGFloat yPosition = self.contentOffset.y;
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
             [self _softReload];
