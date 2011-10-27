@@ -98,11 +98,7 @@
         _selectedBackgroundView.hidden = !selected;
     }
     
-    if ([UIView areAnimationsEnabled]) {
-        _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-    } else {
-        _selectedBackgroundView.hidden = !selected;
-    }
+    _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
     for (UIView *view in _contentView.subviews) {
         if ([view respondsToSelector:@selector(setSelected:)]) {
             UIButton *assumedButton = (UIButton *)view;
@@ -110,7 +106,6 @@
         }
     }
     [self layoutSubviews];        
-    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

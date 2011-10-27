@@ -411,13 +411,6 @@
                     if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual) {
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
                             keyPath.index++;
-                            for (KKIndexPath *selectedPath in _selectedIndexPaths) {
-                                if (selectedPath.section == keyPath.section) {
-                                    selectedPath.index++;
-                                    KKGridViewCell *cell = [_visibleCells objectForKey:selectedPath];
-                                    cell.selected = YES;
-                                }
-                            }
                             
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                             if (pathComparison == NSOrderedSame) {
@@ -435,7 +428,7 @@
                                     selectedPath.index--;
                                 }
                             }
-
+                            
                         }
                     }
                 }
@@ -448,6 +441,18 @@
                 }
             }];
             [_visibleCells setDictionary:replacement];
+            
+            NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
+            [_selectedIndexPaths enumerateObjectsUsingBlock:^(KKIndexPath *keyPath, BOOL *stop) {
+                if (update.type == KKGridViewUpdateTypeItemInsert) {
+                    if (indexPath.section == keyPath.section) {
+                        [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
+                    }
+                } else {
+                    [replacementSet addObject:keyPath];
+                }
+            }];
+            [_selectedIndexPaths setSet:replacementSet];
             
             [self reloadContentSize];
             if (![newVisiblePaths isEqual:visiblePaths]) {
@@ -467,7 +472,6 @@
             }
         }
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        cell.selected = [_selectedIndexPaths containsObject:indexPath];
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
@@ -480,6 +484,8 @@
                 cell.frame = [self rectForCellAtIndexPath:indexPath];
             }
         }
+        cell.selected = [_selectedIndexPaths containsObject:indexPath];
+t        
         index++;
     }
     [self _cleanupCells];

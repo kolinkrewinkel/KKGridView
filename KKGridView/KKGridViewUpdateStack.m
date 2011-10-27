@@ -55,7 +55,6 @@
 - (void)removeUpdate:(KKGridViewUpdate *)update
 {
     [_itemsToUpdate removeObject:update];
-    NSLog(@"%@", _itemsToUpdate);
 }
 
 - (void)_sortItems
@@ -66,7 +65,6 @@
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath
 {   
     NSPredicate *sameIndexPath = [NSPredicate predicateWithFormat:@"indexPath = %@", indexPath];
-//    NSLog(@"%@", [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] lastObject]);
     return [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] objectAtIndex:0];
 }
 
