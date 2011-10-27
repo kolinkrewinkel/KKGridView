@@ -423,12 +423,6 @@
                                 [_updateStack removeUpdate:update];
                                 updateCell = NO;
                             }
-                            for (KKIndexPath *selectedPath in _selectedIndexPaths) {
-                                if (selectedPath.section == keyPath.section) {
-                                    selectedPath.index--;
-                                }
-                            }
-                            
                         }
                     }
                 }
@@ -447,6 +441,15 @@
                 if (update.type == KKGridViewUpdateTypeItemInsert) {
                     if (indexPath.section == keyPath.section) {
                         [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
+                    } else {
+                        [replacementSet addObject:keyPath];
+                    }
+                } else if (update.type == KKGridViewUpdateTypeItemDelete) {
+                    if (indexPath.section == keyPath.section) {
+                        if (keyPath.index - 1 > -1)t
+                            [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
+                    } else {
+                        [replacementSet addObject:keyPath];
                     }
                 } else {
                     [replacementSet addObject:keyPath];
@@ -485,7 +488,7 @@
             }
         }
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
-t        
+        
         index++;
     }
     [self _cleanupCells];
