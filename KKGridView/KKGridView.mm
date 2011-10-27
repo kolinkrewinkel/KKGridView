@@ -383,9 +383,7 @@
     NSArray *visiblePaths = [self visibleIndexPaths];
     BOOL needsAccessoryReload = NO;
     NSUInteger index = 0;
-    NSUInteger decrementOtherCellsByAmountRelative = 0;
-    __block NSUInteger sectionDecremented = NSUIntegerMax;
-    //    Use this to set frames of cells already hypothetically traversed; messed up by deletion model.
+    
     for (KKIndexPath *indexPath in visiblePaths) {
         //      Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
@@ -399,6 +397,7 @@
             animation = update.animation;
             NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
             
+            NSArray *newVisiblePaths = [self visibleIndexPaths];
             [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
                 BOOL set = YES;
                 
@@ -412,6 +411,14 @@
                     if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual) {
                         if (update.type == KKGridViewUpdateTypeItemInsert) {
                             keyPath.index++;
+                            for (KKIndexPath *selectedPath in _selectedIndexPaths) {
+                                if (selectedPath.section == keyPath.section) {
+                                    selectedPath.index++;
+                                    KKGridViewCell *cell = [_visibleCells objectForKey:selectedPath];
+                                    cell.selected = YES;
+                                }
+                            }
+                            
                         } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                             if (pathComparison == NSOrderedSame) {
                                 set = NO;
@@ -420,10 +427,15 @@
                                 } completion:^(BOOL finished) {
                                     [cell removeFromSuperview];
                                 }];
-                                sectionDecremented = indexPath.section;
                                 [_updateStack removeUpdate:update];
                                 updateCell = NO;
                             }
+                            for (KKIndexPath *selectedPath in _selectedIndexPaths) {
+                                if (selectedPath.section == keyPath.section) {
+                                    selectedPath.index--;
+                                }
+                            }
+
                         }
                     }
                 }
@@ -436,37 +448,44 @@
                 }
             }];
             [_visibleCells setDictionary:replacement];
+            
             [self reloadContentSize];
-        }
-        if (sectionDecremented < indexPath.section) {
-            sectionDecremented = NSUIntegerMax;
-        }
-        KKIndexPath *replacement = [KKIndexPath indexPathForIndex:indexPath.index - decrementOtherCellsByAmountRelative inSection:indexPath.section];
-        KKGridViewCell *cell = [_visibleCells objectForKey:replacement];
-        cell.selected = [_selectedIndexPaths containsObject:replacement];
-        if (!cell) {
-            cell = [self _loadCellAtVisibleIndexPath:replacement];
-            [self _displayCell:cell atIndexPath:replacement withAnimation:animation];
-            cell.indexPath = replacement;
-        } else if (_markedForDisplay) {
-            cell.indexPath = replacement;
-            if (_staggerForInsertion) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut) animations:^{
-                    cell.frame = [self rectForCellAtIndexPath:replacement];
-                } completion:nil];
-            } else {
-                cell.frame = [self rectForCellAtIndexPath:replacement];
+            if (![newVisiblePaths isEqual:visiblePaths]) {
+                NSMutableArray *difference = [[[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
+                [difference removeObjectsInArray:visiblePaths];
+                for (KKIndexPath *keyPath in difference) {
+                    KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
+                    cell.selected = [_selectedIndexPaths containsObject:keyPath];
+                    if (_staggerForInsertion) {
+                        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0.0015 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
+                            cell.frame = [self rectForCellAtIndexPath:indexPath];
+                        } completion:nil];
+                    } else {
+                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                    }
+                }
             }
         }
-        
-        
-        
+        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+        cell.selected = [_selectedIndexPaths containsObject:indexPath];
+        if (!cell) {
+            cell = [self _loadCellAtVisibleIndexPath:indexPath];
+            [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
+        } else if (_markedForDisplay) {
+            if (_staggerForInsertion) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:index * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+                    cell.frame = [self rectForCellAtIndexPath:indexPath];
+                } completion:nil];
+            } else {
+                cell.frame = [self rectForCellAtIndexPath:indexPath];
+            }
+        }
         index++;
     }
     [self _cleanupCells];
     
     if (needsAccessoryReload) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
             [self reloadContentSize];
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
@@ -627,7 +646,7 @@
 
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
 {
-    KKGridViewCell *cell = self.cellBlock(self, indexPath);
+    KKGridViewCell *cell = _cellBlock(self, indexPath);
     [_visibleCells setObject:cell forKey:indexPath];
     cell.frame = [self rectForCellAtIndexPath:indexPath];
     return cell;
