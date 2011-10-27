@@ -446,7 +446,7 @@
                     }
                 } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                     if (indexPath.section == keyPath.section) {
-                        if (keyPath.index - 1 > -1)t
+                        if (keyPath.index - 1 > -1)
                             [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
                     } else {
                         [replacementSet addObject:keyPath];
