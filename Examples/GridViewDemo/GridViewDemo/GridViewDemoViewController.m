@@ -165,9 +165,9 @@ static const NSUInteger kNumSection = 40;
 
 - (void)moveItems:(id)sender
 {
-    NSUInteger num = (arc4random() % 1) + 2;
+//    NSUInteger num = (arc4random() % 1) + 2;
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
-    KKIndexPath *destinationPath = num == 1 ? [KKIndexPath indexPathForIndex:1 inSection:0] : [KKIndexPath indexPathForIndex:2 inSection:2];
+    KKIndexPath *destinationPath = /*num == 1 ?*/ [KKIndexPath indexPathForIndex:1 inSection:0] /*: [KKIndexPath indexPathForIndex:2 inSection:2]*/;
     [self.gridView moveItemAtIndexPath:indexPath toIndexPath:destinationPath];
 }
 

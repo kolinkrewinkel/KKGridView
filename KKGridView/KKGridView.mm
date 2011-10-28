@@ -405,6 +405,13 @@
                 [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
             } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                 [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:YES];
+            } else if (update.type == KKGridViewUpdateTypeItemMove) {
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
+                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+                    cell.frame = [self rectForCellAtIndexPath:update.destinationPath];
+                }];
+                [self _incrementCellsAtIndexPath:update.destinationPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
+                [self _incrementCellsAtIndexPath:update.indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
             }
             
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
@@ -892,7 +899,7 @@
     _staggerForInsertion = YES;
     _markedForDisplay = YES;
     [self _layoutGridView];
-    [self _performRemainingUpdatesModelOnly];
+//    [self _performRemainingUpdatesModelOnly];
 }
 
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
