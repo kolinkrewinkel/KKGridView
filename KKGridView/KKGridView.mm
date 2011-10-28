@@ -410,7 +410,7 @@
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
             [_selectedIndexPaths enumerateObjectsUsingBlock:^(KKIndexPath *keyPath, BOOL *stop) {
                 if (update.type == KKGridViewUpdateTypeItemInsert) {
-                    if (indexPath.section == keyPath.section && keyPath.index > indexPath.index) {
+                    if (indexPath.section == keyPath.section && keyPath.index >= indexPath.index) {
                         [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
                     } else {
                         [replacementSet addObject:keyPath];
