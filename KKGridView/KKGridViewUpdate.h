@@ -13,6 +13,7 @@ typedef enum {
     KKGridViewUpdateTypeItemInsert,
     KKGridViewUpdateTypeItemDelete,
     KKGridViewUpdateTypeItemReload,
+    KKGridViewUpdateTypeItemMove,
     KKGridViewUpdateTypeSectionInsert,
     KKGridViewUpdateTypeSectionDelete,
     KKGridViewUpdateTypeSectionReload
@@ -26,6 +27,7 @@ typedef enum {
 @property (nonatomic) KKGridViewUpdateType type;
 @property (nonatomic) BOOL animating;
 @property (nonatomic) CFTimeInterval timestamp;
+@property (nonatomic, copy) KKIndexPath *destinationPath;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;

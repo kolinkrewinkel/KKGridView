@@ -67,9 +67,9 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
-    UIBarButtonItem *forceLayout = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self.gridView action:@selector(_layoutGridView)];
+    UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
     
-    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, forceLayout, spacer, multiple, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, move, spacer, multiple, nil];
     
     [self _setupGridView];
 }
@@ -155,12 +155,20 @@ static const NSUInteger kNumSection = 40;
 {
     NSArray *items = [NSArray arrayWithObjects:[KKIndexPath indexPathForIndex:0 inSection:0]/*, [KKIndexPath indexPathForIndex:3 inSection:0], [KKIndexPath indexPathForIndex:0 inSection:1]*/, nil];
     
-    if (_firstSectionCount >= [items count]) {
+    if (_firstSectionCount >= [items count] + 1) {
         _firstSectionCount-= [items count];
         [self.gridView deleteItemsAtIndexPaths:items withAnimation:KKGridViewAnimationExplode];
     } else {
         NSLog(@"Warning: can't remove any more objects here");
     }
+}
+
+- (void)moveItems:(id)sender
+{
+    NSUInteger num = (arc4random() % 1) + 2;
+    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
+    KKIndexPath *destinationPath = num == 1 ? [KKIndexPath indexPathForIndex:1 inSection:0] : [KKIndexPath indexPathForIndex:2 inSection:2];
+    [self.gridView moveItemAtIndexPath:indexPath toIndexPath:destinationPath];
 }
 
 - (void)toggleSelectionStyle:(id)sender

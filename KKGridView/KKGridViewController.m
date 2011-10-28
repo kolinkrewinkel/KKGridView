@@ -21,21 +21,4 @@
     self.view = _gridView;
 }
 
-#pragma mark - KKGridViewDataSource
-
-- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
-{
-    return 0;
-}
-
-- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
-{
-    return 0;
-}
-
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
-{
-    return nil;
-}
-
 @end
