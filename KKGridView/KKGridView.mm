@@ -1092,8 +1092,8 @@
         cell.selected = NO;
     }
     
-    if (_didSelectIndexPathBlock) {
-        _didSelectIndexPathBlock(self, indexPath);
+    if (_didDeselectIndexPathBlock) {
+        _didDeselectIndexPathBlock(self, indexPath);
     }
 }
 
