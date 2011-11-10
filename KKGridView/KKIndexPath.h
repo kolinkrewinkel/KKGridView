@@ -14,6 +14,8 @@
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath;
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath;
 
+- (NSIndexPath*) nsIndexPath;
+
 @property (nonatomic, readwrite) NSUInteger section;
 @property (nonatomic, readwrite) NSUInteger index;
 
