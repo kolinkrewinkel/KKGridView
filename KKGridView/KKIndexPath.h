@@ -16,7 +16,7 @@
 
 - (NSIndexPath *)NSIndexPath;
 
-#pragmamark - NSArray
+#pragma mark - NSArray
 
 - (NSComparisonResult)compare:(id)other;
 
