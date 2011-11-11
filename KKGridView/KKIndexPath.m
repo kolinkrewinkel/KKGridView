@@ -73,13 +73,15 @@
     return (indexPath.index == self.index && indexPath.section == self.section);
 }
 
-- (NSUInteger)hash {
+- (NSUInteger)hash
+{
     return _section + 7 * _index;
 }
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(NSZone *)zone
+{
     return [[[self class] alloc] initWithIndex:_index section:_section];
 }
 
@@ -90,7 +92,7 @@
 
 #pragma mark - KKIndexPath to NSIndexPath
 
-- (NSIndexPath*) nsIndexPath {
+- (NSIndexPath *)NSIndexPath {
     return [NSIndexPath indexPathForRow:self.index inSection:self.section];
 }
 
