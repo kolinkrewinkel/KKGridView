@@ -14,11 +14,13 @@
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath;
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath;
 
-- (NSIndexPath*) nsIndexPath;
+- (NSIndexPath *)NSIndexPath;
+
+#pragmamark - NSArray
+
+- (NSComparisonResult)compare:(id)other;
 
 @property (nonatomic, readwrite) NSUInteger section;
 @property (nonatomic, readwrite) NSUInteger index;
-
-- (NSComparisonResult)compare:(id)other;
 
 @end

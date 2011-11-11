@@ -99,7 +99,7 @@ static const NSUInteger kNumSection = 40;
     }];
     
     [self.gridView setNumberOfSectionsBlock:^(KKGridView *gridView) {
-        return kNumSection; 
+        return kNumSection;
     }];
     
     
