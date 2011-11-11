@@ -88,4 +88,10 @@
     return [NSString stringWithFormat:@"%@ {Index: %i; Section: %i}", NSStringFromClass([self class]), _index, _section];
 }
 
+#pragma mark - KKIndexPath to NSIndexPath
+
+- (NSIndexPath*) nsIndexPath {
+    return [NSIndexPath indexPathForRow:self.index inSection:self.section];
+}
+
 @end
