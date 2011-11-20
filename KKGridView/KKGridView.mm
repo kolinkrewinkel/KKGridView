@@ -1152,6 +1152,18 @@
         [UIView commitAnimations];
 }
 
+- (KKIndexPath*) indexPathForSelectedCell {
+    if (!_allowsMultipleSelection) {
+        return [_selectedIndexPaths anyObject];
+    } else {
+        return nil;
+    }
+}
+
+- (NSArray *)indexPathsForSelectedCells {
+    return [_selectedIndexPaths allObjects];
+}
+
 #pragma mark - Internal Selection Methods
 
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
