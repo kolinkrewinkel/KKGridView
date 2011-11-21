@@ -478,14 +478,17 @@
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
                 KKGridViewHeader *header = [_headerViews objectAtIndex:section];
+                if (header) {
+                    CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
+                    [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
+                }
+                
                 KKGridViewFooter *footer = [_footerViews objectAtIndex:section];
-                
-                CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-                CGFloat footerHeight = _footerHeights[section];
-                CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-                
-                [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
-                [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                if (footer) {
+                    CGFloat footerHeight = _footerHeights[section];
+                    CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
+                    [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                }
             }
         } completion:nil];
     }
@@ -1150,6 +1153,18 @@
     }
     if (animated)
         [UIView commitAnimations];
+}
+
+- (KKIndexPath*) indexPathForSelectedCell {
+    if (!_allowsMultipleSelection) {
+        return [_selectedIndexPaths anyObject];
+    } else {
+        return nil;
+    }
+}
+
+- (NSArray *)indexPathsForSelectedCells {
+    return [_selectedIndexPaths allObjects];
 }
 
 #pragma mark - Internal Selection Methods
