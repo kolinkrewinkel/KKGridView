@@ -821,7 +821,7 @@
                 _needsAccessoryReload = YES;
                 
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                animation = update.animation;
+//                animation = update.animation;
                 
                 NSArray *newVisiblePaths = [self visibleIndexPaths];
                 
