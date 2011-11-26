@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name     = 'KKGridView'
-  s.version  = '0.0.1'
+  s.version  = '0.6.6'
   s.license  = 'MIT'
   s.platform = :ios
-  s.summary  = 'A high-performance iOS grid view.'
+  s.summary  = 'Gridview for iOS.'
   s.homepage = 'https://github.com/kolinkrewinkel/KKGridView'
-  s.authors  = { 'Kolin Krewinkel'   => 'kolin.krewinkel@me.com',
+  s.authors  = { 'Kolin Krewinkel'   => 'kolin@kolinkrewinkel.com',
                  'Giulio Petek'      => 'gi-lo@touch-mania.com',
                  'Jonathan Sterling' => 'jonsterling@me.com',
                  'Kyle Hickinson'    => 'kyle.hickinson@gmail.com',
