@@ -185,6 +185,14 @@
     }
 }
 
+- (void) setContentInset:(UIEdgeInsets)contentInset {
+    UIEdgeInsets oldInsets = self.contentInset;
+    [super setContentInset:contentInset];
+    if (!UIEdgeInsetsEqualToEdgeInsets(oldInsets, contentInset)) {
+        [self _respondToBoundsChange];
+    }
+}
+
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
@@ -297,8 +305,8 @@
 
 - (void)_layoutAccessories
 {
-    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
-    CGFloat offset = self.contentOffset.y;
+    CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
+    CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
     for (KKGridViewHeader *header in _headerViews) {
         CGRect f = header.view.frame;
@@ -319,11 +327,10 @@
         } else {
             f.origin.y = header->stickPoint;
         }
-        
         header.view.frame = f;
     }
     
-    NSUInteger index = 0;
+    offset = self.contentOffset.y;
     for (KKGridViewFooter *footer in _footerViews) {
         CGRect f = footer.view.frame;
         f.size.width = visibleBounds.size.width;
@@ -362,7 +369,6 @@
         }
         
         footer.view.frame = f;
-        index++;
     }
 }
 
@@ -477,15 +483,18 @@
             [self reloadContentSize];
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
-                KKGridViewHeader *header = [_headerViews objectAtIndex:section];
-                KKGridViewFooter *footer = [_footerViews objectAtIndex:section];
+                KKGridViewHeader *header = nil;
+                if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
+                    CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
+                    [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
+                }
                 
-                CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-                CGFloat footerHeight = _footerHeights[section];
-                CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-                
-                [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
-                [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                KKGridViewFooter *footer = nil;
+                if (_footerViews.count > section && (header = [_footerViews objectAtIndex:section])) {
+                    CGFloat footerHeight = _footerHeights[section];
+                    CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
+                    [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                }
             }
         } completion:nil];
     }
@@ -1092,11 +1101,11 @@
     CGFloat verticalOffset = 0.0;
     
     CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
-    CGFloat boundsHeight = self.bounds.size.height;
+    CGFloat boundsHeight = self.bounds.size.height - self.contentInset.bottom;
     
     switch (scrollPosition) {
         case KKGridViewScrollPositionTop:
-            verticalOffset = CGRectGetMinY(cellRect);
+            verticalOffset = CGRectGetMinY(cellRect) + self.contentInset.top;
             break;
         case KKGridViewScrollPositionBottom:
             verticalOffset = CGRectGetMaxY(cellRect) - boundsHeight;
@@ -1150,6 +1159,18 @@
     }
     if (animated)
         [UIView commitAnimations];
+}
+
+- (KKIndexPath*) indexPathForSelectedCell {
+    if (!_allowsMultipleSelection) {
+        return [_selectedIndexPaths anyObject];
+    } else {
+        return nil;
+    }
+}
+
+- (NSArray *)indexPathsForSelectedCells {
+    return [_selectedIndexPaths allObjects];
 }
 
 #pragma mark - Internal Selection Methods
