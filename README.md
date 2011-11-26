@@ -33,9 +33,24 @@ When we set out building this, we all had a few common things we knew we needed 
 * Solid codebase — We didn't want something that was inextensible and 
 full of messy code.
 
+##Project Integration
+
+* Create a new workspace in Xcode in the same directory as your existing *.xcodeproj.
+* Drag in your existing Xcode project.
+* Locate your copy of KKGridView, drag KKGridView.xcodeproj into the workspace so that it stays at the top of the hierarchy, just like your original project.
+* In the Build Phases section of your original project, link your project with libKKGridView.a.
+* Now, simply import KKGridView just like an Apple framework:
+
+~~~~objc
+#import <KKGridView/KKGridView.h>
+~~~~
+* You can do this wherever necessary, though we think it's best to simply import in your prefix (.pch) file.
 
 ##Usage
-**This is liable to change as a `KKGridViewController` is added as a correspondence to `UITableViewController`.**
+
+KKGridViewController, like UITableViewController, can automatically instantiate a grid view for you.  Simply subclass it and customize away.  
+
+**As an alternative, one can perform custom instantiation, as shown below.**
 
 First, instantiate a grid view instance.  *Using the designated initializer and a `_gridView` ivar:*
 
