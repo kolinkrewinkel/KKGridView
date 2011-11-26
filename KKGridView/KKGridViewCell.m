@@ -18,6 +18,8 @@
 @implementation KKGridViewCell {
     UIButton *_badgeView;
     NSString *_badgeText;
+
+    UIColor *_userContentViewBackgroundColor;
 }
 
 @synthesize accessoryPosition = _accessoryPosition;
@@ -70,9 +72,20 @@
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
         [self bringSubviewToFront:_contentView];
+        
+        [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
     
     return self;
+}
+
+#pragma mark - NSKeyValueObserving
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (object == _contentView && !_selected) {
+        _userContentViewBackgroundColor = [change objectForKey:@"new"];
+    }
 }
 
 #pragma mark - Setters
@@ -135,7 +148,7 @@
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
     } else {
-        _contentView.backgroundColor = [UIColor lightGrayColor];
+        _contentView.backgroundColor = _userContentViewBackgroundColor;
     }
     
     _selectedBackgroundView.hidden = !_selected;

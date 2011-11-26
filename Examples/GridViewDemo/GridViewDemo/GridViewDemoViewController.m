@@ -97,16 +97,12 @@ static const NSUInteger kNumSection = 40;
                 break;
         }
     }];
-    
     [self.gridView setNumberOfSectionsBlock:^(KKGridView *gridView) {
         return kNumSection;
     }];
-    
-    
     [self.gridView setHeightForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
         return 25.f;
     }];
-    
     [self.gridView setHeightForHeaderInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
         return 25.f;
     }];
@@ -121,7 +117,7 @@ static const NSUInteger kNumSection = 40;
         cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
 
         
-        cell.contentView.backgroundColor = [UIColor lightGrayColor];
+        cell.contentView.backgroundColor = [UIColor orangeColor];
         
         return cell; 
     }];
@@ -166,8 +162,8 @@ static const NSUInteger kNumSection = 40;
 - (void)moveItems:(id)sender
 {
 //    NSUInteger num = (arc4random() % 1) + 2;
-    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
-    KKIndexPath *destinationPath = /*num == 1 ?*/ [KKIndexPath indexPathForIndex:1 inSection:0] /*: [KKIndexPath indexPathForIndex:2 inSection:2]*/;
+    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:1 inSection:0];
+    KKIndexPath *destinationPath = /*num == 1 ?*/ [KKIndexPath indexPathForIndex:2 inSection:0] /*: [KKIndexPath indexPathForIndex:2 inSection:2]*/;
     [self.gridView moveItemAtIndexPath:indexPath toIndexPath:destinationPath];
 }
 
