@@ -1223,7 +1223,9 @@
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
-    
+    if (_willSelectItemAtIndexPathBlock)
+        indexPath = _willSelectItemAtIndexPathBlock(self, indexPath);
+
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
         return;
     
