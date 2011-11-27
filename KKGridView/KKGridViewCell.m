@@ -302,6 +302,9 @@
                 case KKGridViewCellAccessoryPositionBottomRight:
                     point = CGPointMake(self.bounds.size.width - 14.f, (self.bounds.size.height - 14.f));
                     break;
+                case KKGridViewCellAccessoryPositionCenter:
+                    point = CGPointMake((self.bounds.size.width - 14.f) * .5f, (self.bounds.size.height - 14.f) * .5f);
+                    break;
                 default:
                     break;
             }
