@@ -28,7 +28,8 @@ typedef enum {
     KKGridViewCellAccessoryTypeDelete, // customish deletion
     KKGridViewCellAccessoryTypeInfo, // Info button
     KKGridViewCellAccessoryTypeBadgeExclamatory, // Messages app style error
-    KKGridViewCellAccessoryTypeBadgeNumeric // SpringBoard numeric badge
+    KKGridViewCellAccessoryTypeBadgeNumeric, // SpringBoard numeric badge
+    KKGridViewCellAccessoryTypeCheckmark
 } KKGridViewCellAccessoryType;
 
 typedef enum {
