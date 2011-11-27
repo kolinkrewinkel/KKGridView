@@ -280,7 +280,36 @@
             _badgeView.frame = (CGRect){point, CGSizeMake(29.f, 29.f)};
             [_contentView bringSubviewToFront:_badgeView];
             break;
-        } default:
+        } case KKGridViewCellAccessoryTypeCheckmark:
+            if (!_badgeView) {
+                _badgeView = [[UIButton alloc] init];
+                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIPreferencesWhiteCheck" ofType:@"png"]] forState:UIControlStateNormal];
+                _badgeView.userInteractionEnabled = NO;
+                [_contentView addSubview:_badgeView];
+            }
+
+            CGPoint point = CGPointZero;
+            switch (_accessoryPosition) {
+                case KKGridViewCellAccessoryPositionTopRight:
+                    point = CGPointMake(self.bounds.size.width - 14.f, 0.f);
+                    break;
+                case KKGridViewCellAccessoryPositionTopLeft:
+                    point = CGPointZero;
+                    break;
+                case KKGridViewCellAccessoryPositionBottomLeft:
+                    point = CGPointMake(0.f, (self.bounds.size.height - 14.f));
+                    break;
+                case KKGridViewCellAccessoryPositionBottomRight:
+                    point = CGPointMake(self.bounds.size.width - 14.f, (self.bounds.size.height - 14.f));
+                    break;
+                default:
+                    break;
+            }
+            
+            _badgeView.frame = (CGRect){point, CGSizeMake(14.f, 14.f)};
+            [_contentView bringSubviewToFront:_badgeView];
+            break;
+        default:
             break;
     }
 }
