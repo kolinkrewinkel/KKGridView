@@ -18,6 +18,7 @@ typedef enum {
     KKGridViewCellAccessoryPositionTopLeft,     // 2
     KKGridViewCellAccessoryPositionBottomLeft,  // 3
     KKGridViewCellAccessoryPositionBottomRight, // 4
+    KKGridViewCellAccessoryPositionCenter
 } KKGridViewCellAccessoryPosition;
 
 typedef enum {
