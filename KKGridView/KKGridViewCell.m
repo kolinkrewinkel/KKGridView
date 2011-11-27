@@ -79,6 +79,10 @@
     return self;
 }
 
+- (void) dealloc {
+    [_contentView removeObserver:self forKeyPath:@"backgroundColor"];
+}
+
 #pragma mark - NSKeyValueObserving
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
