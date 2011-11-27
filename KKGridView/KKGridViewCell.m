@@ -148,7 +148,7 @@
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
     } else {
-        _contentView.backgroundColor = _userContentViewBackgroundColor;
+        _contentView.backgroundColor = (_userContentViewBackgroundColor) ? _userContentViewBackgroundColor : [UIColor lightGrayColor];
     }
     
     _selectedBackgroundView.hidden = !_selected;
