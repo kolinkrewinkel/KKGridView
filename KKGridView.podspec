@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'KKGridView'
-  s.version  = '0.6.7'
+  s.version  = '0.6.8-2'
   s.license  = 'MIT'
   s.platform = :ios
   s.summary  = 'Gridview for iOS.'
