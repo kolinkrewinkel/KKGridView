@@ -79,6 +79,11 @@
     return self;
 }
 
+- (void) dealloc
+{
+    [_contentView removeObserver:self forKeyPath:@"backgroundColor"];
+}
+
 #pragma mark - NSKeyValueObserving
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -148,7 +153,7 @@
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
     } else {
-        _contentView.backgroundColor = _userContentViewBackgroundColor;
+        _contentView.backgroundColor = (_userContentViewBackgroundColor) ? _userContentViewBackgroundColor : [UIColor whiteColor];
     }
     
     _selectedBackgroundView.hidden = !_selected;
