@@ -39,7 +39,7 @@ full of messy code.
 * Drag in your existing Xcode project.
 * Locate your copy of KKGridView, drag KKGridView.xcodeproj into the workspace so that it stays at the top of the hierarchy, just like your original project.
 * In the Build Phases section of your original project, link your project with libKKGridView.a.
-* In the Build Settings section of your original project, add `-lstdc++` to Other Linker Flags
+* In the Build Settings section of your original project, add `-lstdc++` to Other Linker Flags.
 * Now, simply import KKGridView just like an Apple framework:
 
 ~~~~objc
