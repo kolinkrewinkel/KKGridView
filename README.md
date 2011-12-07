@@ -1,5 +1,6 @@
-<img style="position: relative; top: 0; width: 768px; height: 200px; left: 50%; margin-left: -384px;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
-
+<div style="width:768px; height: 200px; position: relative; margin: 0 auto;"> 
+<img style="position: relative; width: 768px; height: 200px; margin: 0;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
+</div>
 High-performance iOS grid view (MIT license). **Requirements**: you need
 to build `KKGridView` with a compiler that supports *Automatic Reference
 Counting*. We know this stings at first, but we strongly believe that
