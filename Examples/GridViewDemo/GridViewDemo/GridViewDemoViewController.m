@@ -110,14 +110,11 @@ static const NSUInteger kNumSection = 40;
         KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
         if (indexPath.index % 2) {
             cell.accessoryType = KKGridViewCellAccessoryTypeUnread;
-//            cell.accessoryPosition = KKGridViewCellAccessoryPositionTopRight;
         } else {
             cell.accessoryType = KKGridViewCellAccessoryTypeReadPartial;
         }
         cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
-
-        
-        cell.contentView.backgroundColor = [UIColor orangeColor];
+        cell.contentView.backgroundColor = [UIColor lightGrayColor];
         
         return cell; 
     }];
