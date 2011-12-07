@@ -1,4 +1,4 @@
-#KKGridView
+<img style="position: relative; top: 0; width: 768px; height: 200px; left: 50%; margin-left: -384px;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
 
 High-performance iOS grid view (MIT license). **Requirements**: you need
 to build `KKGridView` with a compiler that supports *Automatic Reference
