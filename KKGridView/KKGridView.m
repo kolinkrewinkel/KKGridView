@@ -12,8 +12,6 @@
 #import <KKGridView/KKGridViewUpdate.h>
 #import <KKGridView/KKGridViewUpdateStack.h>
 #import <KKGridView/KKGridViewCell.h>
-#import <map>
-#import <vector>
 
 #define KKGridViewDefaultAnimationStaggerInterval 0.025
 
@@ -23,10 +21,10 @@
     NSMutableArray *_headerViews;
     
     // Metrics - C Structs are used to improve performance
-    std::vector<CGFloat> _footerHeights;
-    std::vector<CGFloat> _headerHeights;
-    std::vector<CGFloat> _sectionHeights;
-    std::vector<NSUInteger> _sectionItemCount;
+    CGFloat *_footerHeights;
+    CGFloat *_headerHeights;
+    CGFloat *_sectionHeights;
+    NSUInteger *_sectionItemCounts;
     
     // Cell containers
     NSMutableDictionary *_reusableCells;
@@ -163,6 +161,16 @@
     self.cellPadding = CGSizeMake(4.f, 4.f);
     self.allowsMultipleSelection = NO;
     self.backgroundColor = [UIColor whiteColor];
+}
+
+#pragma mark - Cleanup
+
+- (void)dealloc
+{
+    free(_footerHeights);
+    free(_headerHeights);
+    free(_sectionHeights);
+    free(_sectionItemCounts);
 }
 
 #pragma mark - Setters
@@ -559,7 +567,7 @@
 - (CGFloat)_sectionHeightsCombinedUpToSection:(NSUInteger)section
 {
     CGFloat height = 0.f;
-    for (NSUInteger index = 0; index < section && index < _sectionHeights.size(); index++) {
+    for (NSUInteger index = 0; index < section && index < _numberOfSections; index++) {
         height += _sectionHeights[index];
     }
     return height;
@@ -569,18 +577,15 @@
 {
     CGFloat height = 0.f;
     
-    if (_headerHeights.size() > section) {
-        height += _headerHeights[section];   
-    }
-    
-    if (_footerHeights.size() > section) {
+    if (_numberOfSections > section) {
+        height += _headerHeights[section];
         height += _footerHeights[section];
-    }    
+    }
     
     CGFloat numberOfRows = 0.f;
     
-    if (_sectionItemCount.size() > 0) {
-        numberOfRows = ceilf(_sectionItemCount[section] / [[NSNumber numberWithUnsignedInt:_numberOfColumns] floatValue]);
+    if (_numberOfSections > 0) {
+        numberOfRows = ceilf(_sectionItemCounts[section] / [[NSNumber numberWithUnsignedInt:_numberOfColumns] floatValue]);
     } else {
         if (_numberOfItemsInSectionBlock)
             numberOfRows = ceilf(_numberOfItemsInSectionBlock(self, section) / (CGFloat)_numberOfColumns);
@@ -707,14 +712,14 @@
     };
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_sectionHeights.size() > 0) {
+        if (_numberOfSections > 0) {
             point.y += _sectionHeights[section];
         } else {
             point.y += [self _heightForSection:section];
         }
     }
     
-    if (indexPath.section < _headerHeights.size()) {
+    if (indexPath.section < _numberOfSections) {
         point.y += _headerHeights[indexPath.section];
     }
     
@@ -931,19 +936,19 @@
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(__strong NSMutableArray *&) = ^(__strong NSMutableArray *&views)
+    void (^clearAuxiliaryViews)(__strong NSMutableArray **) = ^(__strong NSMutableArray **views)
     {
-        [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [views removeAllObjects];
+        [[*views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [*views removeAllObjects];
         
         if (!views)
         {
-            views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+            *views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
     };
     
     if (_heightForHeaderInSectionBlock && _viewForHeaderInSectionBlock) {
-        clearAuxiliaryViews(_headerViews);
+        clearAuxiliaryViews(&_headerViews);
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = self.viewForHeaderInSectionBlock(self, section);
@@ -958,7 +963,7 @@
     }
     
     if (_heightForFooterInSectionBlock && _viewForFooterInSectionBlock) {
-        clearAuxiliaryViews(_footerViews);
+        clearAuxiliaryViews(&_footerViews);
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = _viewForFooterInSectionBlock(self, section);
@@ -987,19 +992,19 @@
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(__strong NSMutableArray *&) = ^(__strong NSMutableArray *&views)
+    void (^clearAuxiliaryViews)(__strong NSMutableArray **) = ^(__strong NSMutableArray **views)
     {
-        [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [views removeAllObjects];
+        [[*views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [*views removeAllObjects];
         
         if (!views)
         {
-            views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+            *views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
     };
     
     if (_heightForHeaderInSectionBlock && _viewForHeaderInSectionBlock) {
-        clearAuxiliaryViews(_headerViews);
+        clearAuxiliaryViews(&_headerViews);
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = self.viewForHeaderInSectionBlock(self, section);
@@ -1014,7 +1019,7 @@
     }
     
     if (_heightForFooterInSectionBlock && _viewForFooterInSectionBlock) {
-        clearAuxiliaryViews(_footerViews);
+        clearAuxiliaryViews(&_footerViews);
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = _viewForFooterInSectionBlock(self, section);
@@ -1046,12 +1051,13 @@
     
     CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
-    _sectionHeights.clear();
+    free(_sectionHeights);
+    _sectionHeights = (CGFloat *)calloc(_numberOfSections, sizeof(CGFloat));
     
     for (NSUInteger i = 0; i < _numberOfSections; ++i) {
-        CGFloat _heightForSection = [self _heightForSection:i];
-        _sectionHeights.push_back(_heightForSection);
-        newContentSize.height += _heightForSection;
+        CGFloat heightForSection = [self _heightForSection:i];
+        _sectionHeights[i] = heightForSection;
+        newContentSize.height += heightForSection;
     }
     
     self.contentSize = newContentSize;
@@ -1065,27 +1071,30 @@
         _numberOfSections = 1;
     }
     
-    _headerHeights.clear();
+    free(_headerHeights);
+    _headerHeights = (CGFloat *)calloc(_numberOfSections, sizeof(CGFloat));
     
     if (_heightForHeaderInSectionBlock) {
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            _headerHeights.push_back(_heightForHeaderInSectionBlock(self, section));
+            _headerHeights[section] = _heightForHeaderInSectionBlock(self, section);
         }
     }
     
-    _footerHeights.clear();
+    free(_footerHeights);
+    _footerHeights = (CGFloat *)calloc(_numberOfSections, sizeof(CGFloat));
     
     if (_heightForFooterInSectionBlock) {
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            _footerHeights.push_back(_heightForFooterInSectionBlock(self, section));
+            _footerHeights[section] = _heightForFooterInSectionBlock(self, section);
         }
     }
     
-    _sectionItemCount.clear();
+    free(_sectionItemCounts);
+    _sectionItemCounts = (NSUInteger *)calloc(_numberOfSections, sizeof(NSUInteger));
     
     if (_numberOfItemsInSectionBlock) {
         for (NSUInteger section = 0; section < _numberOfSections; section++)
-            _sectionItemCount.push_back(_numberOfItemsInSectionBlock(self, section));
+            _sectionItemCounts[section] = _numberOfItemsInSectionBlock(self, section);
     }
 }
 
