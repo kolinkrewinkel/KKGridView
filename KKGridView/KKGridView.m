@@ -499,7 +499,7 @@
                 }
                 
                 KKGridViewFooter *footer = nil;
-                if (_footerViews.count > section && (header = [_footerViews objectAtIndex:section])) {
+                if (_footerViews.count > section && (footer = [_footerViews objectAtIndex:section])) {
                     CGFloat footerHeight = _footerHeights[section];
                     CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
                     [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
