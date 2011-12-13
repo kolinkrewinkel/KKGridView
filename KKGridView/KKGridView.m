@@ -492,14 +492,14 @@
             [self reloadContentSize];
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
-                KKGridViewHeader *header = nil;
-                if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
+                KKGridViewHeader *header = [_headerViews objectAtIndex:section];
+                if (_headerViews.count > section && header != nil) {
                     CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
                     [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:_headerHeights[section]];
                 }
                 
-                KKGridViewFooter *footer = nil;
-                if (_footerViews.count > section && (footer = [_footerViews objectAtIndex:section])) {
+                KKGridViewFooter *footer = [_footerViews objectAtIndex:section];
+                if (_footerViews.count > section && footer != nil) {
                     CGFloat footerHeight = _footerHeights[section];
                     CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
                     [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
