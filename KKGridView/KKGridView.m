@@ -46,6 +46,7 @@
 
 // Reloading
 - (void)_reloadIntegers;
+- (void)_commonReload;
 - (void)_softReload;
 
 // Torch-passers
@@ -932,7 +933,7 @@
 
 #pragma mark - Reloading
 
-- (void)reloadData
+- (void)_commonReload
 {
     [self reloadContentSize];
     
@@ -977,7 +978,11 @@
             [self addSubview:footer.view];
         }
     }
-    
+}
+
+- (void)reloadData
+{
+    [self _commonReload];
     // cells are saved in _reusableCells container to re-use them later on
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
@@ -990,49 +995,7 @@
 
 - (void)_softReload
 {
-    [self reloadContentSize];
-    
-    void (^clearAuxiliaryViews)(__strong NSMutableArray **) = ^(__strong NSMutableArray **views)
-    {
-        [[*views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [*views removeAllObjects];
-        
-        if (!views)
-        {
-            *views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
-        }
-    };
-    
-    if (_heightForHeaderInSectionBlock && _viewForHeaderInSectionBlock) {
-        clearAuxiliaryViews(&_headerViews);
-        
-        for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = self.viewForHeaderInSectionBlock(self, section);
-            KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
-            [_headerViews addObject:header];
-            
-            CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            [self _configureAuxiliaryView:header inSection:section withStickPoint:position height:_headerHeights[section]];
-            
-            [self addSubview:header.view];
-        }
-    }
-    
-    if (_heightForFooterInSectionBlock && _viewForFooterInSectionBlock) {
-        clearAuxiliaryViews(&_footerViews);
-        
-        for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = _viewForFooterInSectionBlock(self, section);
-            KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
-            [_footerViews addObject:footer];
-            
-            CGFloat footerHeight = _footerHeights[section];
-            CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-            [self _configureAuxiliaryView:footer inSection:section withStickPoint:position height:footerHeight];
-            
-            [self addSubview:footer.view];
-        }
-    }
+    [self _commonReload];
     
     [self _layoutModelCells];
     [self _cleanupCells];
