@@ -20,7 +20,7 @@
     NSMutableArray *_footerViews;
     NSMutableArray *_headerViews;
     
-    // Metrics - C Structs are used to improve performance
+    // Metrics - C arrays are used to improve performance
     CGFloat *_footerHeights;
     CGFloat *_headerHeights;
     CGFloat *_sectionHeights;
