@@ -937,19 +937,18 @@
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(__strong NSMutableArray **) = ^(__strong NSMutableArray **views)
+    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views)
     {
-        [[*views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-        [*views removeAllObjects];
-        
-        if (!views)
-        {
-            *views = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
-        }
+        [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+        [views removeAllObjects];
     };
     
     if (_heightForHeaderInSectionBlock && _viewForHeaderInSectionBlock) {
-        clearAuxiliaryViews(&_headerViews);
+        clearAuxiliaryViews(_headerViews);
+        if (!_headerViews)
+        {
+            _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = self.viewForHeaderInSectionBlock(self, section);
@@ -964,7 +963,11 @@
     }
     
     if (_heightForFooterInSectionBlock && _viewForFooterInSectionBlock) {
-        clearAuxiliaryViews(&_footerViews);
+        clearAuxiliaryViews(_footerViews);
+        if (!_footerViews)
+        {
+            _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+        }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
             UIView *view = _viewForFooterInSectionBlock(self, section);
