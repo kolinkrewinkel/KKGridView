@@ -1041,7 +1041,7 @@ struct KKSectionMetrics {
         free(_metrics);
     }
     
-    _metrics = (struct KKSectionMetrics *)malloc(sizeof(struct KKSectionMetrics) * _numberOfSections);
+    _metrics = (struct KKSectionMetrics *)calloc(_numberOfColumns, sizeof(struct KKSectionMetrics));
     
     for (NSUInteger section = 0; section < _numberOfSections; section++)
     {
