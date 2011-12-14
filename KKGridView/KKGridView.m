@@ -1047,7 +1047,7 @@ struct KKSectionMetrics {
     {
         struct KKSectionMetrics *sectionMetrics = &_metrics[section];
         
-        if (_heightForFooterInSectionBlock)
+        if (_heightForHeaderInSectionBlock)
             sectionMetrics->headerHeight = _heightForHeaderInSectionBlock(self, section);
         if (_heightForFooterInSectionBlock)
             sectionMetrics->footerHeight = _heightForFooterInSectionBlock(self, section);
