@@ -1,4 +1,4 @@
-<div style="width:768px; height: 200px; position: relative; margin: 0 auto;"> 
+c<div style="width:768px; height: 200px; position: relative; margin: 0 auto;"> 
 <img style="position: relative; width: 768px; height: 200px; margin: 0;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
 </div>
 High-performance iOS grid view (MIT license). **Requirements**: you need
@@ -40,7 +40,6 @@ full of messy code.
 * Drag in your existing Xcode project.
 * Locate your copy of KKGridView, drag KKGridView.xcodeproj into the workspace so that it stays at the top of the hierarchy, just like your original project.
 * In the Build Phases section of your original project, link your project with libKKGridView.a.
-* In the Build Settings section of your original project, add `-lstdc++` to Other Linker Flags.
 * Now, simply import KKGridView just like an Apple framework:
 
 ~~~~objc
