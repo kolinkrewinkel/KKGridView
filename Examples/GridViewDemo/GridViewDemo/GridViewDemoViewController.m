@@ -14,12 +14,6 @@
 
 static const NSUInteger kNumSection = 40;
 
-@interface GridViewDemoViewController ()
-
-- (void)_setupGridView;
-
-@end
-
 @implementation GridViewDemoViewController
 @synthesize firstSectionCount = _firstSectionCount;
 @synthesize footerViews = _footerViews;
@@ -70,62 +64,70 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
     
     self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, move, spacer, multiple, nil];
-    
-    [self _setupGridView];
 }
 
-- (void)_setupGridView
+#pragma mark - KKGridViewDataSource
+
+- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
-    __block typeof(self) selfRef = self;
-    
-    [self.gridView setNumberOfItemsInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
-        switch (section) {
-            case 0:
-                return selfRef.firstSectionCount;
-                break;
-            case 1:
-                return 15;
-                break;
-            case 2:
-                return 10;
-                break;
-            case 3:
-                return 5;
-                break;
-            default:
-                return (section % 2) ? 4 : 7;
-                break;
-        }
-    }];
-    [self.gridView setNumberOfSectionsBlock:^(KKGridView *gridView) {
-        return kNumSection;
-    }];
-    [self.gridView setHeightForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
-        return 25.f;
-    }];
-    [self.gridView setHeightForHeaderInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
-        return 25.f;
-    }];
-    [self.gridView setCellBlock:^(KKGridView *gridView, KKIndexPath *indexPath) {
-        KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-        if (indexPath.index % 2) {
-            cell.accessoryType = KKGridViewCellAccessoryTypeUnread;
-        } else {
-            cell.accessoryType = KKGridViewCellAccessoryTypeReadPartial;
-        }
-        cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
-        cell.contentView.backgroundColor = [UIColor lightGrayColor];
-        
-        return cell; 
-    }];
-    [self.gridView setViewForFooterInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
-        return [selfRef.footerViews objectAtIndex:section]; 
-    }];
-    [self.gridView setViewForHeaderInSectionBlock:^(KKGridView *gridView, NSUInteger section) {
-        return [selfRef.headerViews objectAtIndex:section];
-    }];
-    
+    return kNumSection;
 }
+
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
+{
+    switch (section) {
+        case 0:
+            return self.firstSectionCount;
+            break;
+        case 1:
+            return 15;
+            break;
+        case 2:
+            return 10;
+            break;
+        case 3:
+            return 5;
+            break;
+        default:
+            return (section % 2) ? 4 : 7;
+            break;
+    }
+}
+
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
+{
+    KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
+    if (indexPath.index % 2) {
+        cell.accessoryType = KKGridViewCellAccessoryTypeUnread;
+    } else {
+        cell.accessoryType = KKGridViewCellAccessoryTypeReadPartial;
+    }
+    cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
+    cell.contentView.backgroundColor = [UIColor lightGrayColor];
+    
+    return cell; 
+}
+
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
+{
+    return 25.f;
+}
+
+- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
+{
+    return 25.f;
+}
+
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+{
+    return [self.headerViews objectAtIndex:section];
+}
+
+- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section
+{
+    return [self.footerViews objectAtIndex:section];
+}
+
 
 #pragma mark - UISearchBarDelegate
 
