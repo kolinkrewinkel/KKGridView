@@ -593,14 +593,7 @@ struct KKSectionMetrics {
             height += sectionMetrics.footerHeight;
         }
         
-        float numberOfRows = 0.f;
-        
-        if (_numberOfSections > 0) {
-            numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-        } else if (_numberOfItemsInSectionBlock) {
-            numberOfRows = ceilf(_numberOfItemsInSectionBlock(self, section) / (float)_numberOfColumns);
-        }
-        
+        NSUInteger numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);        
         height += numberOfRows * (_cellSize.height + _cellPadding.height);
         height += _cellPadding.height;
     }
@@ -723,11 +716,7 @@ struct KKSectionMetrics {
     };
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_numberOfSections > 0) {
-            point.y += _metrics[section].sectionHeight;
-        } else {
-            point.y += [self _heightForSection:section];
-        }
+        point.y += _metrics[section].sectionHeight;
     }
     
     if (indexPath.section < _numberOfSections) {
@@ -839,14 +828,13 @@ struct KKSectionMetrics {
         for (KKGridViewUpdate *update in unaffected) {
             //      Updates
             KKIndexPath *indexPath = update.indexPath;
-            KKGridViewAnimation animation = KKGridViewAnimationNone;
+            
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 _markedForDisplay = YES;
                 _staggerForInsertion = YES;
                 _needsAccessoryReload = YES;
                 
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                //                animation = update.animation;
                 
                 NSArray *newVisiblePaths = [self visibleIndexPaths];
                 
