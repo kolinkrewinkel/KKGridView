@@ -934,9 +934,12 @@ struct KKSectionMetrics {
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views)
-    {
-        [[views valueForKey:@"view"] makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views) {
+        for (id view in [views valueForKey:@"view"]) {
+            if (view != [NSNull null])
+                [view removeFromSuperview];
+        }
+        
         [views removeAllObjects];
     };
     

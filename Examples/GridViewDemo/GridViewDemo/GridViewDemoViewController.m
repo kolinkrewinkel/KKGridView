@@ -64,8 +64,6 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
     
     self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, move, spacer, multiple, nil];
-    
-    self.gridView.dataSource = self;
 }
 
 #pragma mark - KKGridViewDataSource

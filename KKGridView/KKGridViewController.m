@@ -18,7 +18,21 @@
     [super loadView];
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds];
     _gridView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    _gridView.dataSource = self;
+    _gridView.gridDelegate = self;
     self.view = _gridView;
+}
+
+#pragma mark - KKGridViewDataSource
+
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
+{
+    return 0;
+}
+
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
+{
+    return [KKGridViewCell cellForGridView:gridView];
 }
 
 @end
