@@ -8,7 +8,7 @@
 
 #import <KKGridView/KKGridViewController.h>
 
-@interface GridViewDemoViewController : KKGridViewController <UISearchBarDelegate>
+@interface GridViewDemoViewController : KKGridViewController <UISearchBarDelegate,KKGridViewDataSource>
 
 @property (nonatomic) NSUInteger firstSectionCount;
 @property (nonatomic, strong) NSMutableArray *footerViews;

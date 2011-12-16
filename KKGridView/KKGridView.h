@@ -10,13 +10,6 @@
 #import <KKGridView/KKIndexPath.h>
 #import <KKGridView/Definitions.h>
 
-typedef KKGridViewCell * (^KKGridViewCellForItemAtIndexPath)(KKGridView *gridView, KKIndexPath *indexPath);
-typedef NSUInteger (^KKGridViewNumberOfSections)(KKGridView *gridView);
-typedef NSUInteger (^KKGridViewNumberOfItemsInSection)(KKGridView *gridView, NSUInteger section);
-typedef CGFloat (^KKGridViewHeightForHeaderInSection)(KKGridView *gridView, NSUInteger section);
-typedef CGFloat (^KKGridViewHeightForFooterInSection)(KKGridView *gridView, NSUInteger section);
-typedef UIView * (^KKGridViewViewForHeaderInSection)(KKGridView *gridView, NSUInteger section);
-typedef UIView * (^KKGridViewViewForFooterInSection)(KKGridView *gridView, NSUInteger section);
 typedef void (^KKGridViewIndexPath)(KKGridView *gridView, KKIndexPath *indexPath);
 typedef KKIndexPath * (^KKGridViewReturnPath)(KKGridView *gridView, KKIndexPath *indexPath);
 typedef void (^KKGridViewWillDisplayCellAtPath)(KKGridView *gridView, KKGridViewCell *cell, KKIndexPath *indexPath);
@@ -40,6 +33,8 @@ typedef enum {
     KKGridViewAnimationNone
 } KKGridViewAnimation;
 
+@protocol KKGridViewDataSource;
+
 @interface KKGridView : UIScrollView
 
 #pragma mark - Properties
@@ -53,15 +48,8 @@ typedef enum {
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 
-#pragma mark - Data Source
-
-@property (nonatomic, copy) KKGridViewCellForItemAtIndexPath cellBlock;
-@property (nonatomic, copy) KKGridViewNumberOfSections numberOfSectionsBlock;
-@property (nonatomic, copy) KKGridViewNumberOfItemsInSection numberOfItemsInSectionBlock;
-@property (nonatomic, copy) KKGridViewHeightForHeaderInSection heightForHeaderInSectionBlock;
-@property (nonatomic, copy) KKGridViewHeightForFooterInSection heightForFooterInSectionBlock;
-@property (nonatomic, copy) KKGridViewViewForHeaderInSection viewForHeaderInSectionBlock;
-@property (nonatomic, copy) KKGridViewViewForFooterInSection viewForFooterInSectionBlock;
+#pragma mark - Data Source and Delegate
+@property (nonatomic, __kk_weak) id <KKGridViewDataSource> dataSource;
 
 #pragma mark - Delegate
 
@@ -107,3 +95,15 @@ typedef enum {
 
 @end
 
+
+@protocol KKGridViewDataSource <NSObject>
+@required
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath;
+@optional
+- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
+- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
+@end

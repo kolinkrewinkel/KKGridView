@@ -44,6 +44,15 @@ struct KKSectionMetrics {
     BOOL _staggerForInsertion; // Animate items or not
     BOOL _needsAccessoryReload;
     KKGridViewUpdateStack *_updateStack; // Update manager
+    
+    // DataSource/Delegate flags
+    struct {
+        unsigned int numberOfSections:1;
+        unsigned int heightForHeader:1;
+        unsigned int heightForFooter:1;
+        unsigned int viewForHeader:1;
+        unsigned int viewForFooter:1;
+    } _dataSourceRespondsTo;
 }
 
 // Initialization
@@ -93,6 +102,7 @@ struct KKSectionMetrics {
 @implementation KKGridView
 
 // Main Properties
+@synthesize dataSource = _dataSource;
 @synthesize allowsMultipleSelection = _allowsMultipleSelection;
 @synthesize cellPadding = _cellPadding;
 @synthesize cellSize = _cellSize;
@@ -101,15 +111,6 @@ struct KKSectionMetrics {
 @synthesize numberOfColumns = _numberOfColumns;
 @synthesize numberOfSections = _numberOfSections;
 @synthesize backgroundView = _backgroundView;
-
-// Data Source Blocks
-@synthesize cellBlock = _cellBlock;
-@synthesize numberOfSectionsBlock = _numberOfSectionsBlock;
-@synthesize numberOfItemsInSectionBlock = _numberOfItemsInSectionBlock;
-@synthesize heightForHeaderInSectionBlock = _heightForHeaderInSectionBlock;
-@synthesize heightForFooterInSectionBlock = _heightForFooterInSectionBlock;
-@synthesize viewForHeaderInSectionBlock = _viewForHeaderInSectionBlock;
-@synthesize viewForFooterInSectionBlock = _viewForFooterInSectionBlock;
 
 // Delegate Blocks
 @synthesize didSelectIndexPathBlock = _didSelectIndexPathBlock;
@@ -179,6 +180,20 @@ struct KKSectionMetrics {
 }
 
 #pragma mark - Setters
+
+- (void)setDataSource:(id<KKGridViewDataSource>)dataSource
+{
+    if (dataSource != _dataSource)
+    {
+        _dataSource = dataSource;
+        _dataSourceRespondsTo.numberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
+        _dataSourceRespondsTo.heightForHeader = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
+        _dataSourceRespondsTo.heightForFooter = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
+        _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
+        _dataSourceRespondsTo.viewForFooter = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
+        [self reloadData];
+    }
+}
 
 - (void)setFrame:(CGRect)frame
 {
@@ -252,48 +267,6 @@ struct KKSectionMetrics {
         [self addSubview:gridFooterView];
         [self setNeedsLayout];
     }
-}
-
-- (void)setCellBlock:(KKGridViewCellForItemAtIndexPath)cellBlock
-{
-    _cellBlock = [cellBlock copy];
-    [self reloadData];
-}
-
-- (void)setNumberOfSectionsBlock:(KKGridViewNumberOfSections)numberOfSectionsBlock
-{
-    _numberOfSectionsBlock = [numberOfSectionsBlock copy];
-    [self reloadData];
-}
-
-- (void)setNumberOfItemsInSectionBlock:(KKGridViewNumberOfItemsInSection)numberOfItemsInSectionBlock
-{
-    _numberOfItemsInSectionBlock = [numberOfItemsInSectionBlock copy];
-    [self reloadData];
-}
-
-- (void)setHeightForFooterInSectionBlock:(KKGridViewHeightForFooterInSection)heightForFooterInSectionBlock
-{
-    _heightForFooterInSectionBlock = [heightForFooterInSectionBlock copy];
-    [self reloadData];
-}
-
-- (void)setHeightForHeaderInSectionBlock:(KKGridViewHeightForHeaderInSection)heightForHeaderInSectionBlock
-{
-    _heightForHeaderInSectionBlock = [heightForHeaderInSectionBlock copy];
-    [self reloadData];
-}
-
-- (void)setViewForHeaderInSectionBlock:(KKGridViewViewForHeaderInSection)viewForHeaderInSectionBlock
-{
-    _viewForHeaderInSectionBlock = [viewForHeaderInSectionBlock copy];
-    [self reloadData];
-}
-
-- (void)setViewForFooterInSectionBlock:(KKGridViewViewForFooterInSection)viewForFooterInSectionBlock
-{
-    _viewForFooterInSectionBlock = [viewForFooterInSectionBlock copy];
-    [self reloadData];
 }
 
 #pragma mark - Root Layout Methods
@@ -597,8 +570,8 @@ struct KKSectionMetrics {
         
         if (_numberOfSections > 0) {
             numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-        } else if (_numberOfItemsInSectionBlock) {
-            numberOfRows = ceilf(_numberOfItemsInSectionBlock(self, section) / (float)_numberOfColumns);
+        } else if (_dataSource) {
+            numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (float)_numberOfColumns);
         }
         
         height += numberOfRows * (_cellSize.height + _cellPadding.height);
@@ -658,7 +631,7 @@ struct KKSectionMetrics {
 
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
 {
-    KKGridViewCell *cell = _cellBlock(self, indexPath);
+    KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
     [_visibleCells setObject:cell forKey:indexPath];
     cell.frame = [self rectForCellAtIndexPath:indexPath];
     return cell;
@@ -679,7 +652,7 @@ struct KKSectionMetrics {
 
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section
 {
-    return [KKIndexPath indexPathForIndex:_numberOfItemsInSectionBlock(self, section) inSection:section];
+    return [KKIndexPath indexPathForIndex:[_dataSource gridView:self numberOfItemsInSection:section] inSection:section];
 }
 
 #pragma mark - Public Getters
@@ -768,7 +741,7 @@ struct KKSectionMetrics {
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
     for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        for (NSUInteger index = 0; index < _numberOfItemsInSectionBlock(self, section); index++) {
+        for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
             
             indexPath.section = section;
             indexPath.index = index;
@@ -953,7 +926,7 @@ struct KKSectionMetrics {
         [views removeAllObjects];
     };
     
-    if (_heightForHeaderInSectionBlock && _viewForHeaderInSectionBlock) {
+    if (_dataSourceRespondsTo.heightForHeader && _dataSourceRespondsTo.viewForHeader) {
         clearAuxiliaryViews(_headerViews);
         if (!_headerViews)
         {
@@ -961,7 +934,7 @@ struct KKSectionMetrics {
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = self.viewForHeaderInSectionBlock(self, section);
+            UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
@@ -972,7 +945,7 @@ struct KKSectionMetrics {
         }
     }
     
-    if (_heightForFooterInSectionBlock && _viewForFooterInSectionBlock) {
+    if (_dataSourceRespondsTo.heightForFooter && _dataSourceRespondsTo.viewForFooter) {
         clearAuxiliaryViews(_footerViews);
         if (!_footerViews)
         {
@@ -980,7 +953,7 @@ struct KKSectionMetrics {
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = _viewForFooterInSectionBlock(self, section);
+            UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
             KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
             [_footerViews addObject:footer];
             
@@ -1038,7 +1011,7 @@ struct KKSectionMetrics {
 
 - (void)_reloadMetrics
 {
-    _numberOfSections = _numberOfSectionsBlock ? _numberOfSectionsBlock(self) : 1;
+    _numberOfSections = _dataSourceRespondsTo.numberOfSections ? [_dataSource numberOfSectionsInGridView:self] : 1;
     
     if (_metrics)
         free(_metrics);
@@ -1046,19 +1019,16 @@ struct KKSectionMetrics {
     _metrics = (struct KKSectionMetrics *)calloc(_numberOfSections, sizeof(struct KKSectionMetrics));
     _metricsCount = 0;
     
-    for (NSUInteger section = 0; section < _numberOfSections; section++)
+    for (_metricsCount = 0; _metricsCount < _numberOfSections; _metricsCount++)
     {
-        struct KKSectionMetrics sectionMetrics;
+        struct KKSectionMetrics *sectionMetrics = &_metrics[_metricsCount];
         
-        if (_heightForHeaderInSectionBlock)
-            sectionMetrics.headerHeight = _heightForHeaderInSectionBlock(self, section);
-        if (_heightForFooterInSectionBlock)
-            sectionMetrics.footerHeight = _heightForFooterInSectionBlock(self, section);
-        if (_numberOfItemsInSectionBlock)
-            sectionMetrics.itemCount = _numberOfItemsInSectionBlock(self, section);
+        sectionMetrics->itemCount = [_dataSource gridView:self numberOfItemsInSection:_metricsCount];
         
-        _metrics[section] = sectionMetrics;
-        _metricsCount++;        
+        if (_dataSourceRespondsTo.heightForHeader)
+            sectionMetrics->headerHeight = [_dataSource gridView:self heightForHeaderInSection:_metricsCount];
+        if (_dataSourceRespondsTo.heightForFooter)
+            sectionMetrics->footerHeight = [_dataSource gridView:self heightForFooterInSection:_metricsCount];
     }
 }
 
