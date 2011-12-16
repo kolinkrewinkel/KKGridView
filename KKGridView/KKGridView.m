@@ -27,9 +27,9 @@ struct KKSectionMetrics {
     NSMutableArray *_footerViews;
     NSMutableArray *_headerViews;
     
-    
     // Metrics - C arrays are used to improve performance
     struct KKSectionMetrics *_metrics;
+    NSUInteger _metricsCount;
     
     // Cell containers
     NSMutableDictionary *_reusableCells;
@@ -154,7 +154,6 @@ struct KKSectionMetrics {
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-    _metrics = NULL;
     
     self.alwaysBounceVertical = YES;
     self.delaysContentTouches = YES;
@@ -175,7 +174,7 @@ struct KKSectionMetrics {
 
 - (void)dealloc
 {
-    free(_metrics);
+//    free(_metrics);
 }
 
 #pragma mark - Setters
@@ -583,23 +582,27 @@ struct KKSectionMetrics {
 - (CGFloat)_heightForSection:(NSUInteger)section
 {
     CGFloat height = 0.f;
-    struct KKSectionMetrics sectionMetrics = _metrics[section];
     
-    if (_numberOfSections > section) {
-        height += sectionMetrics.headerHeight;
-        height += sectionMetrics.footerHeight;
+    if (_metricsCount > section)
+    {
+        struct KKSectionMetrics sectionMetrics = _metrics[section];
+        
+        if (_numberOfSections > section) {
+            height += sectionMetrics.headerHeight;
+            height += sectionMetrics.footerHeight;
+        }
+        
+        float numberOfRows = 0.f;
+        
+        if (_numberOfSections > 0) {
+            numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
+        } else if (_numberOfItemsInSectionBlock) {
+            numberOfRows = ceilf(_numberOfItemsInSectionBlock(self, section) / (float)_numberOfColumns);
+        }
+        
+        height += numberOfRows * (_cellSize.height + _cellPadding.height);
+        height += _cellPadding.height;
     }
-    
-    float numberOfRows = 0.f;
-    
-    if (_numberOfSections > 0) {
-        numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-    } else if (_numberOfItemsInSectionBlock) {
-        numberOfRows = ceilf(_numberOfItemsInSectionBlock(self, section) / (float)_numberOfColumns);
-    }
-    
-    height += numberOfRows * (_cellSize.height + _cellPadding.height);
-    height += _cellPadding.height;
     
     return height;
 }
@@ -1037,22 +1040,24 @@ struct KKSectionMetrics {
     _numberOfSections = _numberOfSectionsBlock ? _numberOfSectionsBlock(self) : 1;
     
     if (_metrics)
-    {
         free(_metrics);
-    }
     
-    _metrics = (struct KKSectionMetrics *)calloc(_numberOfColumns, sizeof(struct KKSectionMetrics));
+    _metrics = (struct KKSectionMetrics *)calloc(_numberOfSections, sizeof(struct KKSectionMetrics));
+    _metricsCount = 0;
     
     for (NSUInteger section = 0; section < _numberOfSections; section++)
     {
-        struct KKSectionMetrics *sectionMetrics = &_metrics[section];
+        struct KKSectionMetrics sectionMetrics;
         
         if (_heightForHeaderInSectionBlock)
-            sectionMetrics->headerHeight = _heightForHeaderInSectionBlock(self, section);
+            sectionMetrics.headerHeight = _heightForHeaderInSectionBlock(self, section);
         if (_heightForFooterInSectionBlock)
-            sectionMetrics->footerHeight = _heightForFooterInSectionBlock(self, section);
+            sectionMetrics.footerHeight = _heightForFooterInSectionBlock(self, section);
         if (_numberOfItemsInSectionBlock)
-            sectionMetrics->itemCount = _numberOfItemsInSectionBlock(self, section);
+            sectionMetrics.itemCount = _numberOfItemsInSectionBlock(self, section);
+        
+        _metrics[section] = sectionMetrics;
+        _metricsCount++;        
     }
 }
 
