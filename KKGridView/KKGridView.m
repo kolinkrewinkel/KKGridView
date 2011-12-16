@@ -174,7 +174,8 @@ struct KKSectionMetrics {
 
 - (void)dealloc
 {
-//    free(_metrics);
+    if (_metrics)
+        free(_metrics);
 }
 
 #pragma mark - Setters
