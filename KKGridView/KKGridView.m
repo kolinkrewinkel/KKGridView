@@ -53,6 +53,14 @@ struct KKSectionMetrics {
         unsigned int viewForHeader:1;
         unsigned int viewForFooter:1;
     } _dataSourceRespondsTo;
+    
+    struct {
+        unsigned int didSelectItem:1;
+        unsigned int willSelectItem:1;
+        unsigned int didDeselectItem:1;
+        unsigned int willDeselectItem:1;
+        unsigned int willDisplayCell:1;
+    } _delegateRespondsTo;
 }
 
 // Initialization
@@ -101,8 +109,8 @@ struct KKSectionMetrics {
 
 @implementation KKGridView
 
-// Main Properties
 @synthesize dataSource = _dataSource;
+@synthesize gridDelegate = _gridDelegate;
 @synthesize allowsMultipleSelection = _allowsMultipleSelection;
 @synthesize cellPadding = _cellPadding;
 @synthesize cellSize = _cellSize;
@@ -111,13 +119,6 @@ struct KKSectionMetrics {
 @synthesize numberOfColumns = _numberOfColumns;
 @synthesize numberOfSections = _numberOfSections;
 @synthesize backgroundView = _backgroundView;
-
-// Delegate Blocks
-@synthesize didSelectIndexPathBlock = _didSelectIndexPathBlock;
-@synthesize willSelectItemAtIndexPathBlock = _willSelectItemAtIndexPathBlock;
-@synthesize willDeselectItemAtIndexPathBlock = _willDeselectItemAtIndexPathBlock;
-@synthesize didDeselectIndexPathBlock = _didDeselectIndexPathBlock;
-@synthesize willDisplayCellAtPathBlock = _willDisplayCellAtPathBlock;
 
 #pragma mark - Initialization Methods
 
@@ -192,6 +193,19 @@ struct KKSectionMetrics {
         _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
         _dataSourceRespondsTo.viewForFooter = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
         [self reloadData];
+    }
+}
+
+- (void)setGridDelegate:(id<KKGridViewDelegate>)gridDelegate
+{
+    if (gridDelegate != _gridDelegate)
+    {
+        _gridDelegate = gridDelegate;
+        _delegateRespondsTo.didSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemAtIndexPath:)];
+        _delegateRespondsTo.willSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:willSelectItemAtIndexPath:)];
+        _delegateRespondsTo.didDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:didDeselectItemAtIndexPath:)];
+        _delegateRespondsTo.willDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:willDeselectItemAtIndexPath:)];
+        _delegateRespondsTo.willDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCellAtIndexPath:)];
     }
 }
 
@@ -585,8 +599,8 @@ struct KKSectionMetrics {
 
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath withAnimation:(KKGridViewAnimation)animation
 {
-    if (_willDisplayCellAtPathBlock) {
-        _willDisplayCellAtPathBlock(self, cell, indexPath);
+    if (_delegateRespondsTo.willDisplayCell) {
+        [_gridDelegate gridView:self willDisplayCell:cell atIndexPath:indexPath];
     }
     
     if ([_updateStack hasUpdateForIndexPath:indexPath]) {
@@ -1136,15 +1150,15 @@ struct KKSectionMetrics {
         [_selectedIndexPaths addObject:indexPath];
         cell.selected = YES;
     }
-    if (_didSelectIndexPathBlock) {
-        _didSelectIndexPathBlock(self, indexPath);
+    if (_delegateRespondsTo.didSelectItem) {
+        [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
     }
 }
 
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-    if (_selectedIndexPaths.count > 0 && _willDeselectItemAtIndexPathBlock) {
-        KKIndexPath *redirectedPath = _willDeselectItemAtIndexPathBlock(self, indexPath);
+    if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem) {
+        KKIndexPath *redirectedPath = [_gridDelegate gridView:self willDeselectItemAtIndexPath:indexPath];
         if (redirectedPath != nil && ![redirectedPath isEqual:indexPath]) {
             indexPath = redirectedPath ? redirectedPath : indexPath;
         }
@@ -1156,8 +1170,8 @@ struct KKSectionMetrics {
         cell.selected = NO;
     }
     
-    if (_didDeselectIndexPathBlock) {
-        _didDeselectIndexPathBlock(self, indexPath);
+    if (_delegateRespondsTo.didDeselectItem) {
+        [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
     }
 }
 
@@ -1166,8 +1180,8 @@ struct KKSectionMetrics {
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
     KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
-    if (_willSelectItemAtIndexPathBlock)
-        indexPath = _willSelectItemAtIndexPathBlock(self, indexPath);
+    if (_delegateRespondsTo.willSelectItem)
+        indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
         return;

@@ -10,10 +10,6 @@
 #import <KKGridView/KKIndexPath.h>
 #import <KKGridView/Definitions.h>
 
-typedef void (^KKGridViewIndexPath)(KKGridView *gridView, KKIndexPath *indexPath);
-typedef KKIndexPath * (^KKGridViewReturnPath)(KKGridView *gridView, KKIndexPath *indexPath);
-typedef void (^KKGridViewWillDisplayCellAtPath)(KKGridView *gridView, KKGridViewCell *cell, KKIndexPath *indexPath);
-
 typedef enum {
     KKGridViewScrollPositionNone,        
     KKGridViewScrollPositionTop,    
@@ -34,6 +30,7 @@ typedef enum {
 } KKGridViewAnimation;
 
 @protocol KKGridViewDataSource;
+@protocol KKGridViewDelegate;
 
 @interface KKGridView : UIScrollView
 
@@ -50,14 +47,7 @@ typedef enum {
 
 #pragma mark - Data Source and Delegate
 @property (nonatomic, __kk_weak) id <KKGridViewDataSource> dataSource;
-
-#pragma mark - Delegate
-
-@property (nonatomic, copy) KKGridViewIndexPath didSelectIndexPathBlock;
-@property (nonatomic, copy) KKGridViewReturnPath willSelectItemAtIndexPathBlock;
-@property (nonatomic, copy) KKGridViewReturnPath willDeselectItemAtIndexPathBlock;
-@property (nonatomic, copy) KKGridViewIndexPath didDeselectIndexPathBlock;
-@property (nonatomic, copy) KKGridViewWillDisplayCellAtPath willDisplayCellAtPathBlock;
+@property (nonatomic, __kk_weak) id <KKGridViewDelegate> gridDelegate;
 
 #pragma mark - Getters
 
@@ -106,4 +96,13 @@ typedef enum {
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
+@end
+
+@protocol KKGridViewDelegate <NSObject>
+@optional
+- (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (KKIndexPath *)gridView:(KKGridView *)gridView willDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
 @end
