@@ -1134,7 +1134,7 @@ struct KKSectionMetrics {
         [UIView commitAnimations];
 }
 
-- (KKIndexPath*) indexPathForSelectedCell {
+- (KKIndexPath*)indexPathForSelectedCell {
     if (!_allowsMultipleSelection) {
         return [_selectedIndexPaths anyObject];
     } else {
