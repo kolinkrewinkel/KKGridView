@@ -898,6 +898,8 @@ struct KKSectionMetrics {
         
     }
     [self _performRemainingUpdatesModelOnly];
+    
+    [self _commonReload];
 }
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
@@ -1074,6 +1076,7 @@ struct KKSectionMetrics {
     
     if (_dataSourceRespondsTo.viewForHeader) {
         headerView = [_dataSource gridView:self viewForHeaderInSection:section];
+<<<<<<< HEAD
     }
     
     if (!headerView && _dataSourceRespondsTo.titleForHeader) {
@@ -1085,6 +1088,19 @@ struct KKSectionMetrics {
         headerView = label;
     }
     
+=======
+    }
+    
+    if (!headerView && _dataSourceRespondsTo.titleForHeader) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+        label.backgroundColor = [UIColor darkGrayColor];
+        label.textColor = [UIColor lightTextColor];
+        label.textAlignment = UITextAlignmentCenter;
+        label.text = [_dataSource gridView:self titleForHeaderInSection:section];
+        headerView = label;
+    }
+    
+>>>>>>> 20373e39e3b97f0c0d7eb289270f563a4ecb1e80
     return headerView;
 }
 
