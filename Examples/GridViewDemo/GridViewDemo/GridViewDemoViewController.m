@@ -38,6 +38,7 @@ static const NSUInteger kNumSection = 40;
     
     self.navigationController.toolbarHidden = NO;
     self.navigationController.navigationBarHidden = YES;
+    self.navigationController.toolbar.tintColor = [UIColor darkGrayColor];
     
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
