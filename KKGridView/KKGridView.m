@@ -48,6 +48,8 @@ struct KKSectionMetrics {
     // DataSource/Delegate flags
     struct {
         unsigned int numberOfSections:1;
+        unsigned int titleForHeader:1;
+        unsigned int titleForFooter:1;
         unsigned int heightForHeader:1;
         unsigned int heightForFooter:1;
         unsigned int viewForHeader:1;
@@ -104,6 +106,10 @@ struct KKSectionMetrics {
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
+
+// Headers and Footer views
+- (UIView *)_viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)_viewForFooterInSection:(NSUInteger)section;
 
 @end
 
@@ -188,6 +194,8 @@ struct KKSectionMetrics {
     {
         _dataSource = dataSource;
         _dataSourceRespondsTo.numberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
+        _dataSourceRespondsTo.titleForHeader = [_dataSource respondsToSelector:@selector(gridView:titleForHeaderInSection:)];
+        _dataSourceRespondsTo.titleForFooter = [_dataSource respondsToSelector:@selector(gridView:titleForFooterInSection:)];
         _dataSourceRespondsTo.heightForHeader = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
         _dataSourceRespondsTo.heightForFooter = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
         _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
@@ -943,7 +951,7 @@ struct KKSectionMetrics {
         [views removeAllObjects];
     };
     
-    if (_dataSourceRespondsTo.heightForHeader && _dataSourceRespondsTo.viewForHeader) {
+    if (_dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader) {
         clearAuxiliaryViews(_headerViews);
         if (!_headerViews)
         {
@@ -951,7 +959,7 @@ struct KKSectionMetrics {
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = [_dataSource gridView:self viewForHeaderInSection:section];
+            UIView *view = [self _viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
@@ -962,7 +970,7 @@ struct KKSectionMetrics {
         }
     }
     
-    if (_dataSourceRespondsTo.heightForFooter && _dataSourceRespondsTo.viewForFooter) {
+    if (_dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter) {
         clearAuxiliaryViews(_footerViews);
         if (!_footerViews)
         {
@@ -970,7 +978,7 @@ struct KKSectionMetrics {
         }
         
         for (NSUInteger section = 0; section < _numberOfSections; section++) {
-            UIView *view = [_dataSource gridView:self viewForFooterInSection:section];
+            UIView *view = [self _viewForFooterInSection:section];
             KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
             [_footerViews addObject:footer];
             
@@ -1038,15 +1046,64 @@ struct KKSectionMetrics {
     
     for (_metricsCount = 0; _metricsCount < _numberOfSections; _metricsCount++)
     {
-        struct KKSectionMetrics *sectionMetrics = &_metrics[_metricsCount];
+        struct KKSectionMetrics sectionMetrics = { 
+            .footerHeight = 25.f,
+            .headerHeight = 25.f,
+            .sectionHeight = 0.f,
+            .itemCount = 0.f
+        };
         
-        sectionMetrics->itemCount = [_dataSource gridView:self numberOfItemsInSection:_metricsCount];
+        sectionMetrics.itemCount = [_dataSource gridView:self numberOfItemsInSection:_metricsCount];
         
         if (_dataSourceRespondsTo.heightForHeader)
-            sectionMetrics->headerHeight = [_dataSource gridView:self heightForHeaderInSection:_metricsCount];
+            sectionMetrics.headerHeight = [_dataSource gridView:self heightForHeaderInSection:_metricsCount];
         if (_dataSourceRespondsTo.heightForFooter)
-            sectionMetrics->footerHeight = [_dataSource gridView:self heightForFooterInSection:_metricsCount];
+            sectionMetrics.footerHeight = [_dataSource gridView:self heightForFooterInSection:_metricsCount];
+        
+        _metrics[_metricsCount] = sectionMetrics;
     }
+}
+
+#pragma mark - Header and Footer Views
+
+- (UIView *)_viewForHeaderInSection:(NSUInteger)section
+{
+    NSAssert(_dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader, @"DataSource must provide title or view for header.");
+    
+    UIView *headerView = nil;
+    
+    if (_dataSourceRespondsTo.viewForHeader) {
+        headerView = [_dataSource gridView:self viewForHeaderInSection:section];
+    } else if (_dataSourceRespondsTo.titleForHeader) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+        label.backgroundColor = [UIColor darkGrayColor];
+        label.textColor = [UIColor lightTextColor];
+        label.textAlignment = UITextAlignmentCenter;
+        label.text = [_dataSource gridView:self titleForHeaderInSection:section];
+        headerView = label;
+    }
+    
+    return headerView;
+}
+
+- (UIView *)_viewForFooterInSection:(NSUInteger)section
+{
+    NSAssert(_dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter, @"DataSource must provide title or view for footer.");
+    
+    UIView *footerView = nil;
+    
+    if (_dataSourceRespondsTo.viewForFooter) {
+        footerView = [_dataSource gridView:self viewForFooterInSection:section];
+    } else if (_dataSourceRespondsTo.titleForHeader) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+        label.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
+        label.textAlignment = UITextAlignmentCenter;
+        label.textColor = [UIColor darkGrayColor];
+        label.text = [_dataSource gridView:self titleForFooterInSection:section];
+        footerView = label;
+    }
+    
+    return footerView;
 }
 
 #pragma mark - Positioning
