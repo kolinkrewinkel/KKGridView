@@ -1074,7 +1074,9 @@ struct KKSectionMetrics {
     
     if (_dataSourceRespondsTo.viewForHeader) {
         headerView = [_dataSource gridView:self viewForHeaderInSection:section];
-    } else if (_dataSourceRespondsTo.titleForHeader) {
+    }
+    
+    if (!headerView && _dataSourceRespondsTo.titleForHeader) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
         label.backgroundColor = [UIColor darkGrayColor];
         label.textColor = [UIColor lightTextColor];
@@ -1094,7 +1096,9 @@ struct KKSectionMetrics {
     
     if (_dataSourceRespondsTo.viewForFooter) {
         footerView = [_dataSource gridView:self viewForFooterInSection:section];
-    } else if (_dataSourceRespondsTo.titleForHeader) {
+    }
+    
+    if (!footerView && _dataSourceRespondsTo.titleForFooter) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
         label.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
         label.textAlignment = UITextAlignmentCenter;
