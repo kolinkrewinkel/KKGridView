@@ -890,6 +890,8 @@ struct KKSectionMetrics {
         
     }
     [self _performRemainingUpdatesModelOnly];
+    
+    [self _commonReload];
 }
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
