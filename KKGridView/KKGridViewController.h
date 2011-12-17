@@ -8,7 +8,7 @@
 
 #import <KKGridView/KKGridView.h>
 
-@interface KKGridViewController : UIViewController
+@interface KKGridViewController : UIViewController <KKGridViewDataSource, KKGridViewDelegate>
 
 @property (nonatomic, strong) KKGridView *gridView;
 
