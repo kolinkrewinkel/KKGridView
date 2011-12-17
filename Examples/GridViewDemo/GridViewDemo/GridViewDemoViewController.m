@@ -16,30 +16,12 @@ static const NSUInteger kNumSection = 40;
 
 @implementation GridViewDemoViewController
 @synthesize firstSectionCount = _firstSectionCount;
-@synthesize footerViews = _footerViews;
-@synthesize headerViews = _headerViews;
 
 #pragma mark - View lifecycle
 
 - (void)loadView
 {
     [super loadView];
-    _headerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
-    _footerViews = [[NSMutableArray alloc] initWithCapacity:kNumSection];
-    
-    for (NSUInteger section = 0; section < kNumSection; section++) {
-        UILabel *header = [[UILabel alloc] initWithFrame:CGRectZero];
-        header.backgroundColor = [UIColor grayColor];
-        header.textAlignment = UITextAlignmentCenter;
-        header.text = [NSString stringWithFormat:@"Header %d", section + 1];
-        [_headerViews addObject:header];
-        
-        UILabel *footer = [[UILabel alloc] initWithFrame:CGRectZero];
-        footer.textAlignment = UITextAlignmentCenter;
-        footer.text = [NSString stringWithFormat:@"Footer %d", section + 1];
-        footer.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
-        [_footerViews addObject:footer];
-    }
     
     _firstSectionCount = 7;
     
@@ -118,14 +100,14 @@ static const NSUInteger kNumSection = 40;
     return 25.f;
 }
 
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section
+- (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
 {
-    return [self.headerViews objectAtIndex:section];
+    return [NSString stringWithFormat:@"Header %i",section];
 }
 
-- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section
+- (NSString *)gridView:(KKGridView *)gridView titleForFooterInSection:(NSUInteger)section
 {
-    return [self.footerViews objectAtIndex:section];
+    return [NSString stringWithFormat:@"Footer %i",section];
 }
 
 

@@ -14,6 +14,8 @@
 @synthesize numberOfItems = _numberOfItems;
 @synthesize heightForHeader = _heightForHeader;
 @synthesize heightForFooter = _heightForFooter;
+@synthesize titleForHeader = _titleForHeader;
+@synthesize titleForFooter = _titleForFooter;
 @synthesize viewForHeader = _viewForHeader;
 @synthesize viewForFooter = _viewForFooter;
 
@@ -38,6 +40,16 @@
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
     return _numberOfSections ? _numberOfSections(gridView) : 1;
+}
+
+- (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
+{
+    return _titleForHeader ? _titleForFooter(gridView,section) : @"";
+}
+
+- (NSString *)gridView:(KKGridView *)gridView titleForFooterInSection:(NSUInteger)section
+{
+    return _titleForFooter ? _titleForFooter(gridView,section) : @"";
 }
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section

@@ -18,6 +18,8 @@
 @property (copy) NSUInteger (^numberOfItems)(KKGridView *gridView, NSUInteger section);
 @property (copy) CGFloat (^heightForHeader)(KKGridView *gridView, NSUInteger section);
 @property (copy) CGFloat (^heightForFooter)(KKGridView *gridView, NSUInteger section);
+@property (copy) NSString *(^titleForHeader)(KKGridView *gridView, NSUInteger section);
+@property (copy) NSString *(^titleForFooter)(KKGridView *gridView, NSUInteger section);
 @property (copy) UIView *(^viewForHeader)(KKGridView *gridView, NSUInteger section);
 @property (copy) UIView *(^viewForFooter)(KKGridView *gridView, NSUInteger section);
 
