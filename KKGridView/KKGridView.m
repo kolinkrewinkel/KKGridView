@@ -514,21 +514,34 @@ struct KKSectionMetrics {
 {
     const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
     
-    NSMutableArray *cellToRemove = [[NSMutableArray alloc] init];
+    typedef struct {
+        __unsafe_unretained KKGridViewCell *cell;
+        __unsafe_unretained KKIndexPath *path;
+    } cell_info_t;
     
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *indexPath, KKGridViewCell *cell, BOOL *stop) {
-        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
-            [cellToRemove addObject:indexPath];
-        }
-    }];
-    
-    for (KKIndexPath *path in cellToRemove) {
+    cell_info_t *cellsToRemove  = (cell_info_t *)calloc(_visibleCells.count, sizeof(cell_info_t));
+        
+    NSUInteger cellCount = 0;
+    for (KKIndexPath *path in _visibleCells) {
         KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        if (!KKCGRectIntersectsRectVertically(cell.frame, visibleBounds)) {
+            cellsToRemove[cellCount] = (cell_info_t){ cell, path };
+            cellCount++;
+        }
+    }
+    
+    for (NSUInteger i = 0; i < cellCount; ++i) {
+        cell_info_t pair = cellsToRemove[i];
+        KKGridViewCell *cell = pair.cell;
+        
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
         cell.frame = (CGRect){CGPointZero, _cellSize};
         [cell removeFromSuperview];
-        [_visibleCells removeObjectForKey:path];
+        
+        [_visibleCells removeObjectForKey:pair.path];
     }
+    
+    free(cellsToRemove);
 }
 
 - (void)_respondToBoundsChange
