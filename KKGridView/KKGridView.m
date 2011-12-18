@@ -665,7 +665,7 @@ struct KKSectionMetrics {
     NSMutableSet *set = [_reusableCells objectForKey:identifier];
     if (!set) {
         [_reusableCells setObject:[NSMutableSet set] forKey:identifier];
-        set = [_reusableCells objectForKey:identifier];;
+        set = [_reusableCells objectForKey:identifier];
     }
     return set;
 }
@@ -674,7 +674,8 @@ struct KKSectionMetrics {
 
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section
 {
-    return [KKIndexPath indexPathForIndex:[_dataSource gridView:self numberOfItemsInSection:section] inSection:section];
+    NSUInteger lastItemIndex = [_dataSource gridView:self numberOfItemsInSection:section];
+    return [KKIndexPath indexPathForIndex:lastItemIndex inSection:section];
 }
 
 #pragma mark - Public Getters
@@ -834,14 +835,12 @@ struct KKSectionMetrics {
         for (KKGridViewUpdate *update in unaffected) {
             //      Updates
             KKIndexPath *indexPath = update.indexPath;
-            KKGridViewAnimation animation = KKGridViewAnimationNone;
             if ([_updateStack hasUpdateForIndexPath:indexPath]) {
                 _markedForDisplay = YES;
                 _staggerForInsertion = YES;
                 _needsAccessoryReload = YES;
                 
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                //                animation = update.animation;
                 
                 NSArray *newVisiblePaths = [self visibleIndexPaths];
                 
@@ -904,8 +903,10 @@ struct KKSectionMetrics {
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
-    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)])
-        [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation]];
+    for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
+        KKGridViewUpdate *update = [KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation];
+        [_updateStack addUpdate:update];
+    }
     
     _staggerForInsertion = YES;
     _markedForDisplay = YES;
