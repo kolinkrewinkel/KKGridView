@@ -1218,6 +1218,7 @@ struct KKSectionMetrics {
     if (_allowsMultipleSelection) {
         if ([_selectedIndexPaths containsObject:indexPath]) {
             [self _deselectItemAtIndexPath:indexPath];
+            return;
         } else {
             [_selectedIndexPaths addObject:indexPath];
             cell.selected = YES;
