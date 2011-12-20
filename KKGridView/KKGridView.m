@@ -1071,9 +1071,11 @@ struct KKSectionMetrics {
     
     for (_metricsCount = 0; _metricsCount < _numberOfSections; _metricsCount++)
     {
+        BOOL willDrawHeader = _dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader;
+        
         struct KKSectionMetrics sectionMetrics = { 
-            .footerHeight = 25.f,
-            .headerHeight = 25.f,
+            .footerHeight = 25.0,
+            .headerHeight = willDrawHeader ? 25.0 : 0.0,
             .sectionHeight = 0.f,
             .itemCount = 0.f
         };
