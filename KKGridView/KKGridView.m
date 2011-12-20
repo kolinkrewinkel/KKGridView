@@ -27,9 +27,11 @@ struct KKSectionMetrics {
     NSMutableArray *_footerViews;
     NSMutableArray *_headerViews;
     
-    // Metrics - C arrays are used to improve performance
-    struct KKSectionMetrics *_metrics;
-    NSUInteger _metricsCount;
+    // Metrics
+    struct KKMetricsArray {
+        struct KKSectionMetrics * const sections;
+        NSUInteger const count;
+    } _metrics;
     
     // Cell containers
     NSMutableDictionary *_reusableCells;
@@ -72,6 +74,7 @@ struct KKSectionMetrics {
 
 // Reloading
 - (void)_reloadMetrics;
+- (void)_cleanupMetrics;
 - (void)_commonReload;
 - (void)_softReload;
 
@@ -190,9 +193,7 @@ struct KKSectionMetrics {
 - (void)dealloc
 {
     [self removeGestureRecognizer:_selectionRecognizer];
-    
-    if (_metrics)
-        free(_metrics);
+    [self _cleanupMetrics];
 }
 
 #pragma mark - Setters
@@ -353,7 +354,7 @@ struct KKSectionMetrics {
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = footer->stickPoint;
         // height of current section without height of footerView itself
-        CGFloat heightOfSection = _metrics[footer->section].sectionHeight - f.size.height;
+        CGFloat heightOfSection = _metrics.sections[footer->section].sectionHeight - f.size.height;
         // for footerViews we have to work with the bottom of the screen
         CGFloat screenBottom = offset + visibleBounds.size.height;
         
@@ -500,7 +501,7 @@ struct KKSectionMetrics {
             [self reloadContentSize];
             
             for (NSUInteger section = 0; section < _numberOfSections; section++) {
-                struct KKSectionMetrics sectionMetrics = _metrics[section];
+                struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
                 
                 KKGridViewHeader *header = nil;
                 if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
@@ -591,8 +592,8 @@ struct KKSectionMetrics {
 - (CGFloat)_sectionHeightsCombinedUpToSection:(NSUInteger)section
 {
     CGFloat height = 0.f;
-    for (NSUInteger index = 0; index < section && index < _numberOfSections; index++) {
-        height += _metrics[index].sectionHeight;
+    for (NSUInteger index = 0; index < section && index < _metrics.count; index++) {
+        height += _metrics.sections[index].sectionHeight;
     }
     return height;
 }
@@ -601,9 +602,9 @@ struct KKSectionMetrics {
 {
     CGFloat height = 0.f;
     
-    if (_metricsCount > section)
+    if (_metrics.count > section)
     {
-        struct KKSectionMetrics sectionMetrics = _metrics[section];
+        struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
         
         if (_numberOfSections > section) {
             height += sectionMetrics.headerHeight;
@@ -742,14 +743,14 @@ struct KKSectionMetrics {
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
         if (_numberOfSections > 0) {
-            point.y += _metrics[section].sectionHeight;
+            point.y += _metrics.sections[section].sectionHeight;
         } else {
             point.y += [self _heightForSection:section];
         }
     }
     
     if (indexPath.section < _numberOfSections) {
-        point.y += _metrics[indexPath.section].headerHeight;
+        point.y += _metrics.sections[indexPath.section].headerHeight;
     }
     
     NSInteger row = floor(indexPath.index / _numberOfColumns);
@@ -983,13 +984,13 @@ struct KKSectionMetrics {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
-        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        for (NSUInteger section = 0; section < _metrics.count; section++) {
             UIView *view = [self _viewForHeaderInSection:section];
             KKGridViewHeader *header = [[KKGridViewHeader alloc] initWithView:view];
             [_headerViews addObject:header];
             
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            [self _configureAuxiliaryView:header inSection:section withStickPoint:position height:_metrics[section].headerHeight];
+            [self _configureAuxiliaryView:header inSection:section withStickPoint:position height:_metrics.sections[section].headerHeight];
             
             [self addSubview:header.view];
         }
@@ -1002,12 +1003,12 @@ struct KKSectionMetrics {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
         }
         
-        for (NSUInteger section = 0; section < _numberOfSections; section++) {
+        for (NSUInteger section = 0; section < _metrics.count; section++) {
             UIView *view = [self _viewForFooterInSection:section];
             KKGridViewFooter *footer = [[KKGridViewFooter alloc] initWithView:view];
             [_footerViews addObject:footer];
             
-            CGFloat footerHeight = _metrics[section].footerHeight;
+            CGFloat footerHeight = _metrics.sections[section].footerHeight;
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
             [self _configureAuxiliaryView:footer inSection:section withStickPoint:position height:footerHeight];
             
@@ -1050,9 +1051,9 @@ struct KKSectionMetrics {
     
     CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
-    for (NSUInteger i = 0; i < _numberOfSections; ++i) {
+    for (NSUInteger i = 0; i < _metrics.count; ++i) {
         CGFloat heightForSection = [self _heightForSection:i];
-        _metrics[i].sectionHeight = heightForSection;
+        _metrics.sections[i].sectionHeight = heightForSection;
         newContentSize.height += heightForSection;
     }
     
@@ -1063,13 +1064,23 @@ struct KKSectionMetrics {
 {
     _numberOfSections = _dataSourceRespondsTo.numberOfSections ? [_dataSource numberOfSectionsInGridView:self] : 1;
     
-    if (_metrics)
-        free(_metrics);
+    // If the _metrics.sections array has the right number of items in it,
+    // then we can edit it in place (and don't need to allocate a new array 
+    // each time. If it is not the right size, then we'll wipe it out and 
+    // start over.
+    BOOL arrayIsCorrectSize = _metrics.count == _numberOfSections;
     
-    _metrics = (struct KKSectionMetrics *)calloc(_numberOfSections, sizeof(struct KKSectionMetrics));
-    _metricsCount = 0;
+    struct KKSectionMetrics *metricsArray = _metrics.sections;
     
-    for (_metricsCount = 0; _metricsCount < _numberOfSections; _metricsCount++)
+    if (!arrayIsCorrectSize)
+    {
+        [self _cleanupMetrics];
+        metricsArray = (struct KKSectionMetrics *)calloc(_numberOfSections, sizeof(struct KKSectionMetrics));
+    }
+    
+    
+    NSUInteger index;
+    for (index = 0; index < _numberOfSections; ++index)
     {
         BOOL willDrawHeader = _dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader;
         
@@ -1080,15 +1091,26 @@ struct KKSectionMetrics {
             .itemCount = 0.f
         };
         
-        sectionMetrics.itemCount = [_dataSource gridView:self numberOfItemsInSection:_metricsCount];
+        sectionMetrics.itemCount = [_dataSource gridView:self numberOfItemsInSection:index];
         
         if (_dataSourceRespondsTo.heightForHeader)
-            sectionMetrics.headerHeight = [_dataSource gridView:self heightForHeaderInSection:_metricsCount];
+            sectionMetrics.headerHeight = [_dataSource gridView:self heightForHeaderInSection:index];
         if (_dataSourceRespondsTo.heightForFooter)
-            sectionMetrics.footerHeight = [_dataSource gridView:self heightForFooterInSection:_metricsCount];
+            sectionMetrics.footerHeight = [_dataSource gridView:self heightForFooterInSection:index];
         
-        _metrics[_metricsCount] = sectionMetrics;
+        metricsArray[index] = sectionMetrics;
     }
+    
+    if (!arrayIsCorrectSize)
+        _metrics = (struct KKMetricsArray){ metricsArray, index };    
+}
+
+- (void)_cleanupMetrics
+{
+    if (_metrics.sections)
+        free(_metrics.sections);
+    
+    _metrics = (struct KKMetricsArray){ NULL, 0 };
 }
 
 #pragma mark - Header and Footer Views
