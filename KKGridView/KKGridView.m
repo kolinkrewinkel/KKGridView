@@ -22,7 +22,7 @@ struct KKSectionMetrics {
     NSUInteger itemCount;
 };
 
-@interface KKGridView () {
+@interface KKGridView () <UIGestureRecognizerDelegate,UIScrollViewDelegate> {
     // View-wrapper containers
     NSMutableArray *_footerViews;
     NSMutableArray *_headerViews;
@@ -35,9 +35,11 @@ struct KKSectionMetrics {
     NSMutableDictionary *_reusableCells;
     NSMutableDictionary *_visibleCells;
     
-    // Selection
+    // Selection & Highlighting
     NSMutableSet *_selectedIndexPaths;
-    UITapGestureRecognizer *_selectionRecognizer;
+    UILongPressGestureRecognizer *_selectionRecognizer;
+    
+    KKIndexPath *_lastHighlightedItem;
     
     // Relating to updates/layout changes
     BOOL _markedForDisplay; // Relayout or not
@@ -102,10 +104,10 @@ struct KKSectionMetrics {
 - (NSMutableSet *)_reusableCellSetForIdentifier:(NSString *)identifier;
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section;
 
-// Selection
+// Selection & Highlighting
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
-- (void)_handleSelection:(UITapGestureRecognizer *)recognizer;
+- (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer;
 
 // Headers and Footer views
 - (UIView *)_viewForHeaderInSection:(NSUInteger)section;
@@ -167,8 +169,13 @@ struct KKSectionMetrics {
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
     
-    _selectionRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    self.delegate = self;
+    
+    _selectionRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
+    _selectionRecognizer.minimumPressDuration = 0.01;
+    _selectionRecognizer.delegate = self;
     [self addGestureRecognizer:_selectionRecognizer];
+    
     
     //    Set up defaults
     self.cellSize = CGSizeMake(75.f, 75.f);
@@ -182,6 +189,8 @@ struct KKSectionMetrics {
 
 - (void)dealloc
 {
+    [self removeGestureRecognizer:_selectionRecognizer];
+    
     if (_metrics)
         free(_metrics);
 }
@@ -520,7 +529,7 @@ struct KKSectionMetrics {
     } cell_info_t;
     
     cell_info_t *cellsToRemove  = (cell_info_t *)calloc(_visibleCells.count, sizeof(cell_info_t));
-        
+    
     NSUInteger cellCount = 0;
     for (KKIndexPath *path in _visibleCells) {
         KKGridViewCell *cell = [_visibleCells objectForKey:path];
@@ -1212,9 +1221,30 @@ struct KKSectionMetrics {
 
 #pragma mark - Internal Selection Methods
 
+- (void)_highlightItemAtIndexPath:(KKIndexPath *)indexPath
+{
+    [self _unhighlightAllItems];
+    
+    _lastHighlightedItem = indexPath;
+    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+    cell.highlighted = YES;
+}
+
+- (void)_unhighlightAllItems
+{
+    for (KKIndexPath *path in _visibleCells)
+    {
+        KKGridViewCell *cell = [_visibleCells objectForKey:path];
+        cell.highlighted = NO;
+    }
+}
+
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+    
+    [self _unhighlightAllItems];
+    
     if (_allowsMultipleSelection) {
         if ([_selectedIndexPaths containsObject:indexPath]) {
             [self _deselectItemAtIndexPath:indexPath];
@@ -1256,18 +1286,46 @@ struct KKSectionMetrics {
     }
 }
 
+
 #pragma mark - Touch Handling
 
-- (void)_handleSelection:(UITapGestureRecognizer *)recognizer
-{    
+- (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
+{
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:[recognizer locationInView:self]];
+    
     if (_delegateRespondsTo.willSelectItem)
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     
-    if (indexPath.index == NSNotFound || indexPath.section == NSNotFound)
+    if (indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
+        [self _unhighlightAllItems];
         return;
+    }
     
-    [self _selectItemAtIndexPath:indexPath];
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        [self _highlightItemAtIndexPath:indexPath];
+    }
+    
+    else if (recognizer.state == UIGestureRecognizerStateEnded) {
+        if (CGRectContainsPoint([self rectForCellAtIndexPath:_lastHighlightedItem], [recognizer locationInView:self]))
+            [self _selectItemAtIndexPath:indexPath];
+        [self _unhighlightAllItems];
+    }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
+
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self _unhighlightAllItems];
 }
 
 @end
+
