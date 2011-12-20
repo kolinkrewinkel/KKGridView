@@ -55,7 +55,7 @@ typedef enum {
 @property (nonatomic, strong) UIView *contentView; // Where all subviews should be.
 @property (nonatomic, copy) KKIndexPath *indexPath;
 @property (nonatomic, copy) NSString *reuseIdentifier; // For usage by KKGridView
-@property (nonatomic) BOOL selected; // I/O
+@property (nonatomic, getter = isSelected) BOOL selected;
 @property (nonatomic, strong) UIView *selectedBackgroundView; // Replaces *backgroundView when selected is YES
 @property (nonatomic) BOOL editing; // Editing state
 @property (nonatomic) KKGridViewCellAccessoryType accessoryType; // Default is none.
