@@ -718,7 +718,7 @@ struct KKSectionMetrics {
     return indexes;
 }
 
-- (KKIndexPath *)indexPathsForItemAtPoint:(CGPoint)point
+- (KKIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
     NSArray *indexes = [self indexPathsForItemsInRect:(CGRect){ point, {1.f, 1.f } }];
     return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
@@ -1166,7 +1166,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Public Selection Methods
 
-- (void)selectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
+- (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
 {
     if (!indexPaths)
         return;
@@ -1182,7 +1182,7 @@ struct KKSectionMetrics {
         [UIView commitAnimations];
 }
 
-- (void)deselectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
+- (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
 {
     if (!indexPaths)
         return;
@@ -1260,7 +1260,7 @@ struct KKSectionMetrics {
 
 - (void)_handleSelection:(UITapGestureRecognizer *)recognizer
 {    
-    KKIndexPath *indexPath = [self indexPathsForItemAtPoint:[recognizer locationInView:self]];
+    KKIndexPath *indexPath = [self indexPathForItemAtPoint:[recognizer locationInView:self]];
     if (_delegateRespondsTo.willSelectItem)
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     

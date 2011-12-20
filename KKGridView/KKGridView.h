@@ -77,10 +77,10 @@ typedef enum {
 
 #pragma mark - Selection
 
-- (void)selectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
-- (void)deselectRowsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+- (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+- (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
 
-- (KKIndexPath*)indexPathForSelectedCell;
+- (KKIndexPath *)indexPathForSelectedCell;
 - (NSArray *)indexPathsForSelectedCells;
 
 @end
