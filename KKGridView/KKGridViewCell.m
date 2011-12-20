@@ -12,6 +12,7 @@
 @interface KKGridViewCell ()
 
 - (UIImage *)_defaultBlueBackgroundRendition;
+- (void)_updateSubviewSelectionState;
 
 @end
 
@@ -30,6 +31,7 @@
 @synthesize indexPath = _indexPath;
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize selected = _selected;
+@synthesize highlighted = _highlighted;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
 
 
@@ -79,7 +81,7 @@
     return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
     [_contentView removeObserver:self forKeyPath:@"backgroundColor"];
 }
@@ -88,7 +90,7 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if (object == _contentView && !_selected) {
+    if (object == _contentView && !_selected && !_highlighted) {
         _userContentViewBackgroundColor = [change objectForKey:@"new"];
     }
 }
@@ -111,20 +113,15 @@
 - (void)setSelected:(BOOL)selected
 {
     _selected = selected;
-    
-    if (selected == YES) {
-        _selectedBackgroundView.hidden = !selected;
-    }
-    
-    _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-    for (UIView *view in _contentView.subviews) {
-        if ([view respondsToSelector:@selector(setSelected:)]) {
-            UIButton *assumedButton = (UIButton *)view;
-            assumedButton.selected = selected;
-        }
-    }
     [self layoutSubviews];        
 }
+
+- (void)setHighlighted:(BOOL)highlighted
+{
+    _highlighted = highlighted;
+    [self layoutSubviews];
+}
+
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
@@ -136,10 +133,22 @@
     }];
 }
 
+- (void)_updateSubviewSelectionState
+{
+    for (UIView *view in _contentView.subviews) {
+        if ([view respondsToSelector:@selector(setSelected:)]) {
+            UIButton *assumedButton = (UIButton *)view;
+            assumedButton.selected = _highlighted || _selected;
+        }
+    }
+}
+
 #pragma mark - Layout
 
 - (void)layoutSubviews
 {
+    [self _updateSubviewSelectionState];
+    
     _contentView.frame = self.bounds;
     _backgroundView.frame = self.bounds;
     _selectedBackgroundView.frame = self.bounds;
@@ -149,15 +158,16 @@
     [self bringSubviewToFront:_contentView];
     
     
-    if (_selected) {
+    if (_selected || _highlighted) {
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
     } else {
         _contentView.backgroundColor = (_userContentViewBackgroundColor) ? _userContentViewBackgroundColor : [UIColor whiteColor];
     }
     
-    _selectedBackgroundView.hidden = !_selected;
-    _backgroundView.hidden = _selected;
+    _selectedBackgroundView.hidden = !_selected && !_highlighted;
+    _backgroundView.hidden = _selected || _highlighted;
+    _selectedBackgroundView.alpha = _highlighted ? 1.f : (_selected ? 1.f : 0.f);
     
     switch (self.accessoryType) {
         case KKGridViewCellAccessoryTypeNone:
