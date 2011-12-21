@@ -1333,7 +1333,8 @@ struct KKSectionMetrics {
     }
     
     else if (recognizer.state == UIGestureRecognizerStateEnded) {
-        if (CGRectContainsPoint([self rectForCellAtIndexPath:_lastHighlightedItem], [recognizer locationInView:self]))
+        BOOL touchInSameCell = CGRectContainsPoint([self rectForCellAtIndexPath:_lastHighlightedItem], [recognizer locationInView:self]);
+        if (touchInSameCell && ![self isDragging])
             [self _selectItemAtIndexPath:indexPath];
         [self _unhighlightAllItems];
     }
