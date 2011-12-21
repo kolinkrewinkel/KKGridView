@@ -1256,6 +1256,7 @@ struct KKSectionMetrics {
 
 - (void)_unhighlightAllItems
 {
+    _lastHighlightedItem = nil;
     for (KKIndexPath *path in _visibleCells)
     {
         KKGridViewCell *cell = [_visibleCells objectForKey:path];
