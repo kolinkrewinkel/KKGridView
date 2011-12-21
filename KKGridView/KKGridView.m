@@ -1315,6 +1315,9 @@ struct KKSectionMetrics {
 
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
 {
+    if ([self isDecelerating])
+        return;
+    
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:[recognizer locationInView:self]];
     
     if (_delegateRespondsTo.willSelectItem)
