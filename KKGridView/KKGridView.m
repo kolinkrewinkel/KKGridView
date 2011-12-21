@@ -41,7 +41,7 @@ struct KKSectionMetrics {
     NSMutableSet *_selectedIndexPaths;
     UILongPressGestureRecognizer *_selectionRecognizer;
     
-    KKIndexPath *_lastHighlightedItem;
+    KKIndexPath *_highlightedIndexPath;
     
     // Relating to updates/layout changes
     BOOL _markedForDisplay; // Relayout or not
@@ -110,6 +110,8 @@ struct KKSectionMetrics {
 // Selection & Highlighting
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)_highlightItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)_cancelHighlighting;
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer;
 
 // Headers and Footer views
@@ -1247,28 +1249,29 @@ struct KKSectionMetrics {
 
 - (void)_highlightItemAtIndexPath:(KKIndexPath *)indexPath
 {
-    [self _unhighlightAllItems];
+    [self _cancelHighlighting];
     
-    _lastHighlightedItem = indexPath;
+    _highlightedIndexPath = indexPath;
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     cell.highlighted = YES;
 }
 
-- (void)_unhighlightAllItems
+- (void)_cancelHighlighting
 {
-    _lastHighlightedItem = nil;
-    for (KKIndexPath *path in _visibleCells)
-    {
-        KKGridViewCell *cell = [_visibleCells objectForKey:path];
-        cell.highlighted = NO;
-    }
+    if (!_highlightedIndexPath)
+        return;
+    
+    KKGridViewCell *cell = [_visibleCells objectForKey:_highlightedIndexPath];
+    cell.highlighted = NO;
+    
+    _highlightedIndexPath = nil;
 }
 
 - (void)_selectItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
     
-    [self _unhighlightAllItems];
+    [self _cancelHighlighting];
     
     if (_allowsMultipleSelection) {
         if ([_selectedIndexPaths containsObject:indexPath]) {
@@ -1325,7 +1328,7 @@ struct KKSectionMetrics {
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
-        [self _unhighlightAllItems];
+        [self _cancelHighlighting];
         return;
     }
     
@@ -1334,10 +1337,10 @@ struct KKSectionMetrics {
     }
     
     else if (recognizer.state == UIGestureRecognizerStateEnded) {
-        BOOL touchInSameCell = CGRectContainsPoint([self rectForCellAtIndexPath:_lastHighlightedItem], [recognizer locationInView:self]);
+        BOOL touchInSameCell = CGRectContainsPoint([self rectForCellAtIndexPath:_highlightedIndexPath], [recognizer locationInView:self]);
         if (touchInSameCell && ![self isDragging])
             [self _selectItemAtIndexPath:indexPath];
-        [self _unhighlightAllItems];
+        [self _cancelHighlighting];
     }
 }
 
@@ -1353,7 +1356,7 @@ struct KKSectionMetrics {
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    [self _unhighlightAllItems];
+    [self _cancelHighlighting];
 }
 
 @end
