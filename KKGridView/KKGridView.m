@@ -12,6 +12,7 @@
 #import <KKGridView/KKGridViewUpdate.h>
 #import <KKGridView/KKGridViewUpdateStack.h>
 #import <KKGridView/KKGridViewCell.h>
+#import <KKGridView/KKGridViewIndexView.h>
 
 #define KKGridViewDefaultAnimationStaggerInterval 0.025
 
@@ -58,6 +59,8 @@ struct KKSectionMetrics {
         unsigned int heightForFooter:1;
         unsigned int viewForHeader:1;
         unsigned int viewForFooter:1;
+        unsigned int sectionIndexTitles:1;
+        unsigned int sectionForSectionIndexTitle:1;
     } _dataSourceRespondsTo;
     
     struct {
@@ -67,6 +70,8 @@ struct KKSectionMetrics {
         unsigned int willDeselectItem:1;
         unsigned int willDisplayCell:1;
     } _delegateRespondsTo;
+    
+    KKGridViewIndexView *_indexView;
 }
 
 // Initialization
@@ -212,6 +217,8 @@ struct KKSectionMetrics {
         _dataSourceRespondsTo.heightForFooter = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
         _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
         _dataSourceRespondsTo.viewForFooter = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
+        _dataSourceRespondsTo.sectionIndexTitles = [_dataSource respondsToSelector:@selector(sectionIndexTitlesForGridView:)];
+        _dataSourceRespondsTo.sectionForSectionIndexTitle = [_dataSource respondsToSelector:@selector(gridView:sectionForSectionIndexTitle:atIndex:)];
         [self reloadData];
     }
 }
@@ -1017,6 +1024,33 @@ struct KKSectionMetrics {
             [self addSubview:footer.view];
         }
     }
+    
+    // IndexView
+    if (_dataSourceRespondsTo.sectionIndexTitles) {
+        if (_indexView)
+            [_indexView removeFromSuperview];
+        
+        NSArray *indexes = [_dataSource sectionIndexTitlesForGridView:self];
+        if (indexes && [indexes isKindOfClass:[NSArray class]]) {
+            _indexView = [[KKGridViewIndexView alloc] initWithFrame:CGRectZero];
+            [_indexView setSectionIndexTitles:indexes];
+            
+            __unsafe_unretained KKGridView *weakSelf = self;
+            [_indexView setSectionTracked:^(NSUInteger section) {
+                KKGridView *strongSelf = weakSelf;
+                
+                if (strongSelf->_dataSourceRespondsTo.sectionForSectionIndexTitle) {
+                    NSUInteger sectionToScroll = [strongSelf->_dataSource gridView:strongSelf sectionForSectionIndexTitle:[indexes objectAtIndex:section] atIndex:section];
+                    [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0. inSection:sectionToScroll] animated:NO position:KKGridViewScrollPositionTop];
+                }
+                
+            }];
+
+            [self addSubview:_indexView];
+            [self bringSubviewToFront:_indexView];
+            
+        }
+    }
 }
 
 - (void)reloadData
@@ -1357,6 +1391,15 @@ struct KKSectionMetrics {
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     [self _cancelHighlighting];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (_indexView) {
+        [_indexView setFrame:CGRectMake(_indexView.frame.origin.x,
+                                        scrollView.contentOffset.y,
+                                        _indexView.frame.size.width,
+                                        _indexView.frame.size.height)];
+    }
 }
 
 @end
