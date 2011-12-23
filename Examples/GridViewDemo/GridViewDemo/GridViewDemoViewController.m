@@ -29,7 +29,7 @@ static const NSUInteger kNumSection = 40;
     searchBar.barStyle = UIBarStyleBlackTranslucent;
     searchBar.delegate = self;
     searchBar.showsCancelButton = YES;
-    searchBar.userInteractionEnabled = NO;
+    searchBar.userInteractionEnabled = YES;
     self.gridView.gridHeaderView = searchBar;
     
     UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
@@ -111,6 +111,9 @@ static const NSUInteger kNumSection = 40;
     return [NSString stringWithFormat:@"Footer %i",section];
 }
 
+- (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView {
+    return [NSArray arrayWithObjects:@"A",@"B",@"C",@"D",@"E",@"F",nil];
+}
 
 #pragma mark - UISearchBarDelegate
 
