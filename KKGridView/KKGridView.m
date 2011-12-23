@@ -386,10 +386,6 @@ struct KKSectionMetrics {
                     f.origin.y = sectionTwoY + sectionTwoHeight;
                 }
             }
-            
-            // move footer view to right below scroller
-            [footer.view removeFromSuperview];
-            [self insertSubview:footer.view atIndex:self.subviews.count - 1];
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
@@ -1354,7 +1350,25 @@ struct KKSectionMetrics {
 #pragma mark - Touch Handling
 
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
-{
+{    
+    if (_indexView) {
+        if (CGRectContainsPoint(_indexView.frame, [recognizer locationInView:self]) &&
+            recognizer.state == UIGestureRecognizerStateBegan) {
+            [self setScrollEnabled:NO];
+            [_indexView setTracking:YES location:[recognizer locationInView:_indexView]];
+            return;
+        }
+        else if (recognizer.state == UIGestureRecognizerStateChanged && _indexView.tracking) {
+            [_indexView setTracking:YES location:CGPointMake(0.0, [recognizer locationInView:_indexView].y)];
+            return;
+        }
+        else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
+            [self setScrollEnabled:YES];
+            [_indexView setTracking:NO location:[recognizer locationInView:_indexView]];
+            return;
+        }
+    }
+ 
     if ([self isDecelerating])
         return;
     
@@ -1396,12 +1410,11 @@ struct KKSectionMetrics {
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (_indexView) {
+    if (_indexView)
         [_indexView setFrame:CGRectMake(_indexView.frame.origin.x,
                                         scrollView.contentOffset.y,
                                         _indexView.frame.size.width,
                                         _indexView.frame.size.height)];
-    }
 }
 
 @end

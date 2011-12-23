@@ -10,4 +10,7 @@
 @interface KKGridViewIndexView : UIView
 @property (nonatomic, strong) NSArray *sectionIndexTitles; // Array with NSStrings
 @property (nonatomic, copy) void (^sectionTracked)(NSUInteger section);
+@property (nonatomic, assign) BOOL tracking;
+
+- (void)setTracking:(BOOL)tracking location:(CGPoint)location;
 @end
