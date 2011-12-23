@@ -184,6 +184,7 @@ struct KKSectionMetrics {
     _selectionRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
     _selectionRecognizer.minimumPressDuration = 0.01;
     _selectionRecognizer.delegate = self;
+    _selectionRecognizer.cancelsTouchesInView = NO;
     [self addGestureRecognizer:_selectionRecognizer];
     
     
@@ -1031,24 +1032,24 @@ struct KKSectionMetrics {
             [_indexView removeFromSuperview];
         
         NSArray *indexes = [_dataSource sectionIndexTitlesForGridView:self];
-        if (indexes && [indexes isKindOfClass:[NSArray class]]) {
+        if (indexes && [indexes isKindOfClass:[NSArray class]] && [indexes count]) {
             _indexView = [[KKGridViewIndexView alloc] initWithFrame:CGRectZero];
             [_indexView setSectionIndexTitles:indexes];
             
             __unsafe_unretained KKGridView *weakSelf = self;
             [_indexView setSectionTracked:^(NSUInteger section) {
                 KKGridView *strongSelf = weakSelf;
+  
+                NSUInteger sectionToScroll = section;
+                if (strongSelf->_dataSourceRespondsTo.sectionForSectionIndexTitle)
+                    sectionToScroll = [strongSelf->_dataSource gridView:strongSelf
+                                            sectionForSectionIndexTitle:[indexes objectAtIndex:section] atIndex:section];
                 
-                if (strongSelf->_dataSourceRespondsTo.sectionForSectionIndexTitle) {
-                    NSUInteger sectionToScroll = [strongSelf->_dataSource gridView:strongSelf sectionForSectionIndexTitle:[indexes objectAtIndex:section] atIndex:section];
-                    [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0. inSection:sectionToScroll] animated:NO position:KKGridViewScrollPositionTop];
-                }
-                
+                [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0. inSection:sectionToScroll] animated:NO position:KKGridViewScrollPositionTop]; 
             }];
 
             [self addSubview:_indexView];
-            [self bringSubviewToFront:_indexView];
-            
+            [self bringSubviewToFront:_indexView];   
         }
     }
 }
@@ -1119,9 +1120,10 @@ struct KKSectionMetrics {
     for (index = 0; index < _numberOfSections; ++index)
     {
         BOOL willDrawHeader = _dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader;
+        BOOL willDrawFooter = _dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter;
         
         struct KKSectionMetrics sectionMetrics = { 
-            .footerHeight = 25.0,
+            .footerHeight = willDrawFooter ? 25.0 : 0.0,
             .headerHeight = willDrawHeader ? 25.0 : 0.0,
             .sectionHeight = 0.f,
             .itemCount = 0.f
@@ -1211,10 +1213,10 @@ struct KKSectionMetrics {
     
     switch (scrollPosition) {
         case KKGridViewScrollPositionTop:
-            verticalOffset = CGRectGetMinY(cellRect) + self.contentInset.top;
+            verticalOffset = CGRectGetMinY(cellRect) + self.contentInset.top - _metrics.sections[indexPath.section].headerHeight - self.cellPadding.height;
             break;
         case KKGridViewScrollPositionBottom:
-            verticalOffset = CGRectGetMaxY(cellRect) - boundsHeight;
+            verticalOffset = CGRectGetMaxY(cellRect) - boundsHeight + _metrics.sections[indexPath.section].headerHeight + self.cellPadding.height;
             break;
         case KKGridViewScrollPositionMiddle:
             verticalOffset = CGRectGetMaxY(cellRect) - (boundsHeight * .5f);
