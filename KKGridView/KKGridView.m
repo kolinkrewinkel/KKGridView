@@ -634,7 +634,7 @@ struct KKSectionMetrics {
         }
         
         height += numberOfRows * (_cellSize.height + _cellPadding.height);
-        height += _cellPadding.height;
+        height += (numberOfRows? _cellPadding.height:0.f);
     }
     
     return height;
