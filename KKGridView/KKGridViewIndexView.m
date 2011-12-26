@@ -111,6 +111,9 @@ static UIFont *font = nil;
     
         _lastTrackingSection = floorf(abs(location.y)/sectionHeight);
         
+        if (_lastTrackingSection == _sectionIndexTitles.count)
+            _lastTrackingSection--;
+        
         if (_sectionTracked)
             _sectionTracked(_lastTrackingSection);
 
