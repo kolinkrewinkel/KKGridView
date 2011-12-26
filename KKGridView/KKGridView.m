@@ -123,6 +123,8 @@ struct KKSectionMetrics {
 - (UIView *)_viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)_viewForFooterInSection:(NSUInteger)section;
 
+// Custom Subviewinsertion
+- (void)_insertSubviewBelowScrollbar:(UIView *)view;
 @end
 
 @implementation KKGridView
@@ -386,6 +388,12 @@ struct KKSectionMetrics {
                     f.origin.y = sectionTwoY + sectionTwoHeight;
                 }
             }
+            
+            
+            // move footer view to right below scroller
+            [footer.view removeFromSuperview];
+            [self _insertSubviewBelowScrollbar:footer.view];
+
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
@@ -1044,8 +1052,7 @@ struct KKSectionMetrics {
                 [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0. inSection:sectionToScroll] animated:NO position:KKGridViewScrollPositionTop]; 
             }];
 
-            [self addSubview:_indexView];
-            [self bringSubviewToFront:_indexView];   
+            [self _insertSubviewBelowScrollbar:_indexView];
         }
     }
 }
@@ -1193,6 +1200,15 @@ struct KKSectionMetrics {
     return footerView;
 }
 
+#pragma mark - Subviewinsertion
+             
+- (void)_insertSubviewBelowScrollbar:(UIView *)view {
+    if (_indexView && view!=_indexView)
+        [self insertSubview:view belowSubview:_indexView];
+    else
+        [self insertSubview:view atIndex:self.subviews.count - 1];
+}
+             
 #pragma mark - Positioning
 
 - (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition
