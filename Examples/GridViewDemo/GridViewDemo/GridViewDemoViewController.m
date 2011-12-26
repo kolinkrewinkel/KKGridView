@@ -112,7 +112,7 @@ static const NSUInteger kNumSection = 40;
 }
 
 - (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView {
-    return [NSArray arrayWithObjects:@"A",@"B",@"C",@"D",@"E",@"F",nil];
+    return [NSArray arrayWithObjects:@"A",@"B",@"C",@"D",@"E",@"F",@"G",@"H",@"I",@"J",@"K",@"L",@"M",@"N",@"O",@"P",nil];
 }
 
 #pragma mark - UISearchBarDelegate
