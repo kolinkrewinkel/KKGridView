@@ -306,6 +306,10 @@
 		1A61BE1D13DCAF1F00AB4243 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				CLANG_ARC_MIGRATION = donothing;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = NO;
@@ -325,6 +329,10 @@
 		1A61BE1E13DCAF1F00AB4243 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					armv6,
+					"$(ARCHS_STANDARD_32_BIT)",
+				);
 				CLANG_ARC_MIGRATION = donothing;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_OBJCPP_ARC_ABI = NO;
