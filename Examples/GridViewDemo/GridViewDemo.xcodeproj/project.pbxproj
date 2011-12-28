@@ -20,19 +20,8 @@
 		1A75378F148F070D00B8A777 /* KKGridViewIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A75378D148F070D00B8A777 /* KKGridViewIcon.png */; };
 		1A753790148F070D00B8A777 /* KKGridViewIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */; };
 		1A753798148F1B6300B8A777 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A753796148F1B6300B8A777 /* Default.png */; };
-		1A7DF7191454F878000372DA /* failure-btn.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF7151454F878000372DA /* failure-btn.png */; };
-		1A7DF71A1454F878000372DA /* failure-btn-press@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF7161454F878000372DA /* failure-btn-press@2x.png */; };
-		1A7DF71B1454F878000372DA /* failure-btn@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF7171454F878000372DA /* failure-btn@2x.png */; };
-		1A7DF71C1454F878000372DA /* failure-btn-press.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF7181454F878000372DA /* failure-btn-press.png */; };
-		1A7DF72114551E00000372DA /* UIUnreadIndicator.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF71D14551E00000372DA /* UIUnreadIndicator.png */; };
-		1A7DF72214551E00000372DA /* UIUnreadIndicatorPartial@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF71E14551E00000372DA /* UIUnreadIndicatorPartial@2x.png */; };
-		1A7DF72314551E00000372DA /* UIUnreadIndicatorPartial.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF71F14551E00000372DA /* UIUnreadIndicatorPartial.png */; };
-		1A7DF72414551E00000372DA /* UIUnreadIndicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF72014551E00000372DA /* UIUnreadIndicator@2x.png */; };
-		1A7DF729145520B7000372DA /* UIUnreadIndicatorPartialPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF725145520B7000372DA /* UIUnreadIndicatorPartialPressed.png */; };
-		1A7DF72A145520B7000372DA /* UIUnreadIndicatorPartialPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF726145520B7000372DA /* UIUnreadIndicatorPartialPressed@2x.png */; };
-		1A7DF72B145520B7000372DA /* UIUnreadIndicatorPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF727145520B7000372DA /* UIUnreadIndicatorPressed.png */; };
-		1A7DF72C145520B7000372DA /* UIUnreadIndicatorPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A7DF728145520B7000372DA /* UIUnreadIndicatorPressed@2x.png */; };
 		397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397E3D271406642500C3DEA3 /* QuartzCore.framework */; };
+		5674016D14AACDF300A838F8 /* KKGridView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5674016C14AACDF300A838F8 /* KKGridView.bundle */; };
 		FC35C029149C70F100A56750 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FC35C028149C70F100A56750 /* Default@2x.png */; };
 		FC35C02B149C710000A56750 /* Default-Landscape@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FC35C02A149C710000A56750 /* Default-Landscape@2x.png */; };
 /* End PBXBuildFile section */
@@ -52,23 +41,12 @@
 		1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GridViewDemoViewController.h; sourceTree = "<group>"; };
 		1A530A4313DE962700E6C60B /* GridViewDemoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GridViewDemoViewController.m; sourceTree = "<group>"; };
 		1A530A4613DE962700E6C60B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/GridViewDemoViewController.xib; sourceTree = "<group>"; };
-		1A72A9791453B450002546F8 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libKKGridView.a; path = "libKKGridView.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A72A9791453B450002546F8 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libKKGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A75378D148F070D00B8A777 /* KKGridViewIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KKGridViewIcon.png; sourceTree = "<group>"; };
 		1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "KKGridViewIcon@2x.png"; sourceTree = "<group>"; };
 		1A753796148F1B6300B8A777 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		1A7DF7151454F878000372DA /* failure-btn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "failure-btn.png"; sourceTree = "<group>"; };
-		1A7DF7161454F878000372DA /* failure-btn-press@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "failure-btn-press@2x.png"; sourceTree = "<group>"; };
-		1A7DF7171454F878000372DA /* failure-btn@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "failure-btn@2x.png"; sourceTree = "<group>"; };
-		1A7DF7181454F878000372DA /* failure-btn-press.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "failure-btn-press.png"; sourceTree = "<group>"; };
-		1A7DF71D14551E00000372DA /* UIUnreadIndicator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UIUnreadIndicator.png; sourceTree = "<group>"; };
-		1A7DF71E14551E00000372DA /* UIUnreadIndicatorPartial@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UIUnreadIndicatorPartial@2x.png"; sourceTree = "<group>"; };
-		1A7DF71F14551E00000372DA /* UIUnreadIndicatorPartial.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UIUnreadIndicatorPartial.png; sourceTree = "<group>"; };
-		1A7DF72014551E00000372DA /* UIUnreadIndicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UIUnreadIndicator@2x.png"; sourceTree = "<group>"; };
-		1A7DF725145520B7000372DA /* UIUnreadIndicatorPartialPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UIUnreadIndicatorPartialPressed.png; sourceTree = "<group>"; };
-		1A7DF726145520B7000372DA /* UIUnreadIndicatorPartialPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UIUnreadIndicatorPartialPressed@2x.png"; sourceTree = "<group>"; };
-		1A7DF727145520B7000372DA /* UIUnreadIndicatorPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UIUnreadIndicatorPressed.png; sourceTree = "<group>"; };
-		1A7DF728145520B7000372DA /* UIUnreadIndicatorPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "UIUnreadIndicatorPressed@2x.png"; sourceTree = "<group>"; };
 		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		5674016C14AACDF300A838F8 /* KKGridView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = KKGridView.bundle; path = ../../../../KKGridView/KKGridView.bundle; sourceTree = "<group>"; };
 		FC35C028149C70F100A56750 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
 		FC35C02A149C710000A56750 /* Default-Landscape@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape@2x.png"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -130,7 +108,6 @@
 				1A530A4513DE962700E6C60B /* GridViewDemoViewController.xib */,
 				1A530A3F13DE962700E6C60B /* MainWindow.xib */,
 				1A75378C148F070D00B8A777 /* Resources */,
-				1A7DF7101454E8CE000372DA /* KKGridView Resources */,
 				1A530A3413DE962700E6C60B /* Supporting Files */,
 			);
 			path = GridViewDemo;
@@ -150,6 +127,7 @@
 		1A75378C148F070D00B8A777 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5674016C14AACDF300A838F8 /* KKGridView.bundle */,
 				FC35C02A149C710000A56750 /* Default-Landscape@2x.png */,
 				FC35C028149C70F100A56750 /* Default@2x.png */,
 				1A753796148F1B6300B8A777 /* Default.png */,
@@ -157,25 +135,6 @@
 				1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		1A7DF7101454E8CE000372DA /* KKGridView Resources */ = {
-			isa = PBXGroup;
-			children = (
-				1A7DF71D14551E00000372DA /* UIUnreadIndicator.png */,
-				1A7DF71E14551E00000372DA /* UIUnreadIndicatorPartial@2x.png */,
-				1A7DF71F14551E00000372DA /* UIUnreadIndicatorPartial.png */,
-				1A7DF72014551E00000372DA /* UIUnreadIndicator@2x.png */,
-				1A7DF725145520B7000372DA /* UIUnreadIndicatorPartialPressed.png */,
-				1A7DF726145520B7000372DA /* UIUnreadIndicatorPartialPressed@2x.png */,
-				1A7DF727145520B7000372DA /* UIUnreadIndicatorPressed.png */,
-				1A7DF728145520B7000372DA /* UIUnreadIndicatorPressed@2x.png */,
-				1A7DF7151454F878000372DA /* failure-btn.png */,
-				1A7DF7161454F878000372DA /* failure-btn-press@2x.png */,
-				1A7DF7171454F878000372DA /* failure-btn@2x.png */,
-				1A7DF7181454F878000372DA /* failure-btn-press.png */,
-			);
-			path = "KKGridView Resources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,23 +191,12 @@
 				1A530A3813DE962700E6C60B /* InfoPlist.strings in Resources */,
 				1A530A4113DE962700E6C60B /* MainWindow.xib in Resources */,
 				1A530A4713DE962700E6C60B /* GridViewDemoViewController.xib in Resources */,
-				1A7DF7191454F878000372DA /* failure-btn.png in Resources */,
-				1A7DF71A1454F878000372DA /* failure-btn-press@2x.png in Resources */,
-				1A7DF71B1454F878000372DA /* failure-btn@2x.png in Resources */,
-				1A7DF71C1454F878000372DA /* failure-btn-press.png in Resources */,
-				1A7DF72114551E00000372DA /* UIUnreadIndicator.png in Resources */,
-				1A7DF72214551E00000372DA /* UIUnreadIndicatorPartial@2x.png in Resources */,
-				1A7DF72314551E00000372DA /* UIUnreadIndicatorPartial.png in Resources */,
-				1A7DF72414551E00000372DA /* UIUnreadIndicator@2x.png in Resources */,
-				1A7DF729145520B7000372DA /* UIUnreadIndicatorPartialPressed.png in Resources */,
-				1A7DF72A145520B7000372DA /* UIUnreadIndicatorPartialPressed@2x.png in Resources */,
-				1A7DF72B145520B7000372DA /* UIUnreadIndicatorPressed.png in Resources */,
-				1A7DF72C145520B7000372DA /* UIUnreadIndicatorPressed@2x.png in Resources */,
 				1A75378F148F070D00B8A777 /* KKGridViewIcon.png in Resources */,
 				1A753790148F070D00B8A777 /* KKGridViewIcon@2x.png in Resources */,
 				1A753798148F1B6300B8A777 /* Default.png in Resources */,
 				FC35C029149C70F100A56750 /* Default@2x.png in Resources */,
 				FC35C02B149C710000A56750 /* Default-Landscape@2x.png in Resources */,
+				5674016D14AACDF300A838F8 /* KKGridView.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
