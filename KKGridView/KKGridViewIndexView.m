@@ -104,12 +104,15 @@ static UIFont *font = nil;
 
 - (void)setTracking:(BOOL)tracking location:(CGPoint)location {
     _tracking = tracking;
-    if (_tracking) {
+    if (_tracking && CGRectContainsPoint(self.bounds, location)) {
         NSUInteger sections = [_sectionIndexTitles count];
         CGFloat sectionHeight = (self.bounds.size.height - 2*KKGridViewIndexViewMargin)/sections;
         location.y-=KKGridViewIndexViewMargin;
     
         _lastTrackingSection = floorf(abs(location.y)/sectionHeight);
+        
+        if (_lastTrackingSection == _sectionIndexTitles.count)
+            _lastTrackingSection--;
         
         if (_sectionTracked)
             _sectionTracked(_lastTrackingSection);
