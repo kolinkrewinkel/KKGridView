@@ -1453,7 +1453,7 @@ struct KKSectionMetrics {
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return YES;
+    return (gestureRecognizer == _selectionRecognizer || otherGestureRecognizer == _selectionRecognizer);
 }
 
 
