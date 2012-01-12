@@ -434,7 +434,7 @@ struct KKSectionMetrics {
     NSArray *visiblePaths = [self visibleIndexPaths];
     NSUInteger index = 0;
     
-    void (^updateCellFrame)(KKGridViewCell *,KKIndexPath *) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
+    void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
 
@@ -480,23 +480,29 @@ struct KKSectionMetrics {
 
             
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
-            [_selectedIndexPaths enumerateObjectsUsingBlock:^(KKIndexPath *keyPath, BOOL *stop) {
-                if (update.type == KKGridViewUpdateTypeItemInsert) {
-                    if (indexPath.section == keyPath.section && keyPath.index >= indexPath.index) {
-                        [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
+            
+            for (KKIndexPath *keyPath in _selectedIndexPaths) {
+                void (^addCorrectKeyPath)(BOOL,NSInteger) = ^(BOOL condition, NSInteger delta) {
+                    if (indexPath.section == keyPath.section && condition) {
+                        [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + delta inSection:keyPath.section]];
                     } else {
                         [replacementSet addObject:keyPath];
                     }
-                } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                    if (indexPath.section == keyPath.section && indexPath.index < keyPath.index && keyPath.index != 0) {
-                        [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
-                    } else if (keyPath.index != 0) {
+                };
+                
+                switch (update.type) {
+                    case KKGridViewUpdateTypeItemInsert:
+                        addCorrectKeyPath(keyPath.index >= indexPath.index, +1);
+                        break;
+                    case KKGridViewUpdateTypeItemDelete:
+                        addCorrectKeyPath(indexPath.index < keyPath.index && keyPath.index != 0, -1);
+                        break;
+                    default:
                         [replacementSet addObject:keyPath];
-                    }
-                } else {
-                    [replacementSet addObject:keyPath];
+                        break;
                 }
-            }];
+            }
+    
             [_selectedIndexPaths setSet:replacementSet];
             
             [self reloadContentSize];
