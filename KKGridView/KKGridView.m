@@ -628,18 +628,11 @@ struct KKSectionMetrics {
     {
         struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
         
-        if (_metrics.count > section) {
-            height += sectionMetrics.headerHeight;
-            height += sectionMetrics.footerHeight;
-        }
+        height += sectionMetrics.headerHeight;
+        height += sectionMetrics.footerHeight;
         
         float numberOfRows = 0.f;
-        
-        if (_metrics.count > 0) {
-            numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-        } else if (_dataSource) {
-            numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (float)_numberOfColumns);
-        }
+        numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
         
         height += numberOfRows * (_cellSize.height + _cellPadding.height);
         height += (numberOfRows? _cellPadding.height:0.f);
