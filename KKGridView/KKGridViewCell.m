@@ -113,13 +113,13 @@
 - (void)setSelected:(BOOL)selected
 {
     _selected = selected;
-    [self layoutSubviews];        
+    [self setNeedsLayout];
 }
 
 - (void)setHighlighted:(BOOL)highlighted
 {
     _highlighted = highlighted;
-    [self layoutSubviews];
+    [self setNeedsLayout];
 }
 
 
@@ -129,7 +129,7 @@
         _selected = selected;
         _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
     } completion:^(BOOL finished) {
-        [self layoutSubviews];        
+        [self setNeedsLayout];
     }];
 }
 
