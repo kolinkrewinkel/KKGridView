@@ -801,7 +801,7 @@ struct KKSectionMetrics {
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
     for (NSUInteger section = 0; section < _metrics.count; section++) {
-        for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
+        for (NSUInteger index = 0; index < _metrics.sections[section].itemCount; index++) {
             
             indexPath.section = section;
             indexPath.index = index;
@@ -860,6 +860,8 @@ struct KKSectionMetrics {
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
+    [self _reloadMetrics];
+    
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)])
         [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
     
@@ -940,6 +942,8 @@ struct KKSectionMetrics {
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
+    [self _reloadMetrics];
+    
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)]) {
         KKGridViewUpdate *update = [KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemDelete animation:animation];
         [_updateStack addUpdate:update];
@@ -953,6 +957,8 @@ struct KKSectionMetrics {
 
 - (void)moveItemAtIndexPath:(KKIndexPath *)indexPath toIndexPath:(KKIndexPath *)newIndexPath
 {
+    [self _reloadMetrics];
+    
     KKGridViewUpdate *update = [KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemMove animation:KKGridViewAnimationNone];
     update.destinationPath = newIndexPath;
     [_updateStack addUpdate:update];
