@@ -44,9 +44,9 @@ static const NSUInteger kNumSection = 40;
     UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
     UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
     UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
-    UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
+//    UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
     
-    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, move, spacer, multiple, nil];
+    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, spacer, multiple, nil];
 }
 
 #pragma mark - KKGridViewDataSource
@@ -144,13 +144,13 @@ static const NSUInteger kNumSection = 40;
     }
 }
 
-- (void)moveItems:(id)sender
-{
-//    NSUInteger num = (arc4random() % 1) + 2;
-    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:1 inSection:0];
-    KKIndexPath *destinationPath = /*num == 1 ?*/ [KKIndexPath indexPathForIndex:2 inSection:0] /*: [KKIndexPath indexPathForIndex:2 inSection:2]*/;
-    [self.gridView moveItemAtIndexPath:indexPath toIndexPath:destinationPath];
-}
+//- (void)moveItems:(id)sender
+//{
+////    NSUInteger num = (arc4random() % 1) + 2;
+//    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:1 inSection:0];
+//    KKIndexPath *destinationPath = /*num == 1 ?*/ [KKIndexPath indexPathForIndex:2 inSection:0] /*: [KKIndexPath indexPathForIndex:2 inSection:2]*/;
+//    [self.gridView moveItemAtIndexPath:indexPath toIndexPath:destinationPath];
+//}
 
 - (void)toggleSelectionStyle:(id)sender
 {
