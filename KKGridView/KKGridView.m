@@ -452,19 +452,32 @@ struct KKSectionMetrics {
             
             NSArray *newVisiblePaths = [self visibleIndexPaths];
             
-            if (update.type == KKGridViewUpdateTypeItemInsert) {
-                [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
-            } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:YES];
-            } else if (update.type == KKGridViewUpdateTypeItemMove) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
-                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                    cell.frame = [self rectForCellAtIndexPath:update.destinationPath];
-                }];
-                [self _incrementCellsAtIndexPath:update.destinationPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
-                //                [self _incrementCellsAtIndexPath:update.indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
-                [_updateStack removeUpdate:update];
+            void (^incrementCells)(KKIndexPath *,BOOL) = ^(KKIndexPath *path, BOOL negative) {
+              [self _incrementCellsAtIndexPath:path
+                                   toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+                                      byAmount:1
+                                amountNegative:negative];  
+            };
+            
+            switch (update.type) {
+                case KKGridViewUpdateTypeItemInsert:
+                    incrementCells(indexPath,NO);
+                    break;
+                case KKGridViewUpdateTypeItemDelete:
+                    incrementCells(indexPath,YES);
+                    break;
+                case KKGridViewUpdateTypeItemMove: {
+//                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+//                    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
+//                                     animations:^{ updateCellFrame(cell, update.indexPath); }];
+//                    incrementCells(update.destinationPath,NO);
+//                    [_updateStack removeUpdate:update];
+                    break;
+                }
+                default:
+                    break;
             }
+
             
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
             [_selectedIndexPaths enumerateObjectsUsingBlock:^(KKIndexPath *keyPath, BOOL *stop) {
@@ -971,14 +984,18 @@ struct KKSectionMetrics {
 - (void)moveItemAtIndexPath:(KKIndexPath *)indexPath toIndexPath:(KKIndexPath *)newIndexPath
 {
     [self _reloadMetrics];
-    
-    KKGridViewUpdate *update = [KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemMove animation:KKGridViewAnimationNone];
-    update.destinationPath = newIndexPath;
-    [_updateStack addUpdate:update];
-    
-    _staggerForInsertion = YES;
-    _markedForDisplay = YES;
-    [self _layoutGridView];
+    @throw [NSException exceptionWithName:@"Operation Not Implemented" 
+                                   reason:@"KKGridViewUpdateTypeItemMove is not yet implemented. Sorry!"
+                                 userInfo:nil];
+//    
+//    
+//    KKGridViewUpdate *update = [KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemMove animation:KKGridViewAnimationNone];
+//    update.destinationPath = newIndexPath;
+//    [_updateStack addUpdate:update];
+//    
+//    _staggerForInsertion = YES;
+//    _markedForDisplay = YES;
+//    [self _layoutGridView];
 }
 
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths
