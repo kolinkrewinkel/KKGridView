@@ -800,7 +800,7 @@ struct KKSectionMetrics {
     return reusableCell;
 }
 
-- (NSMutableArray *)visibleIndexPaths
+- (NSArray *)visibleIndexPaths
 {
     const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
     NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
