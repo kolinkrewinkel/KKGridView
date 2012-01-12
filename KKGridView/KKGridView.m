@@ -137,7 +137,6 @@ struct KKSectionMetrics {
 @synthesize gridFooterView = _gridFooterView;
 @synthesize gridHeaderView = _gridHeaderView;
 @synthesize numberOfColumns = _numberOfColumns;
-@synthesize numberOfSections = _numberOfSections;
 @synthesize backgroundView = _backgroundView;
 
 #pragma mark - Initialization Methods
@@ -514,7 +513,7 @@ struct KKSectionMetrics {
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
             [self reloadContentSize];
             
-            for (NSUInteger section = 0; section < _numberOfSections; section++) {
+            for (NSUInteger section = 0; section < _metrics.count; section++) {
                 struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
                 
                 KKGridViewHeader *header = nil;
@@ -620,14 +619,14 @@ struct KKSectionMetrics {
     {
         struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
         
-        if (_numberOfSections > section) {
+        if (_metrics.count > section) {
             height += sectionMetrics.headerHeight;
             height += sectionMetrics.footerHeight;
         }
         
         float numberOfRows = 0.f;
         
-        if (_numberOfSections > 0) {
+        if (_metrics.count > 0) {
             numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
         } else if (_dataSource) {
             numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (float)_numberOfColumns);
@@ -711,8 +710,7 @@ struct KKSectionMetrics {
 
 - (KKIndexPath *)_lastIndexPathForSection:(NSUInteger)section
 {
-    NSUInteger lastItemIndex = [_dataSource gridView:self numberOfItemsInSection:section];
-    return [KKIndexPath indexPathForIndex:lastItemIndex inSection:section];
+    return [KKIndexPath indexPathForIndex:_metrics.sections[section].itemCount inSection:section];
 }
 
 #pragma mark - Public Getters
@@ -756,14 +754,14 @@ struct KKSectionMetrics {
     };
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_numberOfSections > 0) {
+        if (_metrics.count > 0) {
             point.y += _metrics.sections[section].sectionHeight;
         } else {
             point.y += [self _heightForSection:section];
         }
     }
     
-    if (indexPath.section < _numberOfSections) {
+    if (indexPath.section < _metrics.count) {
         point.y += _metrics.sections[indexPath.section].headerHeight;
     }
     
@@ -800,8 +798,8 @@ struct KKSectionMetrics {
     
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
-    for (NSUInteger section = 0; section < _numberOfSections; section++) {
-        for (NSUInteger index = 0; index < [_dataSource gridView:self numberOfItemsInSection:section]; index++) {
+    for (NSUInteger section = 0; section < _metrics.count; section++) {
+        for (NSUInteger index = 0; index < _metrics.sections[section].itemCount; index++) {
             
             indexPath.section = section;
             indexPath.index = index;
@@ -995,7 +993,7 @@ struct KKSectionMetrics {
         clearAuxiliaryViews(_headerViews);
         if (!_headerViews)
         {
-            _headerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+            _headerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
         }
         
         for (NSUInteger section = 0; section < _metrics.count; section++) {
@@ -1014,7 +1012,7 @@ struct KKSectionMetrics {
         clearAuxiliaryViews(_footerViews);
         if (!_footerViews)
         {
-            _footerViews = [[NSMutableArray alloc] initWithCapacity:_numberOfSections];
+            _footerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
         }
         
         for (NSUInteger section = 0; section < _metrics.count; section++) {
@@ -1102,25 +1100,25 @@ struct KKSectionMetrics {
 
 - (void)_reloadMetrics
 {
-    _numberOfSections = _dataSourceRespondsTo.numberOfSections ? [_dataSource numberOfSectionsInGridView:self] : 1;
+    NSUInteger numberOfSections = _dataSourceRespondsTo.numberOfSections ? [_dataSource numberOfSectionsInGridView:self] : 1;
     
     // If the _metrics.sections array has the right number of items in it,
     // then we can edit it in place (and don't need to allocate a new array 
     // each time. If it is not the right size, then we'll wipe it out and 
     // start over.
-    BOOL arrayIsCorrectSize = _metrics.count == _numberOfSections;
+    BOOL arrayIsCorrectSize = _metrics.count == numberOfSections;
     
     struct KKSectionMetrics *metricsArray = _metrics.sections;
     
     if (!arrayIsCorrectSize)
     {
         [self _cleanupMetrics];
-        metricsArray = (struct KKSectionMetrics *)calloc(_numberOfSections, sizeof(struct KKSectionMetrics));
+        metricsArray = (struct KKSectionMetrics *)calloc(numberOfSections, sizeof(struct KKSectionMetrics));
     }
     
     
     NSUInteger index;
-    for (index = 0; index < _numberOfSections; ++index)
+    for (index = 0; index < numberOfSections; ++index)
     {
         BOOL willDrawHeader = _dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader;
         BOOL willDrawFooter = _dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter;
@@ -1414,7 +1412,7 @@ struct KKSectionMetrics {
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return YES;
+    return (gestureRecognizer == _selectionRecognizer || otherGestureRecognizer == _selectionRecognizer);
 }
 
 
