@@ -51,13 +51,13 @@ typedef enum {
 
 #pragma mark - Properties
 
-@property (nonatomic, strong) UIView *backgroundView; // Underneath contentView, use this to customize backgrounds
-@property (nonatomic, strong) UIView *contentView; // Where all subviews should be.
+@property (nonatomic, strong) IBOutlet UIView *backgroundView; // Underneath contentView, use this to customize backgrounds
+@property (nonatomic, strong) IBOutlet UIView *contentView; // Where all subviews should be.
 @property (nonatomic, copy) KKIndexPath *indexPath;
 @property (nonatomic, copy) NSString *reuseIdentifier; // For usage by KKGridView
 @property (nonatomic, getter = isSelected) BOOL selected;
 @property (nonatomic, getter = isHighlighted) BOOL highlighted;
-@property (nonatomic, strong) UIView *selectedBackgroundView; // Replaces *backgroundView when selected is YES
+@property (nonatomic, strong) IBOutlet UIView *selectedBackgroundView; // Replaces *backgroundView when selected is YES
 @property (nonatomic) BOOL editing; // Editing state
 @property (nonatomic) KKGridViewCellAccessoryType accessoryType; // Default is none.
 @property (nonatomic) KKGridViewCellAccessoryPosition accessoryPosition; // Default is quadrant 1.
