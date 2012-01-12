@@ -105,7 +105,7 @@ struct KKSectionMetrics {
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
 
 // Model modifiers
-- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount amountNegative:(BOOL)negative;
+- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount negative:(BOOL)isNegative;
 
 // Internal getters relating to cells
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
@@ -452,37 +452,31 @@ struct KKSectionMetrics {
             
             NSArray *newVisiblePaths = [self visibleIndexPaths];
             
-            void (^incrementCells)(KKIndexPath *,BOOL) = ^(KKIndexPath *path, BOOL negative) {
-              [self _incrementCellsAtIndexPath:path
-                                   toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                      byAmount:1
-                                amountNegative:negative];  
-            };
-            
-            switch (update.type) {
-                case KKGridViewUpdateTypeItemInsert:
-                    incrementCells(indexPath,NO);
-                    break;
-                case KKGridViewUpdateTypeItemDelete:
-                    incrementCells(indexPath,YES);
-                    break;
-                case KKGridViewUpdateTypeItemMove: {
-//                    KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-//                    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
-//                                     animations:^{ updateCellFrame(cell, update.indexPath); }];
-//                    incrementCells(update.destinationPath,NO);
-//                    [_updateStack removeUpdate:update];
-                    break;
-                }
-                default:
-                    break;
+            if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
+                [self _incrementCellsAtIndexPath:indexPath 
+                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+                                        byAmount:1
+                                        negative:KKGridViewUpdateIsNegative[update.type]];
             }
-
+            
+            else if (update.type == KKGridViewUpdateTypeItemMove) {
+//                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+//                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
+//                                 animations:^{ updateCellFrame(cell, update.indexPath); }];
+//                [self _incrementCellsAtIndexPath:update.destinationPath
+//                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+//                                        byAmount:1
+//                                        negative:KKGridViewUpdateIsNegative[update.type]];
+//                [_updateStack removeUpdate:update];
+            }
+            
             
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
             
             for (KKIndexPath *keyPath in _selectedIndexPaths) {
-                void (^addCorrectKeyPath)(BOOL,NSInteger) = ^(BOOL condition, NSInteger delta) {
+                
+                void (^addCorrectKeyPath)(BOOL) = ^(BOOL condition) {
+                    NSInteger delta = KKGridViewUpdateIsNegative[update.type] ? -1 : 1;
                     if (indexPath.section == keyPath.section && condition) {
                         [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + delta inSection:keyPath.section]];
                     } else {
@@ -492,10 +486,10 @@ struct KKSectionMetrics {
                 
                 switch (update.type) {
                     case KKGridViewUpdateTypeItemInsert:
-                        addCorrectKeyPath(keyPath.index >= indexPath.index, +1);
+                        addCorrectKeyPath(keyPath.index >= indexPath.index);
                         break;
                     case KKGridViewUpdateTypeItemDelete:
-                        addCorrectKeyPath(indexPath.index < keyPath.index && keyPath.index != 0, -1);
+                        addCorrectKeyPath(indexPath.index < keyPath.index && keyPath.index != 0);
                         break;
                     default:
                         [replacementSet addObject:keyPath];
@@ -852,7 +846,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Model Modifiers
 
-- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount amountNegative:(BOOL)negative
+- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount negative:(BOOL)isNegative
 {
     NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
@@ -865,7 +859,7 @@ struct KKSectionMetrics {
             BOOL indexPathIsLessOrEqual = pathComparison == NSOrderedAscending || pathComparison == NSOrderedSame;
             BOOL lastPathIsGreatorOrEqual = lastPathComparison == NSOrderedDescending || lastPathComparison == NSOrderedSame;
             
-            if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && negative && pathComparison == NSOrderedSame) {
+            if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && isNegative && pathComparison == NSOrderedSame) {
                 set = NO;
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
                     cell.alpha = 0.f;
@@ -877,12 +871,12 @@ struct KKSectionMetrics {
                 amountForPath = 0;
             }
         }
+        
         if (set) {
-            if (!negative) {     
-                [replacement setObject:cell forKey:[KKIndexPath indexPathForIndex:keyPath.section == fromPath.section ? keyPath.index + amountForPath : keyPath.index inSection:keyPath.section]];
-            } else {
-                [replacement setObject:cell forKey:[KKIndexPath indexPathForIndex:keyPath.section == fromPath.section ? keyPath.index - amountForPath : keyPath.index inSection:keyPath.section]];
-            }
+            NSInteger sign = isNegative ? -1 : 1;
+            NSUInteger index = (keyPath.section == fromPath.section) ? keyPath.index + (sign * amountForPath) : keyPath.index;
+            KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:index inSection:keyPath.section];
+            [replacement setObject:cell forKey:indexPath];
         }
     }];
     [_visibleCells setDictionary:replacement];
@@ -915,14 +909,16 @@ struct KKSectionMetrics {
                 
                 NSArray *newVisiblePaths = [self visibleIndexPaths];
                 
-                if (update.type == KKGridViewUpdateTypeItemInsert) {
-                    [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:NO];
-                } else if (update.type == KKGridViewUpdateTypeItemDelete) {
-                    [self _incrementCellsAtIndexPath:indexPath toIndexPath:[self _lastIndexPathForSection:indexPath.section] byAmount:1 amountNegative:YES];
+                if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
+                    [self _incrementCellsAtIndexPath:indexPath 
+                                         toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+                                            byAmount:1 
+                                            negative:KKGridViewUpdateIsNegative[update.type]];
                 }
                 
                 NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
-                [_selectedIndexPaths enumerateObjectsUsingBlock:^(KKIndexPath *keyPath, BOOL *stop) {
+                
+                for (KKIndexPath *keyPath in _selectedIndexPaths) {
                     if (update.type == KKGridViewUpdateTypeItemInsert) {
                         if (indexPath.section == keyPath.section) {
                             [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
@@ -939,7 +935,8 @@ struct KKSectionMetrics {
                     } else {
                         [replacementSet addObject:keyPath];
                     }
-                }];
+                };
+                
                 [_selectedIndexPaths setSet:replacementSet];
                 
                 [self reloadContentSize];
