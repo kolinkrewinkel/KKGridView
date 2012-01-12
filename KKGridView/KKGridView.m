@@ -629,7 +629,7 @@ struct KKSectionMetrics {
         if (_metrics.count > 0) {
             numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
         } else if (_dataSource) {
-            numberOfRows = ceilf(_metrics.sections[section].itemCount / (float)_numberOfColumns);
+            numberOfRows = ceilf([_dataSource gridView:self numberOfItemsInSection:section] / (float)_numberOfColumns);
         }
         
         height += numberOfRows * (_cellSize.height + _cellPadding.height);
