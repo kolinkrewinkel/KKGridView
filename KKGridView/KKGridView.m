@@ -434,6 +434,11 @@ struct KKSectionMetrics {
     NSArray *visiblePaths = [self visibleIndexPaths];
     NSUInteger index = 0;
     
+    void (^updateCellFrame)(KKGridViewCell *,KKIndexPath *) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
+        cell.frame = [self rectForCellAtIndexPath:indexPath]; 
+    };
+
+    
     for (KKIndexPath *indexPath in visiblePaths) {
         //      Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
@@ -489,12 +494,15 @@ struct KKSectionMetrics {
                 for (KKIndexPath *keyPath in difference) {
                     KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
                     cell.selected = [_selectedIndexPaths containsObject:keyPath];
+                    
                     if (_staggerForInsertion) {
-                        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0.0015 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
-                            cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        } completion:nil];
+                        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
+                                              delay:0.0015
+                                            options:UIViewAnimationOptionCurveEaseInOut
+                                         animations:^{ updateCellFrame(cell,indexPath); }
+                                         completion:nil];
                     } else {
-                        cell.frame = [self rectForCellAtIndexPath:indexPath];
+                        updateCellFrame(cell,indexPath);
                     }
                 }
             }
@@ -503,15 +511,20 @@ struct KKSectionMetrics {
         if (!cell) {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
-        } else if (_markedForDisplay) {
+        }
+        
+        else if (_markedForDisplay) {            
             if (_staggerForInsertion) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-                    cell.frame = [self rectForCellAtIndexPath:indexPath];
-                } completion:nil];
+                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
+                                      delay:(index + 1) * 0.0015
+                                    options:UIViewAnimationOptionBeginFromCurrentState
+                                 animations:^{ updateCellFrame(cell, indexPath); }
+                                 completion:nil];
             } else {
-                cell.frame = [self rectForCellAtIndexPath:indexPath];
+                updateCellFrame(cell, indexPath);
             }
         }
+        
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
         
         index++;
