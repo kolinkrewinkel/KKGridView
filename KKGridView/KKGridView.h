@@ -46,8 +46,8 @@ typedef enum {
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 
 #pragma mark - Data Source and Delegate
-@property (nonatomic, __kk_weak) id <KKGridViewDataSource> dataSource;
-@property (nonatomic, __kk_weak) id <KKGridViewDelegate> gridDelegate;
+@property (nonatomic, __kk_weak) IBOutlet id <KKGridViewDataSource> dataSource;
+@property (nonatomic, __kk_weak) IBOutlet id <KKGridViewDelegate> gridDelegate;
 
 #pragma mark - Getters
 

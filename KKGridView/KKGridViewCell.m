@@ -81,6 +81,32 @@
     return self;
 }
 
+- (void)awakeFromNib {
+	
+	if (!_contentView) {
+		_contentView = [[UIView alloc] initWithFrame:self.bounds];
+		_contentView.backgroundColor = [UIColor whiteColor];
+	}
+	[self addSubview:_contentView];
+	
+	if (!_backgroundView) {
+		_backgroundView = [[UIView alloc] initWithFrame:self.bounds];
+		_backgroundView.backgroundColor = [UIColor whiteColor];
+	}
+	[self addSubview:_backgroundView];
+	
+	if (!_selectedBackgroundView) {
+		_selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+		_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+	}
+	_selectedBackgroundView.hidden = YES;
+	_selectedBackgroundView.alpha = 0.f;
+	[self addSubview:_selectedBackgroundView];
+	[self bringSubviewToFront:_contentView];
+	
+	[_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
 - (void)dealloc
 {
     [_contentView removeObserver:self forKeyPath:@"backgroundColor"];
