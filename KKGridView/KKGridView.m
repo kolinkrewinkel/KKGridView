@@ -1116,8 +1116,7 @@ struct KKSectionMetrics {
             heightForSection += sectionMetrics.headerHeight;
             heightForSection += sectionMetrics.footerHeight;
             
-            float numberOfRows = 0.f;
-            numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
+            NSUInteger numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
             
             heightForSection += numberOfRows * (_cellSize.height + _cellPadding.height);
             heightForSection += (numberOfRows? _cellPadding.height:0.f);
