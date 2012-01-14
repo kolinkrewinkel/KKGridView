@@ -577,7 +577,7 @@ struct KKSectionMetrics {
         __unsafe_unretained KKIndexPath *path;
     } cell_info_t;
     
-    cell_info_t *cellsToRemove  = (cell_info_t *)calloc(_visibleCells.count, sizeof(cell_info_t));
+    cell_info_t *cellsToRemove = calloc(_visibleCells.count, sizeof(cell_info_t));
     
     NSUInteger cellCount = 0;
     for (KKIndexPath *path in _visibleCells) {
@@ -1154,7 +1154,7 @@ struct KKSectionMetrics {
     if (!arrayIsCorrectSize)
     {
         [self _cleanupMetrics];
-        metricsArray = (struct KKSectionMetrics *)calloc(numberOfSections, sizeof(struct KKSectionMetrics));
+        metricsArray = calloc(numberOfSections, sizeof(struct KKSectionMetrics));
     }
     
     
