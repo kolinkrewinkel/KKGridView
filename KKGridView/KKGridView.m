@@ -97,7 +97,6 @@ struct KKSectionMetrics {
 - (void)_performRemainingUpdatesModelOnly;
 
 // Metrics
-- (CGFloat)_heightForSection:(NSUInteger)section;
 - (CGFloat)_sectionHeightsCombinedUpToSection:(NSUInteger)section;
 
 // Cell Management
@@ -646,27 +645,6 @@ struct KKSectionMetrics {
     return height;
 }
 
-- (CGFloat)_heightForSection:(NSUInteger)section
-{
-    CGFloat height = 0.f;
-    
-    if (_metrics.count > section)
-    {
-        struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
-        
-        height += sectionMetrics.headerHeight;
-        height += sectionMetrics.footerHeight;
-        
-        float numberOfRows = 0.f;
-        numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-        
-        height += numberOfRows * (_cellSize.height + _cellPadding.height);
-        height += (numberOfRows? _cellPadding.height:0.f);
-    }
-    
-    return height;
-}
-
 #pragma mark - Cell Management
 
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath withAnimation:(KKGridViewAnimation)animation
@@ -1126,10 +1104,25 @@ struct KKSectionMetrics {
         _markedForDisplay = YES;
     }
     
-    CGSize newContentSize = CGSizeMake(self.bounds.size.width, _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
+    CGSize newContentSize = CGSizeMake(self.bounds.size.width, 
+                                       _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
     
     for (NSUInteger i = 0; i < _metrics.count; ++i) {
-        CGFloat heightForSection = [self _heightForSection:i];
+        CGFloat heightForSection = 0.f;
+        
+        if (_metrics.count > i) {
+            struct KKSectionMetrics sectionMetrics = _metrics.sections[i];
+            
+            heightForSection += sectionMetrics.headerHeight;
+            heightForSection += sectionMetrics.footerHeight;
+            
+            float numberOfRows = 0.f;
+            numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
+            
+            heightForSection += numberOfRows * (_cellSize.height + _cellPadding.height);
+            heightForSection += (numberOfRows? _cellPadding.height:0.f);
+        }
+        
         _metrics.sections[i].sectionHeight = heightForSection;
         newContentSize.height += heightForSection;
     }
