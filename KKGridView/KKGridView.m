@@ -782,10 +782,8 @@ struct KKSectionMetrics {
     };
     
     for (NSUInteger section = 0; section < indexPath.section; section++) {
-        if (_metrics.count > 0) {
+        if (_metrics.count > section) {
             point.y += _metrics.sections[section].sectionHeight;
-        } else {
-            point.y += [self _heightForSection:section];
         }
     }
     
