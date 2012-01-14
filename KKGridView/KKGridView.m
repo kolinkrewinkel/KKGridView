@@ -827,9 +827,9 @@ struct KKSectionMetrics {
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
     for (NSUInteger section = 0; section < _metrics.count; section++) {
+        indexPath.section = section;
+        
         for (NSUInteger index = 0; index < _metrics.sections[section].itemCount; index++) {
-            
-            indexPath.section = section;
             indexPath.index = index;
             
             CGRect rect = [self rectForCellAtIndexPath:indexPath];
