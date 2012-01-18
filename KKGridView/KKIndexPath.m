@@ -46,6 +46,17 @@
     return NSOrderedSame;
 }
 
++ (NSArray *) indexPathsWithNSIndexPaths:(NSArray *) indexPaths
+{
+	NSMutableArray *convertedIndexPaths = [NSMutableArray array];
+
+	for (NSIndexPath *indexPath in indexPaths) {
+		[convertedIndexPaths addObject:[self indexPathWithNSIndexPath:indexPath]];
+	}
+
+	return convertedIndexPaths;
+}
+
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
     return [[self alloc] initWithIndex:index section:section];
