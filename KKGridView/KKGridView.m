@@ -325,6 +325,7 @@ struct KKSectionMetrics {
 	if (_backgroundView != backgroundView) {
 		[_backgroundView removeFromSuperview];
 		_backgroundView = backgroundView;
+		_backgroundView.frame = self.frame;
 
 		[self addSubview:_backgroundView];
 		[self sendSubviewToBack:_backgroundView];
@@ -614,6 +615,8 @@ struct KKSectionMetrics {
 
 - (void)_respondToBoundsChange
 {
+	_backgroundView.frame = self.frame;
+
     [self reloadData];
     [self setNeedsLayout];
 }
