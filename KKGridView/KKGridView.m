@@ -320,6 +320,17 @@ struct KKSectionMetrics {
     }
 }
 
+- (void)setBackgroundView:(UIView *)backgroundView
+{
+	if (_backgroundView != backgroundView) {
+		[_backgroundView removeFromSuperview];
+		_backgroundView = backgroundView;
+
+		[self addSubview:_backgroundView];
+		[self sendSubviewToBack:_backgroundView];
+	}
+}
+
 #pragma mark - Root Layout Methods
 
 - (void)layoutSubviews
