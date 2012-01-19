@@ -588,7 +588,7 @@ struct KKSectionMetrics {
         __unsafe_unretained KKIndexPath *path;
     } cell_info_t;
     
-    cell_info_t *cellsToRemove = calloc(_visibleCells.count, sizeof(cell_info_t));
+    cell_info_t *cellsToRemove = (cell_info_t *)malloc(_visibleCells.count * sizeof(cell_info_t));
     
     NSUInteger cellCount = 0;
     for (KKIndexPath *path in _visibleCells) {
