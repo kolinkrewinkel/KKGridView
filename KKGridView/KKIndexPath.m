@@ -80,8 +80,12 @@
 
 - (BOOL)isEqual:(id)object
 {
+	if (object == self) {
+		return YES;
+	}
+
     KKIndexPath *indexPath = (KKIndexPath *)object;    
-    return (indexPath.index == self.index && indexPath.section == self.section);
+    return (indexPath->_index == _index && indexPath->_section == _section);
 }
 
 - (NSUInteger)hash
