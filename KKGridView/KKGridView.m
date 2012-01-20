@@ -325,7 +325,7 @@ struct KKSectionMetrics {
 	if (_backgroundView != backgroundView) {
 		[_backgroundView removeFromSuperview];
 		_backgroundView = backgroundView;
-		_backgroundView.frame = self.frame;
+		_backgroundView.frame = self.bounds;
 
 		[self addSubview:_backgroundView];
 		[self sendSubviewToBack:_backgroundView];
@@ -355,6 +355,9 @@ struct KKSectionMetrics {
 - (void)_layoutAccessories
 {
     CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
+
+	_backgroundView.frame = visibleBounds;
+
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
     for (KKGridViewHeader *header in _headerViews) {
@@ -416,6 +419,7 @@ struct KKSectionMetrics {
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
+            [self insertSubview:footer.view aboveSubview:_backgroundView];
             [self sendSubviewToBack:footer.view];
         }
         
@@ -615,8 +619,6 @@ struct KKSectionMetrics {
 
 - (void)_respondToBoundsChange
 {
-	_backgroundView.frame = self.frame;
-
     [self reloadData];
     [self setNeedsLayout];
 }
@@ -682,8 +684,7 @@ struct KKSectionMetrics {
             break;
     }
     
-    [self addSubview:cell];
-    [self sendSubviewToBack:cell];
+    [self insertSubview:cell aboveSubview:_backgroundView];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
