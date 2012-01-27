@@ -684,7 +684,7 @@ struct KKSectionMetrics {
             break;
     }
     
-    [self insertSubview:cell aboveSubview:_backgroundView];
+	[self addSubview:cell];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
