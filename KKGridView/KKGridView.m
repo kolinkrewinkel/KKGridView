@@ -749,7 +749,7 @@ struct KKSectionMetrics {
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect
 {
     NSArray *visiblePaths = [self visibleIndexPaths];
-    NSMutableArray *indexes = [[NSMutableArray alloc] init];
+    NSMutableArray *indexes = [[NSMutableArray alloc] initWithCapacity:12];
     
     for (KKIndexPath *indexPath in visiblePaths) {
         CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
@@ -813,7 +813,7 @@ struct KKSectionMetrics {
 - (NSArray *)visibleIndexPaths
 {
     const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
-    NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+    NSMutableArray *indexPaths = [[NSMutableArray alloc] initWithCapacity:12];
     
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
