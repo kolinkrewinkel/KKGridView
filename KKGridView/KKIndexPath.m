@@ -97,7 +97,10 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] alloc] initWithIndex:_index section:_section];
+	KKIndexPath *indexPath = [[[self class] alloc] init];
+	indexPath->_index = _index;
+	indexPath->_section = _section;
+	return indexPath;
 }
 
 - (NSString *)description
@@ -108,7 +111,7 @@
 #pragma mark - KKIndexPath to NSIndexPath
 
 - (NSIndexPath *)NSIndexPath {
-    return [NSIndexPath indexPathForRow:self.index inSection:self.section];
+    return [NSIndexPath indexPathForRow:_index inSection:_section];
 }
 
 @end
