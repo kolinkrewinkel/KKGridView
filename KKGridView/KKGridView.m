@@ -144,11 +144,7 @@ struct KKSectionMetrics {
 
 - (id)init
 {
-    if ((self = [super init])) {
-        [self _sharedInitialization];
-    }
-    
-    return self;
+    return [self initWithFrame:CGRectZero];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
