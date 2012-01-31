@@ -88,12 +88,12 @@ struct KKSectionMetrics {
 
 // Internal Layout
 - (void)_cleanupCells;
-- (void)_layoutAccessories;
+- (void)_layoutSectionViews;
 - (void)_layoutExtremities;
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 - (void)_layoutModelCells;
-- (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
+- (void)_configureSectionView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
 - (void)_performRemainingUpdatesModelOnly;
 
 // Metrics
@@ -327,7 +327,7 @@ struct KKSectionMetrics {
 - (void)_layoutGridView
 {
     [self _layoutVisibleCells];
-    [self _layoutAccessories];
+    [self _layoutSectionViews];
     [self _layoutExtremities];
     _markedForDisplay = NO;
     _staggerForInsertion = NO;
@@ -336,7 +336,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Private Layout Methods
 
-- (void)_layoutAccessories
+- (void)_layoutSectionViews
 {
     CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
@@ -549,14 +549,14 @@ struct KKSectionMetrics {
                 KKGridViewHeader *header = nil;
                 if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
                     CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-                    [self _configureAuxiliaryView:header inSection:section withStickPoint:headerPosition height:sectionMetrics.headerHeight];
+                    [self _configureSectionView:header inSection:section withStickPoint:headerPosition height:sectionMetrics.headerHeight];
                 }
                 
                 KKGridViewFooter *footer = nil;
                 if (_footerViews.count > section && (footer = [_footerViews objectAtIndex:section])) {
                     CGFloat footerHeight = sectionMetrics.footerHeight;
                     CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-                    [self _configureAuxiliaryView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                    [self _configureSectionView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
                 }
             }
         } completion:nil];
@@ -623,7 +623,7 @@ struct KKSectionMetrics {
     }
 }
 
-- (void)_configureAuxiliaryView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
+- (void)_configureSectionView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
 {
     headerOrFooter.view.frame = CGRectMake(0.f, stickPoint, self.bounds.size.width, height);
     headerOrFooter->stickPoint = stickPoint;
@@ -993,7 +993,7 @@ struct KKSectionMetrics {
 {
     [self reloadContentSize];
     
-    void (^clearAuxiliaryViews)(NSMutableArray *) = ^(NSMutableArray *views) {
+    void (^clearSectionViews)(NSMutableArray *) = ^(NSMutableArray *views) {
         for (id view in [views valueForKey:@"view"]) {
             if (view != [NSNull null])
                 [view removeFromSuperview];
@@ -1003,7 +1003,7 @@ struct KKSectionMetrics {
     };
     
     if (_dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader) {
-        clearAuxiliaryViews(_headerViews);
+        clearSectionViews(_headerViews);
         if (!_headerViews)
         {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
@@ -1015,14 +1015,14 @@ struct KKSectionMetrics {
             [_headerViews addObject:header];
             
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-            [self _configureAuxiliaryView:header inSection:section withStickPoint:position height:_metrics.sections[section].headerHeight];
+            [self _configureSectionView:header inSection:section withStickPoint:position height:_metrics.sections[section].headerHeight];
             
             [self addSubview:header.view];
         }
     }
     
     if (_dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter) {
-        clearAuxiliaryViews(_footerViews);
+        clearSectionViews(_footerViews);
         if (!_footerViews)
         {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
@@ -1035,7 +1035,7 @@ struct KKSectionMetrics {
             
             CGFloat footerHeight = _metrics.sections[section].footerHeight;
             CGFloat position = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-            [self _configureAuxiliaryView:footer inSection:section withStickPoint:position height:footerHeight];
+            [self _configureSectionView:footer inSection:section withStickPoint:position height:footerHeight];
             
             [self addSubview:footer.view];
         }
