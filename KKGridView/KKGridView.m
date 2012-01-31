@@ -1397,8 +1397,7 @@ struct KKSectionMetrics {
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
 {    
     if (_indexView) {
-        if (CGRectContainsPoint(_indexView.frame, [recognizer locationInView:self]) &&
-            recognizer.state == UIGestureRecognizerStateBegan) {
+        if (recognizer.state == UIGestureRecognizerStateBegan && CGRectContainsPoint(_indexView.frame, [recognizer locationInView:self])) {
             [self setScrollEnabled:NO];
             [_indexView setTracking:YES location:[recognizer locationInView:_indexView]];
             return;
@@ -1407,7 +1406,7 @@ struct KKSectionMetrics {
             [_indexView setTracking:YES location:CGPointMake(0.0, [recognizer locationInView:_indexView].y)];
             return;
         }
-        else if (recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) {
+        else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) && _indexView.tracking) {
             [self setScrollEnabled:YES];
             [_indexView setTracking:NO location:[recognizer locationInView:_indexView]];
             return;
