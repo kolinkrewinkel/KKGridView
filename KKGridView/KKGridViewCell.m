@@ -125,8 +125,10 @@
 
 - (void)setAccessoryType:(KKGridViewCellAccessoryType)accessoryType
 {
-    _accessoryType = accessoryType;
-    [self setNeedsLayout];
+	if (_accessoryType != accessoryType) {
+		_accessoryType = accessoryType;
+		[self setNeedsLayout];
+	}
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -138,25 +140,31 @@
 
 - (void)setSelected:(BOOL)selected
 {
-    _selected = selected;
-    [self setNeedsLayout];
+	if (_selected != selected) {
+		_selected = selected;
+		[self setNeedsLayout];
+	}
 }
 
 - (void)setHighlighted:(BOOL)highlighted
 {
-    _highlighted = highlighted;
-    [self setNeedsLayout];
+	if (_highlighted != highlighted) {
+		_highlighted = highlighted;
+		[self setNeedsLayout];
+	}
 }
 
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-    [UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
-        _selected = selected;
-        _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-    } completion:^(BOOL finished) {
-        [self setNeedsLayout];
-    }];
+	if (_selected != selected) {
+		[UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+			_selected = selected;
+			_selectedBackgroundView.alpha = selected ? 1.f : 0.f;
+		} completion:^(BOOL finished) {
+			[self setNeedsLayout];
+		}];
+	}
 }
 
 - (void)_updateSubviewSelectionState
