@@ -209,11 +209,30 @@
 
 - (void)_layoutAccessories
 {
-    static NSBundle* bundle = nil;
-    if (bundle == nil) {
-        NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"KKGridView.bundle"];
-        bundle = [NSBundle bundleWithPath:path];
-    }
+    static const NSUInteger badgeCount = KKGridViewCellAccessoryTypeCheckmark + 1;
+    static UIImage *normalBadges[badgeCount] = {0};
+    static UIImage *pressedBadges[badgeCount] = {0};
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *bundlePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"KKGridView.bundle"];
+        NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+        UIImage *(^getBundleImage)(NSString *) = ^(NSString *n) {
+            return [UIImage imageWithContentsOfFile:[bundle pathForResource:n ofType:@"png"]];
+        };
+        
+        normalBadges[KKGridViewCellAccessoryTypeBadgeExclamatory] = getBundleImage(@"failure-btn");
+        normalBadges[KKGridViewCellAccessoryTypeUnread] = getBundleImage(@"UIUnreadIndicator");
+        normalBadges[KKGridViewCellAccessoryTypeReadPartial] = getBundleImage(@"UIUnreadIndicatorPartial");
+        normalBadges[KKGridViewCellAccessoryTypeBadgeNumeric] = getBundleImage(@"failure-btn");
+        normalBadges[KKGridViewCellAccessoryTypeCheckmark] = getBundleImage(@"UIPreferencesWhiteCheck");
+        
+        pressedBadges[KKGridViewCellAccessoryTypeBadgeExclamatory] = getBundleImage(@"failure-btn-pressed");
+        pressedBadges[KKGridViewCellAccessoryTypeUnread] = getBundleImage(@"UIUnreadIndicatorPressed");
+        pressedBadges[KKGridViewCellAccessoryTypeReadPartial] = getBundleImage(@"UIUnreadIndicatorPartialPressed");
+        pressedBadges[KKGridViewCellAccessoryTypeBadgeNumeric] = getBundleImage(@"failure-btn-pressed");
+    });
+    
     
     CGSize size = self.bounds.size;
     
@@ -230,8 +249,6 @@
         case KKGridViewCellAccessoryTypeBadgeExclamatory: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"failure-btn" ofType:@"png"]] forState:UIControlStateNormal];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"failure-btn-press" ofType:@"png"]] forState:UIControlStateSelected];
                 [_badgeView setShowsTouchWhenHighlighted:NO];
                 
                 [_contentView addSubview:_badgeView];
@@ -260,8 +277,6 @@
         } case KKGridViewCellAccessoryTypeUnread: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"UIUnreadIndicator" ofType:@"png"]] forState:UIControlStateNormal];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"UIUnreadIndicatorPressed" ofType:@"png"]] forState:UIControlStateSelected];
                 [_contentView addSubview:_badgeView];
             }
             CGPoint point = CGPointZero;
@@ -289,8 +304,6 @@
         } case KKGridViewCellAccessoryTypeReadPartial: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"UIUnreadIndicatorPartial" ofType:@"png"]] forState:UIControlStateNormal];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"UIUnreadIndicatorPartialPressed" ofType:@"png"]] forState:UIControlStateSelected];
                 [_contentView addSubview:_badgeView];
             }
             CGPoint point = CGPointZero;
@@ -317,8 +330,6 @@
         } case KKGridViewCellAccessoryTypeBadgeNumeric: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"failure-btn" ofType:@"png"]] forState:UIControlStateNormal];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"failure-btn-press" ofType:@"png"]] forState:UIControlStateSelected];
                 [_badgeView setShowsTouchWhenHighlighted:NO];
                 [_contentView addSubview:_badgeView];
             }
@@ -346,7 +357,6 @@
         } case KKGridViewCellAccessoryTypeCheckmark:
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
-                [_badgeView setBackgroundImage:[UIImage imageWithContentsOfFile:[bundle pathForResource:@"UIPreferencesWhiteCheck" ofType:@"png"]] forState:UIControlStateNormal];
                 _badgeView.userInteractionEnabled = NO;
                 [_contentView addSubview:_badgeView];
             }
@@ -377,6 +387,16 @@
             break;
         default:
             break;
+    }
+    
+    if (normalBadges[self.accessoryType])
+    {
+         [_badgeView setBackgroundImage:normalBadges[self.accessoryType] forState:UIControlStateNormal];   
+    }
+    
+    if (pressedBadges[self.accessoryType])
+    {
+        [_badgeView setBackgroundImage:pressedBadges[self.accessoryType] forState:UIControlStateSelected];
     }
 }
 
