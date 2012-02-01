@@ -1229,35 +1229,28 @@ struct KKSectionMetrics {
 
 - (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition
 {
-    if (animated && scrollPosition != KKGridViewScrollPositionNone) {
+    CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
+    if (scrollPosition == KKGridViewScrollPositionNone)
+    {
+        [self scrollRectToVisible:cellRect animated:animated];
+        return;
+    }
+    
+    if (animated) {
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:0.3];
     }
     
-    CGFloat verticalOffset = 0.0;
-    
-    CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
     CGFloat boundsHeight = self.bounds.size.height - self.contentInset.bottom;
+    CGFloat headerPlusPadding = _metrics.sections[indexPath.section].headerHeight + self.cellPadding.height;
     
-    switch (scrollPosition) {
-        case KKGridViewScrollPositionTop:
-            verticalOffset = CGRectGetMinY(cellRect) + self.contentInset.top - _metrics.sections[indexPath.section].headerHeight - self.cellPadding.height;
-            break;
-        case KKGridViewScrollPositionBottom:
-            verticalOffset = CGRectGetMaxY(cellRect) - boundsHeight + _metrics.sections[indexPath.section].headerHeight + self.cellPadding.height;
-            break;
-        case KKGridViewScrollPositionMiddle:
-            verticalOffset = CGRectGetMaxY(cellRect) - (boundsHeight * .5f);
-            break;
-        case KKGridViewScrollPositionNone:
-            [self scrollRectToVisible:cellRect animated:animated];
-            return;
-            break;
-        default:
-            break;
-    }
+    CGFloat offsetMap[] = {
+        [KKGridViewScrollPositionTop] = CGRectGetMinY(cellRect) + self.contentInset.top - headerPlusPadding,
+        [KKGridViewScrollPositionBottom] = CGRectGetMaxY(cellRect) - boundsHeight + headerPlusPadding,
+        [KKGridViewScrollPositionMiddle] = CGRectGetMaxY(cellRect) - (boundsHeight / 2)
+    };
     
-    self.contentOffset = (CGPoint) { .y = verticalOffset };
+    self.contentOffset = (CGPoint) {.y = offsetMap[scrollPosition]};
     
     if (animated)
         [UIView commitAnimations];
