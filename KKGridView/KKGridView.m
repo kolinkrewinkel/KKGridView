@@ -272,7 +272,7 @@ struct KKSectionMetrics {
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
         [_selectedIndexPaths removeAllObjects];
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
             [self _layoutGridView];
         } completion:nil];
     }
@@ -469,26 +469,16 @@ struct KKSectionMetrics {
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
             
             for (KKIndexPath *keyPath in _selectedIndexPaths) {
-                
-                void (^addCorrectKeyPath)(BOOL) = ^(BOOL condition) {
-                    NSInteger delta = KKGridViewUpdateIsNegative[update.type] ? -1 : 1;
-                    if (indexPath.section == keyPath.section && condition) {
-                        [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + delta inSection:keyPath.section]];
-                    } else {
-                        [replacementSet addObject:keyPath];
-                    }
+                BOOL conditionMap[KKGridViewUpdateTypeSectionReload+1] = {
+                    [KKGridViewUpdateTypeItemInsert] = keyPath.index >= indexPath.index,
+                    [KKGridViewUpdateTypeItemDelete] = indexPath.index < keyPath.index && keyPath.index != 0
                 };
                 
-                switch (update.type) {
-                    case KKGridViewUpdateTypeItemInsert:
-                        addCorrectKeyPath(keyPath.index >= indexPath.index);
-                        break;
-                    case KKGridViewUpdateTypeItemDelete:
-                        addCorrectKeyPath(indexPath.index < keyPath.index && keyPath.index != 0);
-                        break;
-                    default:
-                        [replacementSet addObject:keyPath];
-                        break;
+                NSInteger delta = KKGridViewUpdateIsNegative[update.type] ? -1 : 1;
+                if (conditionMap[update.type] && indexPath.section == keyPath.section) {
+                    [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + delta inSection:keyPath.section]];
+                } else {
+                    [replacementSet addObject:keyPath];
                 }
             }
     
@@ -540,7 +530,7 @@ struct KKSectionMetrics {
     [self _cleanupCells];
     
     if (_needsAccessoryReload) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^(void) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             [self reloadContentSize];
             
             for (NSUInteger section = 0; section < _metrics.count; section++) {
@@ -588,7 +578,7 @@ struct KKSectionMetrics {
         KKGridViewCell *cell = pair.cell;
         
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-        cell.frame = (CGRect){CGPointZero, _cellSize};
+        cell.frame = (CGRect){.size = _cellSize};
         [cell removeFromSuperview];
         
         [_visibleCells removeObjectForKey:pair.path];
