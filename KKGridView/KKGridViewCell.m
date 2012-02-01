@@ -254,66 +254,29 @@
     
     _badgeView.userInteractionEnabled = NO;
     
-    CGSize size = self.bounds.size;
-    
-    switch (self.accessoryType) {            
-        case KKGridViewCellAccessoryTypeBadgeExclamatory: {
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - 29.f},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 29.f},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 29.f, size.height - 29.f}
-            };
-            
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {29.f, 29.f}};
-            break;
-        }
-            
-        case KKGridViewCellAccessoryTypeUnread:
-        case KKGridViewCellAccessoryTypeReadPartial: {
-            CGFloat s = 16.f;
-            CGFloat t = 3.f;
-            
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {size.width - s, t},
-                [KKGridViewCellAccessoryPositionTopLeft]     = {t, t},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
-            };
-                        
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s - t, s - t}};
-            break;
-        }
+    struct { CGFloat s; CGFloat o; } map[] = {
+        [KKGridViewCellAccessoryTypeBadgeExclamatory] = {29.f, 0.f},
+        [KKGridViewCellAccessoryTypeUnread]           = {16.f, 3.f},
+        [KKGridViewCellAccessoryTypeReadPartial]      = {16.f, 3.f},
+        [KKGridViewCellAccessoryTypeBadgeNumeric]     = {29.f, 0.f},
+        [KKGridViewCellAccessoryTypeCheckmark]        = {14.f, 0.f}
+    };
         
-        case KKGridViewCellAccessoryTypeBadgeNumeric: {            
-            CGFloat s = 29.f;
-            
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - s},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
-            };
-            
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s,s}};
-            break;
-        }
-            
-        case KKGridViewCellAccessoryTypeCheckmark: {            
-            CGFloat s = 14.f;
-            
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - s},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s},
-                [KKGridViewCellAccessoryPositionCenter]      = {(size.width - s) / 2, (size.height - s) / 2}
-            };
-            
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s,s}};
-            break;
-        }
-            
-        default:
-            break;
-    }
+    CGFloat w = self.bounds.size.width;
+    CGFloat h = self.bounds.size.height;
+    CGFloat s = map[self.accessoryType].s;
+    CGFloat o = map[self.accessoryType].o;
+    
+    CGPoint pointMap[] = {
+        [KKGridViewCellAccessoryPositionTopRight]    = {w - s, o},
+        [KKGridViewCellAccessoryPositionTopLeft]     = {o, o},
+        [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = h - s},
+        [KKGridViewCellAccessoryPositionBottomRight] = {w - s, h - s},
+        [KKGridViewCellAccessoryPositionCenter]      = {(w - s)/2, (h - s)/2}
+    };
+    
+    _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s-o, s-o}};
+    
     
     if (normalBadges[self.accessoryType])
     {
