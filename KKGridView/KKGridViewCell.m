@@ -159,7 +159,10 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
 	if (_selected != selected) {
-		[UIView animateWithDuration:animated ? 0.2 : 0 delay:0 options:(UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent) animations:^(void) {
+        NSTimeInterval duration = animated ? 0.2 : 0;
+        UIViewAnimationOptions opts = UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent;
+        
+		[UIView animateWithDuration:duration delay:0 options:opts animations:^{
 			_selected = selected;
 			_selectedBackgroundView.alpha = selected ? 1.f : 0.f;
 		} completion:^(BOOL finished) {
@@ -170,10 +173,9 @@
 
 - (void)_updateSubviewSelectionState
 {
-    for (UIView *view in _contentView.subviews) {
-        if ([view respondsToSelector:@selector(setSelected:)]) {
-            UIButton *assumedButton = (UIButton *)view;
-            assumedButton.selected = _highlighted || _selected;
+    for (UIControl *control in _contentView.subviews) {
+        if ([control respondsToSelector:@selector(setSelected:)]) {
+            control.selected = _highlighted || _selected;
         }
     }
 }
@@ -296,7 +298,7 @@
                 [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 16.f, size.height - 16.f}
             };
             
-            _badgeView.frame = (CGRect){ pointMap[_accessoryPosition], CGSizeMake(13.f, 13.f) };
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(13.f, 13.f)};
             [_contentView bringSubviewToFront:_badgeView];
             break;
         }
