@@ -1095,17 +1095,14 @@ struct KKSectionMetrics {
     for (NSUInteger i = 0; i < _metrics.count; ++i) {
         CGFloat heightForSection = 0.f;
         
-        if (_metrics.count > i) {
-            struct KKSectionMetrics sectionMetrics = _metrics.sections[i];
-            
-            heightForSection += sectionMetrics.headerHeight;
-            heightForSection += sectionMetrics.footerHeight;
-            
-            NSUInteger numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-            
-            heightForSection += numberOfRows * (_cellSize.height + _cellPadding.height);
-            heightForSection += (numberOfRows? _cellPadding.height:0.f);
-        }
+        struct KKSectionMetrics sectionMetrics = _metrics.sections[i];
+        
+        heightForSection += sectionMetrics.headerHeight + sectionMetrics.footerHeight;
+        
+        NSUInteger numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
+        
+        heightForSection += numberOfRows * (_cellSize.height + _cellPadding.height);
+        heightForSection += (numberOfRows? _cellPadding.height:0.f);
         
         _metrics.sections[i].sectionHeight = heightForSection;
         newContentSize.height += heightForSection;
