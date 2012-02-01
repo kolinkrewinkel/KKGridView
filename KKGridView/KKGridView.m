@@ -562,7 +562,7 @@ struct KKSectionMetrics {
         __unsafe_unretained KKIndexPath *path;
     } cell_info_t;
     
-    cell_info_t *cellsToRemove = calloc(_visibleCells.count, sizeof(cell_info_t));
+    cell_info_t cellsToRemove[_visibleCells.count];
     
     NSUInteger cellCount = 0;
     for (KKIndexPath *path in _visibleCells) {
@@ -583,8 +583,6 @@ struct KKSectionMetrics {
         
         [_visibleCells removeObjectForKey:pair.path];
     }
-    
-    free(cellsToRemove);
 }
 
 - (void)_respondToBoundsChange
@@ -1145,10 +1143,8 @@ struct KKSectionMetrics {
             .footerHeight = willDrawFooter ? 25.0 : 0.0,
             .headerHeight = willDrawHeader ? 25.0 : 0.0,
             .sectionHeight = 0.f,
-            .itemCount = 0.f
+            .itemCount = [_dataSource gridView:self numberOfItemsInSection:index]
         };
-        
-        sectionMetrics.itemCount = [_dataSource gridView:self numberOfItemsInSection:index];
         
         if (_dataSourceRespondsTo.heightForHeader)
             sectionMetrics.headerHeight = [_dataSource gridView:self heightForHeaderInSection:index];
@@ -1230,8 +1226,7 @@ struct KKSectionMetrics {
 - (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition
 {
     CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
-    if (scrollPosition == KKGridViewScrollPositionNone)
-    {
+    if (scrollPosition == KKGridViewScrollPositionNone) {
         [self scrollRectToVisible:cellRect animated:animated];
         return;
     }
