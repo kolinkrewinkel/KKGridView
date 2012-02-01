@@ -267,38 +267,24 @@
             break;
         }
         
-        case KKGridViewCellAccessoryTypeUnread: {
-            if (!_badgeView) {
-                _badgeView = [[UIButton alloc] init];
-                [_contentView addSubview:_badgeView];
-            }
-            
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {size.width - 16.f, 3.f},
-                [KKGridViewCellAccessoryPositionTopLeft]     = {3.f,3.f},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 16.f},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 16.f, size.height - 16.f}
-            };
-                        
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(13.f, 13.f)};
-            [_contentView bringSubviewToFront:_badgeView];
-            break;
-        }
-        
+        case KKGridViewCellAccessoryTypeUnread:
         case KKGridViewCellAccessoryTypeReadPartial: {
             if (!_badgeView) {
                 _badgeView = [[UIButton alloc] init];
                 [_contentView addSubview:_badgeView];
             }
             
-            CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {size.width - 16.f, 3.f},
-                [KKGridViewCellAccessoryPositionTopLeft]     = {3.f, 3.f},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 16.f},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 16.f, size.height - 16.f}
-            };
+            CGFloat s = 16.f;
+            CGFloat t = 3.f;
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(13.f, 13.f)};
+            CGPoint pointMap[5] = {
+                [KKGridViewCellAccessoryPositionTopRight]    = {size.width - s, t},
+                [KKGridViewCellAccessoryPositionTopLeft]     = {t, t},
+                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
+                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
+            };
+                        
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s - t, s - t)};
             [_contentView bringSubviewToFront:_badgeView];
             break;
         }
@@ -310,13 +296,15 @@
                 [_contentView addSubview:_badgeView];
             }
             
+            CGFloat s = 29.f;
+            
             CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - 29.f},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 29.f},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 29.f, size.height - 29.f}
+                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - s},
+                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
+                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
             };
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(29.f, 29.f)};
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s, s)};
             [_contentView bringSubviewToFront:_badgeView];
             break;
         }
@@ -328,14 +316,16 @@
                 [_contentView addSubview:_badgeView];
             }
             
+            CGFloat s = 14.f;
+            
             CGPoint pointMap[5] = {
-                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - 14.f},
-                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 14.f},
-                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 14.f, size.height - 14.f},
-                [KKGridViewCellAccessoryPositionCenter]      = {(size.width - 14.f) * .5f, (size.height - 14.f) * .5f}
+                [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - s},
+                [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - s},
+                [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s},
+                [KKGridViewCellAccessoryPositionCenter]      = {(size.width - s) / 2, (size.height - s) / 2}
             };
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(14.f, 14.f)};
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s,s)};
             [_contentView bringSubviewToFront:_badgeView];
             break;
         }
@@ -367,8 +357,9 @@
     CGGradientRef gradient = CGGradientCreateWithColorComponents(baseSpace, colors, NULL, 2);
     CGColorSpaceRelease(baseSpace), baseSpace = NULL;
     
-    CGPoint startPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMinY(self.bounds));
-    CGPoint endPoint = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMaxY(self.bounds));
+    CGFloat horizontalCenter = CGRectGetMidX(self.bounds);
+    CGPoint startPoint = CGPointMake(horizontalCenter, CGRectGetMinY(self.bounds));
+    CGPoint endPoint = CGPointMake(horizontalCenter, CGRectGetMaxY(self.bounds));
     
     CGContextDrawLinearGradient(UIGraphicsGetCurrentContext(), gradient, startPoint, endPoint, 0);
     
