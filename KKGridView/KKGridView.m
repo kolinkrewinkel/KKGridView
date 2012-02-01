@@ -1037,19 +1037,24 @@ struct KKSectionMetrics {
         
         NSArray *indexes = [_dataSource sectionIndexTitlesForGridView:self];
         if ([indexes isKindOfClass:[NSArray class]] && [indexes count]) {
-            _indexView = [[KKGridViewIndexView alloc] initWithFrame:CGRectZero];
-            [_indexView setSectionIndexTitles:indexes];
+            if (!_indexView)
+                _indexView = [[KKGridViewIndexView alloc] initWithFrame:CGRectZero];
             
-            __unsafe_unretained KKGridView *weakSelf = self;
+            _indexView.sectionIndexTitles = indexes;
+            
+            __kk_weak KKGridView *weakSelf = self;
             [_indexView setSectionTracked:^(NSUInteger section) {
                 KKGridView *strongSelf = weakSelf;
                 
                 NSUInteger sectionToScroll = section;
                 if (strongSelf->_dataSourceRespondsTo.sectionForSectionIndexTitle)
                     sectionToScroll = [strongSelf->_dataSource gridView:strongSelf
-                                            sectionForSectionIndexTitle:[indexes objectAtIndex:section] atIndex:section];
+                                            sectionForSectionIndexTitle:[indexes objectAtIndex:section] 
+                                                                atIndex:section];
                 
-                [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0. inSection:sectionToScroll] animated:NO position:KKGridViewScrollPositionTop]; 
+                [strongSelf scrollToItemAtIndexPath:[KKIndexPath indexPathForIndex:0 inSection:sectionToScroll]
+                                           animated:NO
+                                           position:KKGridViewScrollPositionTop]; 
             }];
 
             [self _insertSubviewBelowScrollbar:_indexView];
