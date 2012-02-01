@@ -13,6 +13,7 @@
 
 - (UIImage *)_defaultBlueBackgroundRendition;
 - (void)_updateSubviewSelectionState;
+- (void)_layoutAccessories;
 
 @end
 
@@ -203,12 +204,19 @@
     _backgroundView.hidden = _selected || _highlighted;
     _selectedBackgroundView.alpha = _highlighted ? 1.f : (_selected ? 1.f : 0.f);
     
+    [self _layoutAccessories];
+}
+
+- (void)_layoutAccessories
+{
     static NSBundle* bundle = nil;
-    if (nil == bundle) {
+    if (bundle == nil) {
         NSString* path = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"KKGridView.bundle"];
         bundle = [NSBundle bundleWithPath:path];
     }
-
+    
+    CGSize size = self.bounds.size;
+    
     switch (self.accessoryType) {
         case KKGridViewCellAccessoryTypeNone:
             _badgeView = nil;
@@ -231,16 +239,16 @@
             CGPoint point = CGPointZero;
             switch (_accessoryPosition) {
                 case KKGridViewCellAccessoryPositionTopRight:
-                    point = CGPointMake(self.bounds.size.width - 29.f, 0.f);
+                    point = CGPointMake(size.width - 29.f, 0.f);
                     break;
                 case KKGridViewCellAccessoryPositionTopLeft:
                     point = CGPointZero;
                     break;
                 case KKGridViewCellAccessoryPositionBottomLeft:
-                    point = CGPointMake(0.f, (self.bounds.size.height - 29.f));
+                    point = CGPointMake(0.f, (size.height - 29.f));
                     break;
                 case KKGridViewCellAccessoryPositionBottomRight:
-                    point = CGPointMake(self.bounds.size.width - 29.f, (self.bounds.size.height - 29.f));
+                    point = CGPointMake(size.width - 29.f, (size.height - 29.f));
                     break;
                 default:
                     break;
@@ -259,16 +267,16 @@
             CGPoint point = CGPointZero;
             switch (_accessoryPosition) {
                 case KKGridViewCellAccessoryPositionTopRight:
-                    point = CGPointMake(self.bounds.size.width - 16.f, 3.f);
+                    point = CGPointMake(size.width - 16.f, 3.f);
                     break;
                 case KKGridViewCellAccessoryPositionTopLeft:
                     point = CGPointMake(3.f, 3.f);
                     break;
                 case KKGridViewCellAccessoryPositionBottomLeft:
-                    point = CGPointMake(0.f, (self.bounds.size.height - 16.f));
+                    point = CGPointMake(0.f, (size.height - 16.f));
                     break;
                 case KKGridViewCellAccessoryPositionBottomRight:
-                    point = CGPointMake(self.bounds.size.width - 16.f, (self.bounds.size.height - 16.f));
+                    point = CGPointMake(size.width - 16.f, (size.height - 16.f));
                     break;
                 default:
                     break;
@@ -288,16 +296,16 @@
             CGPoint point = CGPointZero;
             switch (_accessoryPosition) {
                 case KKGridViewCellAccessoryPositionTopRight:
-                    point = CGPointMake(self.bounds.size.width - 16.f, 3.f);
+                    point = CGPointMake(size.width - 16.f, 3.f);
                     break;
                 case KKGridViewCellAccessoryPositionTopLeft:
                     point = CGPointMake(3.f, 3.f);
                     break;
                 case KKGridViewCellAccessoryPositionBottomLeft:
-                    point = CGPointMake(0.f, (self.bounds.size.height - 16.f));
+                    point = CGPointMake(0.f, (size.height - 16.f));
                     break;
                 case KKGridViewCellAccessoryPositionBottomRight:
-                    point = CGPointMake(self.bounds.size.width - 16.f, (self.bounds.size.height - 16.f));
+                    point = CGPointMake(size.width - 16.f, (size.height - 16.f));
                     break;
                 default:
                     break;
@@ -317,16 +325,16 @@
             CGPoint point = CGPointZero;
             switch (_accessoryPosition) {
                 case KKGridViewCellAccessoryPositionTopRight:
-                    point = CGPointMake(self.bounds.size.width - 29.f, 0.f);
+                    point = CGPointMake(size.width - 29.f, 0.f);
                     break;
                 case KKGridViewCellAccessoryPositionTopLeft:
                     point = CGPointZero;
                     break;
                 case KKGridViewCellAccessoryPositionBottomLeft:
-                    point = CGPointMake(0.f, (self.bounds.size.height - 29.f));
+                    point = CGPointMake(0.f, (size.height - 29.f));
                     break;
                 case KKGridViewCellAccessoryPositionBottomRight:
-                    point = CGPointMake(self.bounds.size.width - 29.f, (self.bounds.size.height - 29.f));
+                    point = CGPointMake(size.width - 29.f, (size.height - 29.f));
                     break;
                 default:
                     break;
@@ -342,23 +350,23 @@
                 _badgeView.userInteractionEnabled = NO;
                 [_contentView addSubview:_badgeView];
             }
-
+            
             CGPoint point = CGPointZero;
             switch (_accessoryPosition) {
                 case KKGridViewCellAccessoryPositionTopRight:
-                    point = CGPointMake(self.bounds.size.width - 14.f, 0.f);
+                    point = CGPointMake(size.width - 14.f, 0.f);
                     break;
                 case KKGridViewCellAccessoryPositionTopLeft:
                     point = CGPointZero;
                     break;
                 case KKGridViewCellAccessoryPositionBottomLeft:
-                    point = CGPointMake(0.f, (self.bounds.size.height - 14.f));
+                    point = CGPointMake(0.f, (size.height - 14.f));
                     break;
                 case KKGridViewCellAccessoryPositionBottomRight:
-                    point = CGPointMake(self.bounds.size.width - 14.f, (self.bounds.size.height - 14.f));
+                    point = CGPointMake(size.width - 14.f, (size.height - 14.f));
                     break;
                 case KKGridViewCellAccessoryPositionCenter:
-                    point = CGPointMake((self.bounds.size.width - 14.f) * .5f, (self.bounds.size.height - 14.f) * .5f);
+                    point = CGPointMake((size.width - 14.f) * .5f, (size.height - 14.f) * .5f);
                     break;
                 default:
                     break;
