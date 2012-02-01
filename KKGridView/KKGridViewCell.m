@@ -236,44 +236,40 @@
     });
     
     
-    CGSize size = self.bounds.size;
-    
     switch (self.accessoryType) {
         case KKGridViewCellAccessoryTypeNone:
-            _badgeView = nil;
-            break;
+            [_badgeView removeFromSuperview];
         case KKGridViewCellAccessoryTypeNew:
-            break;
         case KKGridViewCellAccessoryTypeInfo:
-            break;
         case KKGridViewCellAccessoryTypeDelete:
             break;
-        case KKGridViewCellAccessoryTypeBadgeExclamatory: {
-            if (!_badgeView) {
-                _badgeView = [[UIButton alloc] init];
-                [_badgeView setShowsTouchWhenHighlighted:NO];
-                
-                [_contentView addSubview:_badgeView];
-            }
+        default: {
+            if (!_badgeView) _badgeView = [[UIButton alloc] init];
+            if (![_badgeView superview]) [_contentView addSubview:_badgeView];
             
+            [_contentView bringSubviewToFront:_badgeView];
+            break;   
+        }
+    }
+    
+    _badgeView.userInteractionEnabled = NO;
+    
+    CGSize size = self.bounds.size;
+    
+    switch (self.accessoryType) {            
+        case KKGridViewCellAccessoryTypeBadgeExclamatory: {
             CGPoint pointMap[5] = {
                 [KKGridViewCellAccessoryPositionTopRight]    = {.x = size.width - 29.f},
                 [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = size.height - 29.f},
                 [KKGridViewCellAccessoryPositionBottomRight] = {size.width - 29.f, size.height - 29.f}
             };
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(29.f, 29.f)};
-            [_contentView bringSubviewToFront:_badgeView];
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {29.f, 29.f}};
             break;
         }
-        
+            
         case KKGridViewCellAccessoryTypeUnread:
         case KKGridViewCellAccessoryTypeReadPartial: {
-            if (!_badgeView) {
-                _badgeView = [[UIButton alloc] init];
-                [_contentView addSubview:_badgeView];
-            }
-            
             CGFloat s = 16.f;
             CGFloat t = 3.f;
             
@@ -284,18 +280,11 @@
                 [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
             };
                         
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s - t, s - t)};
-            [_contentView bringSubviewToFront:_badgeView];
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s - t, s - t}};
             break;
         }
         
-        case KKGridViewCellAccessoryTypeBadgeNumeric: {
-            if (!_badgeView) {
-                _badgeView = [[UIButton alloc] init];
-                [_badgeView setShowsTouchWhenHighlighted:NO];
-                [_contentView addSubview:_badgeView];
-            }
-            
+        case KKGridViewCellAccessoryTypeBadgeNumeric: {            
             CGFloat s = 29.f;
             
             CGPoint pointMap[5] = {
@@ -304,18 +293,11 @@
                 [KKGridViewCellAccessoryPositionBottomRight] = {size.width - s, size.height - s}
             };
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s, s)};
-            [_contentView bringSubviewToFront:_badgeView];
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s,s}};
             break;
         }
-        
-        case KKGridViewCellAccessoryTypeCheckmark: {
-            if (!_badgeView) {
-                _badgeView = [[UIButton alloc] init];
-                _badgeView.userInteractionEnabled = NO;
-                [_contentView addSubview:_badgeView];
-            }
             
+        case KKGridViewCellAccessoryTypeCheckmark: {            
             CGFloat s = 14.f;
             
             CGPoint pointMap[5] = {
@@ -325,8 +307,7 @@
                 [KKGridViewCellAccessoryPositionCenter]      = {(size.width - s) / 2, (size.height - s) / 2}
             };
             
-            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], CGSizeMake(s,s)};
-            [_contentView bringSubviewToFront:_badgeView];
+            _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s,s}};
             break;
         }
             
