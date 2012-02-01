@@ -254,12 +254,12 @@
     
     _badgeView.userInteractionEnabled = NO;
     
-    struct { CGFloat s; CGFloat o; } map[] = {
+    static const struct { CGFloat s; CGFloat o; } map[] = {
         [KKGridViewCellAccessoryTypeBadgeExclamatory] = {29.f, 0.f},
         [KKGridViewCellAccessoryTypeUnread]           = {16.f, 3.f},
         [KKGridViewCellAccessoryTypeReadPartial]      = {16.f, 3.f},
         [KKGridViewCellAccessoryTypeBadgeNumeric]     = {29.f, 0.f},
-        [KKGridViewCellAccessoryTypeCheckmark]        = {14.f, 0.f}
+        [KKGridViewCellAccessoryTypeCheckmark]        = {14.f, 0.f},
     };
         
     CGFloat w = self.bounds.size.width;
@@ -267,7 +267,7 @@
     CGFloat s = map[self.accessoryType].s;
     CGFloat o = map[self.accessoryType].o;
     
-    CGPoint pointMap[] = {
+    CGPoint const pointMap[] = {
         [KKGridViewCellAccessoryPositionTopRight]    = {w - s, o},
         [KKGridViewCellAccessoryPositionTopLeft]     = {o, o},
         [KKGridViewCellAccessoryPositionBottomLeft]  = {.y = h - s},
@@ -275,8 +275,7 @@
         [KKGridViewCellAccessoryPositionCenter]      = {(w - s)/2, (h - s)/2}
     };
     
-    _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s-o, s-o}};
-    
+    _badgeView.frame = (CGRect){pointMap[_accessoryPosition], {s-o, s-o}}; 
     
     if (normalBadges[self.accessoryType])
     {
