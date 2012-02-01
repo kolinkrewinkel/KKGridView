@@ -889,7 +889,7 @@ struct KKSectionMetrics {
                         }
                     } else if (update.type == KKGridViewUpdateTypeItemDelete) {
                         if (indexPath.section == keyPath.section) {
-                            if (keyPath.index - 1 > -1)
+                            if (keyPath.index > 0)
                                 [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index - 1 inSection:keyPath.section]];
                         } else {
                             [replacementSet addObject:keyPath];
