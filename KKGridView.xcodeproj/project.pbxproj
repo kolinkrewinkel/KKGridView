@@ -29,8 +29,8 @@
 		F42166A714A3A610004E0C32 /* KKGridViewIndexView.m in Sources */ = {isa = PBXBuildFile; fileRef = F42166A514A3A610004E0C32 /* KKGridViewIndexView.m */; };
 		FC368B40149B483900B92E57 /* KKBlocksDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = FC368B3E149B483900B92E57 /* KKBlocksDelegate.h */; };
 		FC368B41149B483900B92E57 /* KKBlocksDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FC368B3F149B483900B92E57 /* KKBlocksDelegate.m */; };
-		FC53DF8313E629FE000767B1 /* KKGridViewViewInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */; };
-		FC53DF8413E629FE000767B1 /* KKGridViewViewInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */; };
+		FC53DF8313E629FE000767B1 /* KKGridViewSectionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = FC53DF8113E629FE000767B1 /* KKGridViewSectionInfo.h */; };
+		FC53DF8413E629FE000767B1 /* KKGridViewSectionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FC53DF8213E629FE000767B1 /* KKGridViewSectionInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,8 +61,8 @@
 		F42166A514A3A610004E0C32 /* KKGridViewIndexView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewIndexView.m; sourceTree = "<group>"; };
 		FC368B3E149B483900B92E57 /* KKBlocksDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKBlocksDelegate.h; sourceTree = "<group>"; };
 		FC368B3F149B483900B92E57 /* KKBlocksDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKBlocksDelegate.m; sourceTree = "<group>"; };
-		FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewViewInfo.h; sourceTree = "<group>"; };
-		FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewViewInfo.m; sourceTree = "<group>"; };
+		FC53DF8113E629FE000767B1 /* KKGridViewSectionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKGridViewSectionInfo.h; sourceTree = "<group>"; };
+		FC53DF8213E629FE000767B1 /* KKGridViewSectionInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKGridViewSectionInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,8 +126,8 @@
 				1A3F1B7313E34CF8006747A3 /* KKGridViewUpdate.m */,
 				1A3F1B6E13E34A61006747A3 /* KKGridViewUpdateStack.h */,
 				1A3F1B6F13E34A61006747A3 /* KKGridViewUpdateStack.m */,
-				FC53DF8113E629FE000767B1 /* KKGridViewViewInfo.h */,
-				FC53DF8213E629FE000767B1 /* KKGridViewViewInfo.m */,
+				FC53DF8113E629FE000767B1 /* KKGridViewSectionInfo.h */,
+				FC53DF8213E629FE000767B1 /* KKGridViewSectionInfo.m */,
 				1A0BEC7413DDF862003C2632 /* KKIndexPath.h */,
 				1A0BEC7513DDF862003C2632 /* KKIndexPath.m */,
 				1A72A9731453AE42002546F8 /* KKGridViewController.h */,
@@ -180,7 +180,7 @@
 				1A0BEC7613DDF862003C2632 /* KKIndexPath.h in Headers */,
 				1A3F1B7413E34CF8006747A3 /* KKGridViewUpdate.h in Headers */,
 				1A3F1B7013E34A62006747A3 /* KKGridViewUpdateStack.h in Headers */,
-				FC53DF8313E629FE000767B1 /* KKGridViewViewInfo.h in Headers */,
+				FC53DF8313E629FE000767B1 /* KKGridViewSectionInfo.h in Headers */,
 				FC368B40149B483900B92E57 /* KKBlocksDelegate.h in Headers */,
 				F42166A614A3A610004E0C32 /* KKGridViewIndexView.h in Headers */,
 			);
@@ -242,7 +242,7 @@
 				1A0BEC7713DDF862003C2632 /* KKIndexPath.m in Sources */,
 				1A3F1B7113E34A62006747A3 /* KKGridViewUpdateStack.m in Sources */,
 				1A3F1B7513E34CF8006747A3 /* KKGridViewUpdate.m in Sources */,
-				FC53DF8413E629FE000767B1 /* KKGridViewViewInfo.m in Sources */,
+				FC53DF8413E629FE000767B1 /* KKGridViewSectionInfo.m in Sources */,
 				1A72A9761453AE42002546F8 /* KKGridViewController.m in Sources */,
 				FC368B41149B483900B92E57 /* KKBlocksDelegate.m in Sources */,
 				F42166A714A3A610004E0C32 /* KKGridViewIndexView.m in Sources */,

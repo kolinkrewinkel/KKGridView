@@ -7,7 +7,7 @@
 //
 
 #import <KKGridView/KKGridView.h>
-#import <KKGridView/KKGridViewViewInfo.h>
+#import <KKGridView/KKGridViewSectionInfo.h>
 #import <KKGridView/KKIndexPath.h>
 #import <KKGridView/KKGridViewUpdate.h>
 #import <KKGridView/KKGridViewUpdateStack.h>
@@ -93,7 +93,7 @@ struct KKSectionMetrics {
 - (void)_layoutGridView; /* Only call this directly; prefer -setNeedsLayout */
 - (void)_layoutVisibleCells;
 - (void)_layoutModelCells;
-- (void)_configureSectionView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
+- (void)_configureSectionView:(KKGridViewSectionInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height;
 - (void)_performRemainingUpdatesModelOnly;
 
 // Metrics
@@ -613,7 +613,7 @@ struct KKSectionMetrics {
     }
 }
 
-- (void)_configureSectionView:(KKGridViewViewInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
+- (void)_configureSectionView:(KKGridViewSectionInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
 {
     headerOrFooter.view.frame = CGRectMake(0.f, stickPoint, self.bounds.size.width, height);
     headerOrFooter->stickPoint = stickPoint;
