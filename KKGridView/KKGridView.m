@@ -1033,18 +1033,17 @@ struct KKSectionMetrics {
     
     // IndexView
     if (_dataSourceRespondsTo.sectionIndexTitles) {
-        if (_indexView)
-            [_indexView removeFromSuperview];
+        [_indexView removeFromSuperview];
         
         NSArray *indexes = [_dataSource sectionIndexTitlesForGridView:self];
-        if (indexes && [indexes isKindOfClass:[NSArray class]] && [indexes count]) {
+        if ([indexes isKindOfClass:[NSArray class]] && [indexes count]) {
             _indexView = [[KKGridViewIndexView alloc] initWithFrame:CGRectZero];
             [_indexView setSectionIndexTitles:indexes];
             
             __unsafe_unretained KKGridView *weakSelf = self;
             [_indexView setSectionTracked:^(NSUInteger section) {
                 KKGridView *strongSelf = weakSelf;
-  
+                
                 NSUInteger sectionToScroll = section;
                 if (strongSelf->_dataSourceRespondsTo.sectionForSectionIndexTitle)
                     sectionToScroll = [strongSelf->_dataSource gridView:strongSelf
@@ -1218,7 +1217,7 @@ struct KKSectionMetrics {
 #pragma mark - Subviewinsertion
              
 - (void)_insertSubviewBelowScrollbar:(UIView *)view {
-    if (_indexView && view!=_indexView)
+    if (_indexView && view != _indexView)
         [self insertSubview:view belowSubview:_indexView];
     else
         [self insertSubview:view atIndex:self.subviews.count - 1];
@@ -1440,11 +1439,10 @@ struct KKSectionMetrics {
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (_indexView)
-        [_indexView setFrame:CGRectMake(_indexView.frame.origin.x,
-                                        scrollView.contentOffset.y,
-                                        _indexView.frame.size.width,
-                                        _indexView.frame.size.height)];
+    [_indexView setFrame:CGRectMake(_indexView.frame.origin.x,
+                                    scrollView.contentOffset.y,
+                                    _indexView.frame.size.width,
+                                    _indexView.frame.size.height)];
 }
 
 @end
