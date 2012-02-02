@@ -1,28 +1,41 @@
 <div style="width:768px; height: 200px; position: relative; margin: 0 auto;"> 
 <img style="position: relative; width: 768px; height: 200px; margin: 0;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
 </div>
-High-performance iOS grid view (MIT license). **Requirements**: you need
-to build `KKGridView` with a compiler that supports *Automatic Reference
-Counting*. We know this stings at first, but we strongly believe that
-the future is better served by requiring this now. Moreover, the move to
-ARC improved `KKGridView`'s performance greatly. Remember that your
-project need not use ARC to include `KKGridView`.
+High-performance iOS grid view (MIT license). **Requirements**: you
+need to build `KKGridView` with a compiler that supports *Automatic
+Reference Counting*. We know this stings at first, but we strongly
+believe that the future is better served by requiring this
+now. Moreover, the move to ARC improved `KKGridView`'s performance
+greatly. Remember that your project need not use ARC to include
+`KKGridView`.
 
-### Contributing
-If you see something you don't like, you are always welcome to submit it
-as an issue. But if you can find it in your heart, we'd be so grateful
-if you would fix it yourself and send us a pull request. We promise not
-to bite!
+### Contributing If you see something you don't like, you are always
+welcome to submit it as an issue. But if you can find it in your
+heart, we'd be so grateful if you would fix it yourself and send us a
+pull request. We promise not to bite!
 
 
 ##Current Issues
 
-Most features, bugs, and missing items for the project are in the Issues section.  Currently, there are placement issues after inserting.  We were initially going to fix these before public release, but instead decided to release now and allow outside contribution.
-Other than that, editing and selection are the only things that need work.
+Most features, bugs, and missing items for the project are in the
+Issues section.  Currently, there are placement issues after
+inserting.  We were initially going to fix these before public
+release, but instead decided to release now and allow outside
+contribution.  Other than that, editing and selection are the only
+things that need work.
 
 ##Motivations
 
-`KKGridView` was created in July 2011 for usage in a few of the apps I was working on.  When I discovered that this would be both very difficult and time consuming, I sought out the help of [Giulio Petek](http://twitter.com/GiloTM) and [Jonathan Sterling](http://twitter.com/jonsterling).  Additionally, we brought on [Kyle Hickinson](http://twitter.com/kylehickinson), [Matthias Tretter](http://twitter.com/myell0w), and most recently, [Peter Steinberger](http://twitter.com/steipete).  Luckily, all of my fellow collaborators shared the common opinion that all of the grid views available now are slow, feature-incomplete, and coded in an inextensible fashion.  With this in mind, we set out to create the best grid view component available for iOS to-date.
+`KKGridView` was created in July 2011 for usage in a few of the apps I
+was working on.  When I discovered that this would be both very
+difficult and time consuming, I sought out the help of [Giulio
+Petek](http://twitter.com/GiloTM) and [Jonathan
+Sterling](http://twitter.com/jonsterling).  Additionally, we brought
+on [Kyle Hickinson](http://twitter.com/kylehickinson), [Matthias
+Tretter](http://twitter.com/myell0w), and most recently, [Peter
+Steinberger](http://twitter.com/steipete). We had all been frustrated
+by the existing grid view components; with this in mind, we set out to
+create the best grid view component available for iOS to-date.
 
 ##Goals
 
@@ -102,23 +115,7 @@ Alternatively, you can add the grid to your view-hierarchy.
 ~~~~objc
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
-  switch (section) {
-    case 0:
-      return kFirstSectionCount;
-      break;
-    case 1:
-      return 15;
-      break;
-    case 2:
-      return 10;
-      break;
-    case 3:
-      return 5;
-      break;
-    default:
-      return 0;
-      break;
-  }
+  return kCellCounts[section];
 }
 ~~~~
 
@@ -127,26 +124,23 @@ Optionally, you can specify how many section you would like in the grid. *(Defau
 ~~~~objc
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
-  return kNumSection;
+  return kNumSections;
 }
 ~~~~
 
-The last required method is to return a cell, just like UITableView.  We've made it easier on you, though.
-
-*`KKIndexPath` works in just the same way as `NSIndexPath`, only `-row` is replaced with `-index`.*
-
-*`KKGridViewCell`, like `UITableViewCell`, is designed to be subclassed.*
+The last required method is to return a cell, just like UITableView.
+We've made it easier on you, though. `KKIndexPath` works in just the
+same way as `NSIndexPath`, only `-row` is replaced with
+`-index`. `KKGridViewCell`, like `UITableViewCell`, is designed to be
+subclassed.*
 
 ~~~~objc
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
 {
   KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-  
   cell.backgroundColor = [UIColor lightGrayColor];
-  
   return cell;
 }
 ~~~~
-
 
 There are no required delegate methods, though all that are implemented in `UITableView` will soon be available in `KKGridView`.
