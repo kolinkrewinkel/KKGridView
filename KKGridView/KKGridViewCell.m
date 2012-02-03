@@ -134,9 +134,15 @@
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
-    [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
-        self.editing = editing;
-    }];
+    if (animated) {
+        [UIView beginAnimations:nil context:NULL];
+        UIView.animationDuration = KKGridViewDefaultAnimationDuration;
+    }
+    
+    self.editing = editing;
+    
+    if (animated)
+        [UIView commitAnimations];
 }
 
 - (void)setSelected:(BOOL)selected
