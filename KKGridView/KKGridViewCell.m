@@ -83,29 +83,29 @@
 }
 
 - (void)awakeFromNib {
-	
-	if (!_contentView) {
-		_contentView = [[UIView alloc] initWithFrame:self.bounds];
-		_contentView.backgroundColor = [UIColor whiteColor];
-	}
-	[self addSubview:_contentView];
-	
-	if (!_backgroundView) {
-		_backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-		_backgroundView.backgroundColor = [UIColor whiteColor];
-	}
-	[self addSubview:_backgroundView];
-	
-	if (!_selectedBackgroundView) {
-		_selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-		_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
-	}
-	_selectedBackgroundView.hidden = YES;
-	_selectedBackgroundView.alpha = 0.f;
-	[self addSubview:_selectedBackgroundView];
-	[self bringSubviewToFront:_contentView];
-	
-	[_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
+    
+    if (!_contentView) {
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
+        _contentView.backgroundColor = [UIColor whiteColor];
+    }
+    [self addSubview:_contentView];
+    
+    if (!_backgroundView) {
+        _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        _backgroundView.backgroundColor = [UIColor whiteColor];
+    }
+    [self addSubview:_backgroundView];
+    
+    if (!_selectedBackgroundView) {
+        _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+    }
+    _selectedBackgroundView.hidden = YES;
+    _selectedBackgroundView.alpha = 0.f;
+    [self addSubview:_selectedBackgroundView];
+    [self bringSubviewToFront:_contentView];
+    
+    [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 - (void)dealloc
@@ -126,10 +126,10 @@
 
 - (void)setAccessoryType:(KKGridViewCellAccessoryType)accessoryType
 {
-	if (_accessoryType != accessoryType) {
-		_accessoryType = accessoryType;
-		[self setNeedsLayout];
-	}
+    if (_accessoryType != accessoryType) {
+        _accessoryType = accessoryType;
+        [self setNeedsLayout];
+    }
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -141,34 +141,34 @@
 
 - (void)setSelected:(BOOL)selected
 {
-	if (_selected != selected) {
-		_selected = selected;
-		[self setNeedsLayout];
-	}
+    if (_selected != selected) {
+        _selected = selected;
+        [self setNeedsLayout];
+    }
 }
 
 - (void)setHighlighted:(BOOL)highlighted
 {
-	if (_highlighted != highlighted) {
-		_highlighted = highlighted;
-		[self setNeedsLayout];
-	}
+    if (_highlighted != highlighted) {
+        _highlighted = highlighted;
+        [self setNeedsLayout];
+    }
 }
 
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
-	if (_selected != selected) {
+    if (_selected != selected) {
         NSTimeInterval duration = animated ? 0.2 : 0;
         UIViewAnimationOptions opts = UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent;
         
-		[UIView animateWithDuration:duration delay:0 options:opts animations:^{
-			_selected = selected;
-			_selectedBackgroundView.alpha = selected ? 1.f : 0.f;
-		} completion:^(BOOL finished) {
-			[self setNeedsLayout];
-		}];
-	}
+        [UIView animateWithDuration:duration delay:0 options:opts animations:^{
+            _selected = selected;
+            _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
+        } completion:^(BOOL finished) {
+            [self setNeedsLayout];
+        }];
+    }
 }
 
 - (void)_updateSubviewSelectionState
