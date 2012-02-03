@@ -1055,9 +1055,9 @@ struct KKSectionMetrics {
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
         [set addObject:cell];
+        [cell removeFromSuperview];
     }
     
-    [[_visibleCells allValues] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_visibleCells removeAllObjects];
 }
 
