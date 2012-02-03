@@ -10,17 +10,13 @@
 #import <KKGridView/KKGridView.h>
 
 @interface KKGridViewCell ()
-
 - (UIImage *)_defaultBlueBackgroundRendition;
 - (void)_updateSubviewSelectionState;
 - (void)_layoutAccessories;
-
 @end
 
 @implementation KKGridViewCell {
     UIButton *_badgeView;
-    NSString *_badgeText;
-
     UIColor *_userContentViewBackgroundColor;
 }
 
@@ -83,29 +79,34 @@
 }
 
 - (void)awakeFromNib {
-    
     if (!_contentView) {
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
     }
-    [self addSubview:_contentView];
     
     if (!_backgroundView) {
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
     }
-    [self addSubview:_backgroundView];
     
     if (!_selectedBackgroundView) {
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
+    
     _selectedBackgroundView.hidden = YES;
     _selectedBackgroundView.alpha = 0.f;
+    
+    [self addSubview:_contentView];
+    [self addSubview:_backgroundView];
     [self addSubview:_selectedBackgroundView];
+    
     [self bringSubviewToFront:_contentView];
     
-    [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
+    [_contentView addObserver:self 
+                   forKeyPath:@"backgroundColor" 
+                      options:NSKeyValueObservingOptionNew
+                      context:NULL];
 }
 
 - (void)dealloc
@@ -205,12 +206,12 @@
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
     } else {
-        _contentView.backgroundColor = (_userContentViewBackgroundColor) ? _userContentViewBackgroundColor : [UIColor whiteColor];
+        _contentView.backgroundColor = _userContentViewBackgroundColor ? _userContentViewBackgroundColor : [UIColor whiteColor];
     }
     
     _selectedBackgroundView.hidden = !_selected && !_highlighted;
     _backgroundView.hidden = _selected || _highlighted;
-    _selectedBackgroundView.alpha = _highlighted ? 1.f : (_selected ? 1.f : 0.f);
+    _selectedBackgroundView.alpha = (_selected || _highlighted) ? 1.f : 0.f;
     
     [self _layoutAccessories];
 }
@@ -223,7 +224,7 @@
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        NSString *bundlePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"KKGridView.bundle"];
+        NSString *bundlePath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"KKGridView.bundle"];
         NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
         UIImage *(^getBundleImage)(NSString *) = ^(NSString *n) {
             return [UIImage imageWithContentsOfFile:[bundle pathForResource:n ofType:@"png"]];
