@@ -124,6 +124,9 @@ struct KKSectionMetrics {
 
 // Custom Subviewinsertion
 - (void)_insertSubviewBelowScrollbar:(UIView *)view;
+
+// Animation Helpers
++ (void)animateIf:(BOOL)animated delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options block:(void(^)())block;
 @end
 
 @implementation KKGridView
@@ -493,15 +496,9 @@ struct KKSectionMetrics {
                     KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
                     cell.selected = [_selectedIndexPaths containsObject:keyPath];
                     
-                    if (_staggerForInsertion) {
-                        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
-                                              delay:0.0015
-                                            options:UIViewAnimationOptionCurveEaseInOut
-                                         animations:^{ updateCellFrame(cell,indexPath); }
-                                         completion:nil];
-                    } else {
+                    [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
                         updateCellFrame(cell,indexPath);
-                    }
+                    }];
                 }
             }
         }
@@ -511,16 +508,10 @@ struct KKSectionMetrics {
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
         }
         
-        else if (_markedForDisplay) {            
-            if (_staggerForInsertion) {
-                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
-                                      delay:(index + 1) * 0.0015
-                                    options:UIViewAnimationOptionBeginFromCurrentState
-                                 animations:^{ updateCellFrame(cell, indexPath); }
-                                 completion:nil];
-            } else {
+        else if (_markedForDisplay) {
+            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
                 updateCellFrame(cell, indexPath);
-            }
+            }];
         }
         
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
@@ -908,13 +899,10 @@ struct KKSectionMetrics {
                     for (KKIndexPath *keyPath in difference) {
                         KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
                         cell.selected = [_selectedIndexPaths containsObject:keyPath];
-                        if (_staggerForInsertion) {
-                            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0.0015 options:(UIViewAnimationOptionCurveEaseInOut) animations:^{
-                                cell.frame = [self rectForCellAtIndexPath:indexPath];
-                            } completion:nil];
-                        } else {
+                        
+                        [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
                             cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        }
+                        }];
                     }
                 }
             }
@@ -1258,15 +1246,11 @@ struct KKSectionMetrics {
     if (!indexPaths)
         return;
     
-    if (animated) {
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration:KKGridViewDefaultAnimationDuration];
-    }
-    for (KKIndexPath *indexPath in indexPaths) {
-        [self _selectItemAtIndexPath:indexPath];
-    }
-    if (animated)
-        [UIView commitAnimations];
+    [KKGridView animateIf:animated delay:0.f options:0 block:^{
+        for (KKIndexPath *indexPath in indexPaths) {
+            [self _selectItemAtIndexPath:indexPath];
+        }
+    }];
 }
 
 - (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated
@@ -1274,15 +1258,11 @@ struct KKSectionMetrics {
     if (!indexPaths)
         return;
     
-    if (animated) {
-        [UIView beginAnimations:nil context:NULL];
-        [UIView setAnimationDuration:KKGridViewDefaultAnimationDuration];
-    }
-    for (KKIndexPath *indexPath in indexPaths) {
-        [self _deselectItemAtIndexPath:indexPath];
-    }
-    if (animated)
-        [UIView commitAnimations];
+    [KKGridView animateIf:animated delay:0.f options:0 block:^{
+        for (KKIndexPath *indexPath in indexPaths) {
+            [self _deselectItemAtIndexPath:indexPath];
+        }
+    }];
 }
 
 - (KKIndexPath*)indexPathForSelectedCell {
@@ -1341,6 +1321,7 @@ struct KKSectionMetrics {
         [_selectedIndexPaths addObject:indexPath];
         cell.selected = YES;
     }
+    
     if (_delegateRespondsTo.didSelectItem) {
         [_gridDelegate gridView:self didSelectItemAtIndexPath:indexPath];
     }
@@ -1370,19 +1351,22 @@ struct KKSectionMetrics {
 #pragma mark - Touch Handling
 
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
-{    
+{
+    UIGestureRecognizerState state = recognizer.state;
+    CGPoint locationInSelf = [recognizer locationInView:self];
+    
     if (_indexView) {
-        if (recognizer.state == UIGestureRecognizerStateBegan && CGRectContainsPoint(_indexView.frame, [recognizer locationInView:self])) {
-            [self setScrollEnabled:NO];
+        if (state == UIGestureRecognizerStateBegan && CGRectContainsPoint(_indexView.frame, locationInSelf)) {
+            self.scrollEnabled = NO;
             [_indexView setTracking:YES location:[recognizer locationInView:_indexView]];
             return;
         }
-        else if (recognizer.state == UIGestureRecognizerStateChanged && _indexView.tracking) {
+        else if (state == UIGestureRecognizerStateChanged && _indexView.tracking) {
             [_indexView setTracking:YES location:CGPointMake(0.0, [recognizer locationInView:_indexView].y)];
             return;
         }
-        else if ((recognizer.state == UIGestureRecognizerStateEnded || recognizer.state == UIGestureRecognizerStateCancelled) && _indexView.tracking) {
-            [self setScrollEnabled:YES];
+        else if ((state == UIGestureRecognizerStateEnded || state == UIGestureRecognizerStateCancelled) && _indexView.tracking) {
+            self.scrollEnabled = YES;
             [_indexView setTracking:NO location:[recognizer locationInView:_indexView]];
             return;
         }
@@ -1391,7 +1375,7 @@ struct KKSectionMetrics {
     if ([self isDecelerating])
         return;
     
-    KKIndexPath *indexPath = [self indexPathForItemAtPoint:[recognizer locationInView:self]];
+    KKIndexPath *indexPath = [self indexPathForItemAtPoint:locationInSelf];
     
     if (_delegateRespondsTo.willSelectItem)
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
@@ -1401,12 +1385,12 @@ struct KKSectionMetrics {
         return;
     }
     
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
+    if (state == UIGestureRecognizerStateBegan) {
         [self _highlightItemAtIndexPath:indexPath];
     }
     
-    else if (recognizer.state == UIGestureRecognizerStateEnded) {
-        BOOL touchInSameCell = CGRectContainsPoint([self rectForCellAtIndexPath:_highlightedIndexPath], [recognizer locationInView:self]);
+    else if (state == UIGestureRecognizerStateEnded) {
+        BOOL touchInSameCell = CGRectContainsPoint([self rectForCellAtIndexPath:_highlightedIndexPath], locationInSelf);
         if (touchInSameCell && ![self isDragging])
             [self _selectItemAtIndexPath:indexPath];
         [self _cancelHighlighting];
@@ -1429,10 +1413,20 @@ struct KKSectionMetrics {
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [_indexView setFrame:CGRectMake(_indexView.frame.origin.x,
-                                    scrollView.contentOffset.y,
-                                    _indexView.frame.size.width,
-                                    _indexView.frame.size.height)];
+    _indexView.frame = (CGRect) {
+        {_indexView.frame.origin.x, scrollView.contentOffset.y},
+        _indexView.frame.size
+    };
+}
+
+#pragma mark - Animation Helpers
+
++ (void)animateIf:(BOOL)animated delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options block:(void(^)())block
+{
+    if (animated)
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:delay options:options animations:block completion:nil];
+    else
+        block();
 }
 
 @end
