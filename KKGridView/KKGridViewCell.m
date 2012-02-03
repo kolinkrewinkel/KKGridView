@@ -40,7 +40,7 @@
 
 + (NSString *)cellIdentifier
 {
-    return NSStringFromClass([self class]);
+    return NSStringFromClass(self);
 }
 
 + (id)cellForGridView:(KKGridView *)gridView

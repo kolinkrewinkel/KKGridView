@@ -32,10 +32,10 @@
 
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation
 {
-    return [[[self class] alloc] initWithIndexPath:indexPath 
-                                   isSectionUpdate:sectionUpdate
-                                              type:type
-                                         animation:animation];
+    return [[self alloc] initWithIndexPath:indexPath 
+                           isSectionUpdate:sectionUpdate
+                                      type:type
+                                 animation:animation];
 }
 
 - (NSString *)description
