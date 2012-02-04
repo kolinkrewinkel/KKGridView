@@ -352,8 +352,13 @@ struct KKSectionMetrics {
 #pragma mark - Private Layout Methods
 
 - (void)_layoutSectionViews
-{
-    CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
+{    
+    CGRect visibleBounds = {
+        self.contentOffset.x + self.contentInset.left,
+        self.contentOffset.y + self.contentInset.top,
+        self.bounds.size.width - self.contentInset.right,
+        self.bounds.size.height - self.contentInset.bottom
+    };
     
     _backgroundView.frame = visibleBounds;
     
