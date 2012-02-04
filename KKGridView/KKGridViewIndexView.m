@@ -99,7 +99,7 @@ static UIFont *font = nil;
         maxWidth + 2*KKGridViewIndexViewPadding + 2*KKGridViewIndexViewMargin,
         self.frame.size.height
     };
-        
+    
     self.frame = (CGRect){self.frame.origin, size};
     [self setNeedsDisplay];
 }
@@ -112,7 +112,7 @@ static UIFont *font = nil;
         NSUInteger sections = [_sectionIndexTitles count];
         CGFloat sectionHeight = (self.bounds.size.height - 2*KKGridViewIndexViewMargin)/sections;
         location.y -= KKGridViewIndexViewMargin;
-    
+        
         _lastTrackingSection = floorf(abs(location.y)/sectionHeight);
         
         if (_lastTrackingSection == _sectionIndexTitles.count)

@@ -50,13 +50,13 @@
 
 + (NSArray *) indexPathsWithNSIndexPaths:(NSArray *) indexPaths
 {
-	NSMutableArray *convertedIndexPaths = [NSMutableArray array];
+    NSMutableArray *convertedIndexPaths = [NSMutableArray array];
 
-	for (NSIndexPath *indexPath in indexPaths) {
-		[convertedIndexPaths addObject:[self indexPathWithNSIndexPath:indexPath]];
-	}
+    for (NSIndexPath *indexPath in indexPaths) {
+        [convertedIndexPaths addObject:[self indexPathWithNSIndexPath:indexPath]];
+    }
 
-	return convertedIndexPaths;
+    return convertedIndexPaths;
 }
 
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
@@ -81,9 +81,9 @@
 
 - (BOOL)isEqual:(KKIndexPath *)indexPath
 {
-	if (indexPath == self) {
-		return YES;
-	}
+    if (indexPath == self) {
+        return YES;
+    }
 
     return (indexPath->_index == _index && indexPath->_section == _section);
 }
@@ -97,10 +97,10 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-	KKIndexPath *indexPath = [[[self class] alloc] init];
-	indexPath->_index = _index;
-	indexPath->_section = _section;
-	return indexPath;
+    KKIndexPath *indexPath = [[[self class] alloc] init];
+    indexPath->_index = _index;
+    indexPath->_section = _section;
+    return indexPath;
 }
 
 - (NSString *)description

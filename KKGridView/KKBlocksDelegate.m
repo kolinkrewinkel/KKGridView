@@ -76,30 +76,30 @@
 
 - (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-  if (_didSelectItem)
-    _didSelectItem(gridView,indexPath);
+    if (_didSelectItem)
+        _didSelectItem(gridView,indexPath);
 }
 
 - (void)gridView:(KKGridView *)gridView didDeselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-  if (_didDeselectItem)
-    _didDeselectItem(gridView,indexPath);
+    if (_didDeselectItem)
+        _didDeselectItem(gridView,indexPath);
 }
 
 - (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-  return _willSelectItem ? _willSelectItem(gridView,indexPath) : indexPath;
+    return _willSelectItem ? _willSelectItem(gridView,indexPath) : indexPath;
 }
 
 - (KKIndexPath *)gridView:(KKGridView *)gridView willDeselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-  return _willDeselectItem ? _willDeselectItem(gridView,indexPath) : indexPath;
+    return _willDeselectItem ? _willDeselectItem(gridView,indexPath) : indexPath;
 }
 
 - (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath
 {
-  if (_willDisplayCell)
-    _willDisplayCell(gridView,cell,indexPath);
+    if (_willDisplayCell)
+        _willDisplayCell(gridView,cell,indexPath);
 }
 
 @end

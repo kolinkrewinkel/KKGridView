@@ -57,7 +57,7 @@
 {
     if ((self = [super initWithFrame:frame])) {
         self.reuseIdentifier = reuseIdentifier;
-		
+        
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_backgroundView];
@@ -66,8 +66,8 @@
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
-		
-		_contentView = [[UIView alloc] initWithFrame:self.bounds];
+        
+        _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
         
@@ -149,9 +149,9 @@
     if (_selected != selected) {
         _selected = selected;
         [self setNeedsLayout];
-
-		if (selected && !_selectedBackgroundView.backgroundColor)
-			_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+        
+        if (selected && !_selectedBackgroundView.backgroundColor)
+            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
 }
 
@@ -160,9 +160,9 @@
     if (_highlighted != highlighted) {
         _highlighted = highlighted;
         [self setNeedsLayout];
-
-		if (highlighted && !_selectedBackgroundView.backgroundColor)
-			_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+        
+        if (highlighted && !_selectedBackgroundView.backgroundColor)
+            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
 }
 
@@ -184,14 +184,14 @@
 
 - (void)setSelectedBackgroundView:(UIView *)selectedBackgroundView
 {
-	if (_selectedBackgroundView == selectedBackgroundView)
-		return;
-	
-	_ignoreUserContentViewBackground = !!_selectedBackgroundView; // if we have a custom background view, we don't set the color.
-	
-	if (selectedBackgroundView)
-		_selectedBackgroundView = selectedBackgroundView;
-	else _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+    if (_selectedBackgroundView == selectedBackgroundView)
+        return;
+    
+    _ignoreUserContentViewBackground = !!_selectedBackgroundView; // if we have a custom background view, we don't set the color.
+    
+    if (selectedBackgroundView)
+        _selectedBackgroundView = selectedBackgroundView;
+    else _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
 }
 
 - (void)_updateSubviewSelectionState
@@ -284,7 +284,7 @@
         [KKGridViewCellAccessoryTypeBadgeNumeric]     = {29.f, 0.f},
         [KKGridViewCellAccessoryTypeCheckmark]        = {14.f, 0.f},
     };
-        
+    
     CGFloat w = self.bounds.size.width;
     CGFloat h = self.bounds.size.height;
     CGFloat s = map[self.accessoryType].sideLength;
@@ -302,7 +302,7 @@
     
     if (normalBadges[self.accessoryType])
     {
-         [_badgeView setBackgroundImage:normalBadges[self.accessoryType] forState:UIControlStateNormal];   
+        [_badgeView setBackgroundImage:normalBadges[self.accessoryType] forState:UIControlStateNormal];   
     }
     
     if (pressedBadges[self.accessoryType])

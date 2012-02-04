@@ -70,7 +70,7 @@
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
 {
-	NSUInteger count = _itemsToUpdate.count;
+    NSUInteger count = _itemsToUpdate.count;
 
     if (count == 0)
         return NO;

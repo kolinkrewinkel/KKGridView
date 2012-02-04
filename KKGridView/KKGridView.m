@@ -321,14 +321,14 @@ struct KKSectionMetrics {
 
 - (void)setBackgroundView:(UIView *)backgroundView
 {
-	if (_backgroundView != backgroundView) {
-		[_backgroundView removeFromSuperview];
-		_backgroundView = backgroundView;
-		_backgroundView.frame = self.bounds;
-
-		[self addSubview:_backgroundView];
-		[self sendSubviewToBack:_backgroundView];
-	}
+    if (_backgroundView != backgroundView) {
+        [_backgroundView removeFromSuperview];
+        _backgroundView = backgroundView;
+        _backgroundView.frame = self.bounds;
+        
+        [self addSubview:_backgroundView];
+        [self sendSubviewToBack:_backgroundView];
+    }
 }
 
 #pragma mark - Root Layout Methods
@@ -354,9 +354,9 @@ struct KKSectionMetrics {
 - (void)_layoutSectionViews
 {
     CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
-
-	_backgroundView.frame = visibleBounds;
-
+    
+    _backgroundView.frame = visibleBounds;
+    
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
     for (KKGridViewHeader *header in _headerViews) {
@@ -414,7 +414,7 @@ struct KKSectionMetrics {
             // move footer view to right below scroller
             [footer.view removeFromSuperview];
             [self _insertSubviewBelowScrollbar:footer.view];
-
+            
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
@@ -451,7 +451,7 @@ struct KKSectionMetrics {
     void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
-
+    
     
     for (KKIndexPath *indexPath in visiblePaths) {
         //      Updates
@@ -500,7 +500,7 @@ struct KKSectionMetrics {
                     [replacementSet addObject:keyPath];
                 }
             }
-    
+            
             [_selectedIndexPaths setSet:replacementSet];
             
             [self reloadContentSize];
@@ -659,7 +659,7 @@ struct KKSectionMetrics {
             break;
     }
     
-	[self addSubview:cell];
+    [self addSubview:cell];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
@@ -1057,7 +1057,7 @@ struct KKSectionMetrics {
                                            animated:NO
                                            position:KKGridViewScrollPositionTop]; 
             }];
-
+            
             [self _insertSubviewBelowScrollbar:_indexView];
         }
     }
@@ -1216,14 +1216,14 @@ struct KKSectionMetrics {
 }
 
 #pragma mark - Subviewinsertion
-             
+
 - (void)_insertSubviewBelowScrollbar:(UIView *)view {
     if (_indexView && view != _indexView)
         [self insertSubview:view belowSubview:_indexView];
     else
         [self insertSubview:view atIndex:self.subviews.count - 1];
 }
-             
+
 #pragma mark - Positioning
 
 - (void)scrollToItemAtIndexPath:(KKIndexPath *)indexPath animated:(BOOL)animated position:(KKGridViewScrollPosition)scrollPosition
@@ -1386,7 +1386,7 @@ struct KKSectionMetrics {
             return;
         }
     }
- 
+    
     if ([self isDecelerating])
         return;
     
