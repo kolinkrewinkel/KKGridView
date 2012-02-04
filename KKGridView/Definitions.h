@@ -15,9 +15,11 @@
 // Macros
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 50000
-#define __kk_weak weak
-#else 
-#define __kk_weak unsafe_unretained
+#define kk_weak weak
+#define __kk_weak __weak
+#else
+#define kk_weak unsafe_unretained
+#define __kk_weak __unsafe_unretained
 #endif
 
 static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)

@@ -1,14 +1,14 @@
 //
-//  KKGridViewViewInfo.m
+//  KKGridViewSectionInfo.m
 //  KKGridView
 //
 //  Created by Jonathan Sterling on 7/31/11.
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-#import <KKGridView/KKGridViewViewInfo.h>
+#import <KKGridView/KKGridViewSectionInfo.h>
 
-@implementation KKGridViewViewInfo
+@implementation KKGridViewSectionInfo
 
 @synthesize view = _view;
 

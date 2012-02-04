@@ -1,12 +1,12 @@
 //
-//  KKGridViewViewInfo.h
+//  KKGridViewSectionInfo.h
 //  KKGridView
 //
 //  Created by Jonathan Sterling on 7/31/11.
 //  Copyright 2011 Giulio Petek, Jonathan Sterling, and Kolin Krewinkel. All rights reserved.
 //
 
-@interface KKGridViewViewInfo : NSObject {
+@interface KKGridViewSectionInfo : NSObject {
     @package
     CGFloat stickPoint;
     NSUInteger section;
@@ -20,8 +20,8 @@
 
 @end
 
-@interface KKGridViewFooter : KKGridViewViewInfo
+@interface KKGridViewFooter : KKGridViewSectionInfo
 @end
 
-@interface KKGridViewHeader : KKGridViewViewInfo
+@interface KKGridViewHeader : KKGridViewSectionInfo
 @end
