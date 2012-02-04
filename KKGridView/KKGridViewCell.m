@@ -18,6 +18,7 @@
 @implementation KKGridViewCell {
     UIButton *_badgeView;
     UIColor *_userContentViewBackgroundColor;
+    BOOL _ignoreUserContentViewBackground;
 }
 
 @synthesize accessoryPosition = _accessoryPosition;
@@ -56,21 +57,19 @@
 {
     if ((self = [super initWithFrame:frame])) {
         self.reuseIdentifier = reuseIdentifier;
-        
-        _contentView = [[UIView alloc] initWithFrame:self.bounds];
-        _contentView.backgroundColor = [UIColor whiteColor];
-        [self addSubview:_contentView];
-        
+		
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_backgroundView];
         
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-        _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
         [self addSubview:_selectedBackgroundView];
-        [self bringSubviewToFront:_contentView];
+		
+		_contentView = [[UIView alloc] initWithFrame:self.bounds];
+        _contentView.backgroundColor = [UIColor whiteColor];
+        [self addSubview:_contentView];
         
         [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
@@ -91,7 +90,6 @@
     
     if (!_selectedBackgroundView) {
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-        _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
     
     _selectedBackgroundView.hidden = YES;
@@ -151,6 +149,9 @@
     if (_selected != selected) {
         _selected = selected;
         [self setNeedsLayout];
+
+		if (selected && !_selectedBackgroundView.backgroundColor)
+			_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
 }
 
@@ -159,6 +160,9 @@
     if (_highlighted != highlighted) {
         _highlighted = highlighted;
         [self setNeedsLayout];
+
+		if (highlighted && !_selectedBackgroundView.backgroundColor)
+			_selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
     }
 }
 
@@ -176,6 +180,18 @@
             [self setNeedsLayout];
         }];
     }
+}
+
+- (void)setSelectedBackgroundView:(UIView *)selectedBackgroundView
+{
+	if (_selectedBackgroundView == selectedBackgroundView)
+		return;
+	
+	_ignoreUserContentViewBackground = !!_selectedBackgroundView; // if we have a custom background view, we don't set the color.
+	
+	if (selectedBackgroundView)
+		_selectedBackgroundView = selectedBackgroundView;
+	else _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
 }
 
 - (void)_updateSubviewSelectionState

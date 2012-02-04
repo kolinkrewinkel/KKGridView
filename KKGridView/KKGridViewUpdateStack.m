@@ -70,11 +70,14 @@
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
 {
-    if (_itemsToUpdate.count == 0)
+	NSUInteger count = _itemsToUpdate.count;
+
+    if (count == 0)
         return NO;
     
-    for (KKGridViewUpdate *update in _itemsToUpdate) {
-        if ([update.indexPath isEqual:indexPath] && !update.animating) {
+    for (NSUInteger i = 0; i < count; i++) {
+        KKGridViewUpdate *update = [_itemsToUpdate objectAtIndex:i];
+        if (!update.animating && [update.indexPath isEqual:indexPath]) {
             return YES;
         }
     }

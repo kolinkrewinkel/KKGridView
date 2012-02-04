@@ -48,6 +48,17 @@
     return NSOrderedSame;
 }
 
++ (NSArray *) indexPathsWithNSIndexPaths:(NSArray *) indexPaths
+{
+	NSMutableArray *convertedIndexPaths = [NSMutableArray array];
+
+	for (NSIndexPath *indexPath in indexPaths) {
+		[convertedIndexPaths addObject:[self indexPathWithNSIndexPath:indexPath]];
+	}
+
+	return convertedIndexPaths;
+}
+
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section
 {
     return [[self alloc] initWithIndex:index section:section];
@@ -70,7 +81,11 @@
 
 - (BOOL)isEqual:(KKIndexPath *)indexPath
 {
-    return indexPath.index == self.index && indexPath.section == self.section;
+	if (indexPath == self) {
+		return YES;
+	}
+
+    return (indexPath->_index == _index && indexPath->_section == _section);
 }
 
 - (NSUInteger)hash
@@ -82,7 +97,10 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] alloc] initWithIndex:_index section:_section];
+	KKIndexPath *indexPath = [[[self class] alloc] init];
+	indexPath->_index = _index;
+	indexPath->_section = _section;
+	return indexPath;
 }
 
 - (NSString *)description
@@ -94,7 +112,7 @@
 #pragma mark - KKIndexPath to NSIndexPath
 
 - (NSIndexPath *)NSIndexPath {
-    return [NSIndexPath indexPathForRow:self.index inSection:self.section];
+    return [NSIndexPath indexPathForRow:_index inSection:_section];
 }
 
 @end

@@ -319,6 +319,18 @@ struct KKSectionMetrics {
     }
 }
 
+- (void)setBackgroundView:(UIView *)backgroundView
+{
+	if (_backgroundView != backgroundView) {
+		[_backgroundView removeFromSuperview];
+		_backgroundView = backgroundView;
+		_backgroundView.frame = self.bounds;
+
+		[self addSubview:_backgroundView];
+		[self sendSubviewToBack:_backgroundView];
+	}
+}
+
 #pragma mark - Root Layout Methods
 
 - (void)layoutSubviews
@@ -342,6 +354,9 @@ struct KKSectionMetrics {
 - (void)_layoutSectionViews
 {
     CGRect visibleBounds = CGRectMake(self.contentOffset.x + self.contentInset.left, self.contentOffset.y + self.contentInset.top, self.bounds.size.width - self.contentInset.right, self.bounds.size.height - self.contentInset.bottom);
+
+	_backgroundView.frame = visibleBounds;
+
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
     for (KKGridViewHeader *header in _headerViews) {
@@ -403,6 +418,7 @@ struct KKSectionMetrics {
         } else {
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
+            [self insertSubview:footer.view aboveSubview:_backgroundView];
             [self sendSubviewToBack:footer.view];
         }
         
@@ -643,8 +659,7 @@ struct KKSectionMetrics {
             break;
     }
     
-    [self addSubview:cell];
-    [self sendSubviewToBack:cell];
+	[self addSubview:cell];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
@@ -709,7 +724,7 @@ struct KKSectionMetrics {
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect
 {
     NSArray *visiblePaths = [self visibleIndexPaths];
-    NSMutableArray *indexes = [[NSMutableArray alloc] init];
+    NSMutableArray *indexes = [[NSMutableArray alloc] initWithCapacity:12];
     
     for (KKIndexPath *indexPath in visiblePaths) {
         CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
@@ -773,7 +788,7 @@ struct KKSectionMetrics {
 - (NSArray *)visibleIndexPaths
 {
     const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
-    NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+    NSMutableArray *indexPaths = [[NSMutableArray alloc] initWithCapacity:12];
     
     KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
     
