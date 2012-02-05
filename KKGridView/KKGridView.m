@@ -1073,6 +1073,8 @@ struct KKSectionMetrics {
 
 - (void)reloadData
 {
+    NSAssert([NSThread isMainThread],@"-[KKGridView reloadData] must be sent from the main thread.");
+    
     [self _commonReload];
     // cells are saved in _reusableCells container to re-use them later on
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
@@ -1082,6 +1084,7 @@ struct KKSectionMetrics {
     }
     
     [_visibleCells removeAllObjects];
+    [self setNeedsLayout];
 }
 
 - (void)_softReload
