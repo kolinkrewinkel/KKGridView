@@ -20,8 +20,5 @@
 
 @end
 
-@interface KKGridViewFooter : KKGridViewSectionInfo
-@end
-
-@interface KKGridViewHeader : KKGridViewSectionInfo
-@end
+@compatibility_alias KKGridViewFooter KKGridViewSectionInfo;
+@compatibility_alias KKGridViewHeader KKGridViewSectionInfo;
