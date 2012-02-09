@@ -791,7 +791,7 @@ struct KKSectionMetrics {
     point.y += (row * (_cellSize.height + _cellPadding.height));
     point.x += (column * (_cellSize.width + _cellPadding.width));
     
-    return (CGRect){point, _cellSize};
+    return CGRectIntegral((CGRect){point, _cellSize});
 }
 
 - (KKGridViewCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier 
