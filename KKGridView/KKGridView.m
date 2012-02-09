@@ -1057,6 +1057,10 @@ struct KKSectionMetrics {
                 previouslyCheckedRow = row;
                 
                 UIView *view = [_dataSource gridView:self viewForRow:row inSection:section];
+				if (!view) {
+					continue;
+				}
+                
                 KKGridViewRowBackground *rowBackground = [[KKGridViewRowBackground alloc] initWithView:view];
                 [_rowViews addObject:rowBackground];
                 
