@@ -1010,7 +1010,7 @@ struct KKSectionMetrics {
 {
     [self reloadContentSize];
     
-    void (^clearSectionViews)(NSMutableArray *) = ^(NSMutableArray *views) {
+    void (^clearViewsInArray)(NSMutableArray *) = ^(NSMutableArray *views) {
         for (id view in [views valueForKey:@"view"]) {
             if (view != [NSNull null])
                 [view removeFromSuperview];
@@ -1020,7 +1020,7 @@ struct KKSectionMetrics {
     };
     
     if (_dataSourceRespondsTo.viewForHeader || _dataSourceRespondsTo.titleForHeader) {
-        clearSectionViews(_headerViews);
+        clearViewsInArray(_headerViews);
         if (!_headerViews)
         {
             _headerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
@@ -1039,7 +1039,7 @@ struct KKSectionMetrics {
     }
     
     if (_dataSourceRespondsTo.viewForRow) {
-        clearSectionViews(_rowViews);
+        clearViewsInArray(_rowViews);
         if (!_rowViews)
         {
             _rowViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
@@ -1076,7 +1076,7 @@ struct KKSectionMetrics {
     }
     
     if (_dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter) {
-        clearSectionViews(_footerViews);
+        clearViewsInArray(_footerViews);
         if (!_footerViews)
         {
             _footerViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
