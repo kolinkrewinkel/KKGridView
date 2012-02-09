@@ -19,6 +19,7 @@
 struct KKSectionMetrics {
     CGFloat footerHeight;
     CGFloat headerHeight;
+    CGFloat rowHeight;
     CGFloat sectionHeight;
     NSUInteger itemCount;
 };
@@ -26,6 +27,7 @@ struct KKSectionMetrics {
 @interface KKGridView () <UIGestureRecognizerDelegate,UIScrollViewDelegate> {
     // View-wrapper containers
     NSMutableArray *_footerViews;
+    NSMutableArray *_rowViews;
     NSMutableArray *_headerViews;
     
     // Metrics
@@ -59,6 +61,7 @@ struct KKSectionMetrics {
         unsigned int heightForFooter:1;
         unsigned int viewForHeader:1;
         unsigned int viewForFooter:1;
+        unsigned int viewForRow:1;
         unsigned int sectionIndexTitles:1;
         unsigned int sectionForSectionIndexTitle:1;
     } _dataSourceRespondsTo;
@@ -226,6 +229,7 @@ struct KKSectionMetrics {
         _dataSourceRespondsTo.heightForFooter = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
         _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
         _dataSourceRespondsTo.viewForFooter = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
+        _dataSourceRespondsTo.viewForRow = [_dataSource respondsToSelector:@selector(gridView:viewForRow:inSection:)];
         _dataSourceRespondsTo.sectionIndexTitles = [_dataSource respondsToSelector:@selector(sectionIndexTitlesForGridView:)];
         _dataSourceRespondsTo.sectionForSectionIndexTitle = [_dataSource respondsToSelector:@selector(gridView:sectionForSectionIndexTitle:atIndex:)];
         [self reloadData];
@@ -641,6 +645,20 @@ struct KKSectionMetrics {
     return height;
 }
 
+- (CGFloat)_sectionHeightsCombinedUpToRow:(NSUInteger)row inSection:(NSUInteger)section
+{
+    CGFloat height = 0.f;
+    for (NSUInteger index = 0; index < section && index < _metrics.count; index++) {
+        height += _metrics.sections[index].sectionHeight;
+    }
+    
+    for (NSUInteger index = 0; index < row; index++) {
+        height += _metrics.sections[section].rowHeight;
+    }
+    return height;
+}
+
+
 #pragma mark - Cell Management
 
 - (void)_displayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath withAnimation:(KKGridViewAnimation)animation
@@ -665,9 +683,9 @@ struct KKSectionMetrics {
     }
     
     if (_backgroundView)
-        [self insertSubview:cell aboveSubview:_backgroundView];
+        [self insertSubview:cell atIndex:(_rowViews.count + 1)];
     else
-        [self insertSubview:cell atIndex:0];
+        [self insertSubview:cell atIndex:_rowViews.count];
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
@@ -767,7 +785,7 @@ struct KKSectionMetrics {
         point.y += _metrics.sections[indexPath.section].headerHeight;
     }
     
-    NSInteger row = floor(indexPath.index / _numberOfColumns);
+    NSInteger row = indexPath.index / _numberOfColumns;
     NSInteger column = indexPath.index - (row * _numberOfColumns);
     
     point.y += (row * (_cellSize.height + _cellPadding.height));
@@ -1020,6 +1038,39 @@ struct KKSectionMetrics {
         }
     }
     
+    if (_dataSourceRespondsTo.viewForRow) {
+        clearSectionViews(_rowViews);
+        if (!_rowViews)
+        {
+            _rowViews = [[NSMutableArray alloc] initWithCapacity:_metrics.count];
+        }
+        
+        for (NSUInteger section = 0; section < _metrics.count; section++) {
+            NSInteger previouslyCheckedRow = -1;
+
+            for (NSUInteger index = 0; index < _metrics.sections[section].itemCount; index++) {
+                NSInteger row = index / _numberOfColumns;
+                
+                if (row <= previouslyCheckedRow)
+                    continue;
+                
+                previouslyCheckedRow = row;
+                
+                UIView *view = [_dataSource gridView:self viewForRow:row inSection:section];
+                KKGridViewRowBackground *rowBackground = [[KKGridViewRowBackground alloc] initWithView:view];
+                [_rowViews addObject:rowBackground];
+                
+                CGFloat rowHeight = _cellSize.height + _cellPadding.height;
+                CGFloat position = [self _sectionHeightsCombinedUpToRow:row inSection:section] + _gridHeaderView.frame.size.height;
+                [self _configureSectionView:rowBackground inSection:section withStickPoint:position height:rowHeight];
+
+                if (_backgroundView)
+                    [self insertSubview:rowBackground.view aboveSubview:_backgroundView];
+                else [self insertSubview:rowBackground.view atIndex:0];
+            }
+        }
+    }
+    
     if (_dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter) {
         clearSectionViews(_footerViews);
         if (!_footerViews)
@@ -1113,12 +1164,12 @@ struct KKSectionMetrics {
         CGFloat heightForSection = 0.f;
         
         struct KKSectionMetrics sectionMetrics = _metrics.sections[i];
+        _metrics.sections[i].rowHeight = (_cellSize.height + _cellPadding.height);
         
         heightForSection += sectionMetrics.headerHeight + sectionMetrics.footerHeight;
         
         NSUInteger numberOfRows = ceilf(sectionMetrics.itemCount / (float)_numberOfColumns);
-        
-        heightForSection += numberOfRows * (_cellSize.height + _cellPadding.height);
+        heightForSection += numberOfRows * _metrics.sections[i].rowHeight;
         heightForSection += (numberOfRows? _cellPadding.height:0.f);
         
         _metrics.sections[i].sectionHeight = heightForSection;

@@ -22,3 +22,4 @@
 
 @compatibility_alias KKGridViewFooter KKGridViewSectionInfo;
 @compatibility_alias KKGridViewHeader KKGridViewSectionInfo;
+@compatibility_alias KKGridViewRowBackground KKGridViewSectionInfo;

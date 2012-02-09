@@ -102,6 +102,7 @@ typedef enum {
 - (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
 - (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForRow:(NSUInteger)row inSection:(NSUInteger)section; // a row is compromised of however many cells fit in a column of a given section
 - (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView;
 - (NSInteger)gridView:(KKGridView *)gridView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index;
 @end
