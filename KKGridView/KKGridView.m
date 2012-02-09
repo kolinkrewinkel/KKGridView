@@ -186,7 +186,7 @@ struct KKSectionMetrics {
     self.delegate = self;
     
     _selectionRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
-    _selectionRecognizer.minimumPressDuration = 0.01;
+    _selectionRecognizer.minimumPressDuration = 0.015;
     _selectionRecognizer.delegate = self;
     _selectionRecognizer.cancelsTouchesInView = NO;
     [self addGestureRecognizer:_selectionRecognizer];
