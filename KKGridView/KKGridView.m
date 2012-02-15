@@ -816,7 +816,7 @@ struct KKSectionMetrics {
     const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
     NSMutableArray *indexPaths = [[NSMutableArray alloc] initWithCapacity:12];
     
-    KKIndexPath *indexPath = [KKIndexPath indexPathForIndex:0 inSection:0];
+    KKIndexPath *indexPath = [KKIndexPath zeroIndexPath];
     
     for (NSUInteger section = 0; section < _metrics.count; section++) {
         indexPath.section = section;

@@ -115,4 +115,13 @@
     return [NSIndexPath indexPathForRow:_index inSection:_section];
 }
 
+#pragma mark - Convenience
+
++ (KKIndexPath *) zeroIndexPath {
+	static KKIndexPath *indexPath = nil;
+	if (!indexPath)
+		indexPath = [[KKIndexPath alloc] initWithIndex:0 section:0];
+	return indexPath;
+}
+
 @end
