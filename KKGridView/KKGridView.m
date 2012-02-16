@@ -1403,7 +1403,7 @@ struct KKSectionMetrics {
     
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:locationInSelf];
     
-    if (_delegateRespondsTo.willSelectItem)
+    if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem)
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     
     if (!indexPath || indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
