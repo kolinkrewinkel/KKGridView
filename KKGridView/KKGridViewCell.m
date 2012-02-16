@@ -56,17 +56,12 @@
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier
 {
     if ((self = [super initWithFrame:frame])) {
-        self.reuseIdentifier = reuseIdentifier;
+        _reuseIdentifier = reuseIdentifier;
         
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_backgroundView];
-        
-        _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-        _selectedBackgroundView.hidden = YES;
-        _selectedBackgroundView.alpha = 0.f;
-        [self addSubview:_selectedBackgroundView];
-        
+                
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
@@ -88,18 +83,8 @@
         _backgroundView.backgroundColor = [UIColor whiteColor];
     }
     
-    if (!_selectedBackgroundView) {
-        _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
-    }
-    
-    _selectedBackgroundView.hidden = YES;
-    _selectedBackgroundView.alpha = 0.f;
-    
-    [self addSubview:_contentView];
     [self addSubview:_backgroundView];
-    [self addSubview:_selectedBackgroundView];
-    
-    [self bringSubviewToFront:_contentView];
+    [self addSubview:_contentView];
     
     [_contentView addObserver:self 
                    forKeyPath:@"backgroundColor" 
@@ -119,6 +104,19 @@
     if (object == _contentView && !_selected && !_highlighted) {
         _userContentViewBackgroundColor = [change objectForKey:@"new"];
     }
+}
+
+#pragma mark - Getters
+
+- (UIView *)selectedBackgroundView
+{
+	if (!_selectedBackgroundView)
+		_selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+
+    _selectedBackgroundView.hidden = YES;
+    _selectedBackgroundView.alpha = 0.f;
+
+	return _selectedBackgroundView;
 }
 
 #pragma mark - Setters
@@ -144,14 +142,33 @@
         [UIView commitAnimations];
 }
 
+- (void)setPressedState:(BOOL)pressedState
+{
+    if (pressedState) {
+        if (!_selectedBackgroundView)
+            _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
+
+        if (!_selectedBackgroundView.superview)
+            [self addSubview:_selectedBackgroundView];
+
+        if (!_selectedBackgroundView.backgroundColor)
+            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+
+        _selectedBackgroundView.hidden = NO;
+        _selectedBackgroundView.alpha = 1.f;
+    } else {
+        _selectedBackgroundView.hidden = YES;
+        _selectedBackgroundView.alpha = 0.f;
+    }
+    
+    [self setNeedsLayout];
+}
+
 - (void)setSelected:(BOOL)selected
 {
     if (_selected != selected) {
         _selected = selected;
-        [self setNeedsLayout];
-        
-        if (selected && !_selectedBackgroundView.backgroundColor)
-            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+        [self setPressedState:selected];
     }
 }
 
@@ -159,13 +176,9 @@
 {
     if (_highlighted != highlighted) {
         _highlighted = highlighted;
-        [self setNeedsLayout];
-        
-        if (highlighted && !_selectedBackgroundView.backgroundColor)
-            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+        [self setPressedState:highlighted];
     }
 }
-
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
@@ -174,7 +187,7 @@
         UIViewAnimationOptions opts = UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionAllowAnimatedContent;
         
         [UIView animateWithDuration:duration delay:0 options:opts animations:^{
-            _selected = selected;
+            self.selected = selected; // use property access to go through the setter
             _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
         } completion:^(BOOL finished) {
             [self setNeedsLayout];
@@ -209,25 +222,32 @@
 {
     [self _updateSubviewSelectionState];
     
-    _contentView.frame = self.bounds;
-    _backgroundView.frame = self.bounds;
-    _selectedBackgroundView.frame = self.bounds;
+	CGRect bounds = self.bounds;
+    _contentView.frame = bounds;
+
+	if (!_backgroundView.hidden)
+		_backgroundView.frame = bounds;
+	else _selectedBackgroundView.frame = bounds;
     
-    [self sendSubviewToBack:_selectedBackgroundView];
+	if (_selectedBackgroundView)
+		[self sendSubviewToBack:_selectedBackgroundView];
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
-    
     
     if (_selected || _highlighted) {
         _contentView.backgroundColor = [UIColor clearColor];
         _contentView.opaque = NO;
+
+        _backgroundView.hidden = YES;
+        _selectedBackgroundView.hidden = NO;
+        _selectedBackgroundView.alpha = 1.f;
     } else {
         _contentView.backgroundColor = _userContentViewBackgroundColor ? _userContentViewBackgroundColor : [UIColor whiteColor];
+        
+        _backgroundView.hidden = NO;
+        _selectedBackgroundView.hidden = YES;
+        _selectedBackgroundView.alpha = 0.f;
     }
-    
-    _selectedBackgroundView.hidden = !_selected && !_highlighted;
-    _backgroundView.hidden = _selected || _highlighted;
-    _selectedBackgroundView.alpha = (_selected || _highlighted) ? 1.f : 0.f;
     
     [self _layoutAccessories];
 }
@@ -339,7 +359,7 @@
 
 - (void)prepareForReuse
 {
-    
+    self.selected = NO;
 }
 
 @end
