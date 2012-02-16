@@ -1406,7 +1406,7 @@ struct KKSectionMetrics {
     if (_delegateRespondsTo.willSelectItem)
         indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     
-    if (indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
+    if (!indexPath || indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
         [self _cancelHighlighting];
         return;
     }
