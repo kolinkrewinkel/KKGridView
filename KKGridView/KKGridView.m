@@ -595,7 +595,8 @@ struct KKSectionMetrics {
         
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
         cell.frame = (CGRect){.size = _cellSize};
-        [cell removeFromSuperview];
+        cell.hidden = YES;
+        cell.alpha = 0.;
         
         [_visibleCells removeObjectForKey:pair.path];
     }
@@ -682,10 +683,15 @@ struct KKSectionMetrics {
             break;
     }
     
-    if (_backgroundView)
-        [self insertSubview:cell atIndex:(_rowViews.count + 1)];
-    else
-        [self insertSubview:cell atIndex:_rowViews.count];
+    if (cell.superview) {
+        cell.hidden = NO;
+        cell.alpha = 1.;
+    } else {
+        if (_backgroundView)
+            [self insertSubview:cell atIndex:(_rowViews.count + 1)];
+        else
+            [self insertSubview:cell atIndex:_rowViews.count];
+    }
     
     switch (animation) {
         case KKGridViewAnimationExplode: {
@@ -856,7 +862,7 @@ struct KKSectionMetrics {
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
                     cell.alpha = 0.f;
                 } completion:^(BOOL finished) {
-                    [cell removeFromSuperview];
+                    cell.hidden = YES;
                 }];
             }
             if (!indexPathIsLessOrEqual || !lastPathIsGreatorOrEqual) {
@@ -995,7 +1001,8 @@ struct KKSectionMetrics {
     for (KKIndexPath *path in indexPaths) {
         KKGridViewCell *cell = [_visibleCells objectForKey:path];
         if (cell) {
-            [cell removeFromSuperview];
+            cell.hidden = YES;
+            cell.alpha = 0.;
             [_visibleCells removeObjectForKey:path];
         }
         
@@ -1057,9 +1064,9 @@ struct KKSectionMetrics {
                 previouslyCheckedRow = row;
                 
                 UIView *view = [_dataSource gridView:self viewForRow:row inSection:section];
-				if (!view) {
-					continue;
-				}
+                if (!view) {
+                    continue;
+                }
                 
                 KKGridViewRowBackground *rowBackground = [[KKGridViewRowBackground alloc] initWithView:view];
                 [_rowViews addObject:rowBackground];
@@ -1135,7 +1142,8 @@ struct KKSectionMetrics {
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
         NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
         [set addObject:cell];
-        [cell removeFromSuperview];
+        cell.hidden = YES;
+        cell.alpha = 0.;
     }
     
     [_visibleCells removeAllObjects];
