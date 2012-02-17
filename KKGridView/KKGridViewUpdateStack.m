@@ -12,6 +12,7 @@
 @interface KKGridViewUpdateStack ()
 
 - (void)_sortItems;
+- (BOOL)addUpdate:(KKGridViewUpdate *)update sortingAfterAdd:(BOOL) sortAfterAdd;
 
 @end
 
@@ -31,11 +32,17 @@
 - (void)addUpdates:(NSArray *)updates
 {
     for (KKGridViewUpdate *update in updates) {
-        [self addUpdate:update];
+        [self addUpdate:update sortingAfterAdd:NO];
     }
+    [self _sortItems];
 }
 
 - (BOOL)addUpdate:(KKGridViewUpdate *)update
+{
+    return [self addUpdate:update sortingAfterAdd:YES];
+}
+
+- (BOOL)addUpdate:(KKGridViewUpdate *)update sortingAfterAdd:(BOOL) sortAfterAdd
 {
     if (![_itemsToUpdate containsObject:update]) {
         [_itemsToUpdate addObject:update];
