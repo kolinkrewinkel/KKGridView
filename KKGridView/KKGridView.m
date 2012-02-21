@@ -288,16 +288,22 @@ struct KKSectionMetrics {
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
-    _cellPadding = cellPadding;
-    if (_cellSize.width != 0.f && _cellSize.height != 0.f) {
+    if (!CGSizeEqualToSize(_cellPadding, cellPadding)) {
+        _cellPadding = cellPadding;
+        
+        [self _layoutModelCells];
+        
         [self reloadData];
     }
 }
 
 - (void)setCellSize:(CGSize)cellSize
 {
-    _cellSize = cellSize;
-    if (_cellPadding.width != 0.f && _cellPadding.height != 0.f) {
+    if (!CGSizeEqualToSize(_cellSize, cellSize)) {
+        _cellSize = cellSize;
+        
+        [self _layoutModelCells];
+        
         [self reloadData];
     }
 }
@@ -842,7 +848,7 @@ struct KKSectionMetrics {
     return indexPaths;
 }
 
-#pragma mark - Model Modifiers
+#pragma mark - Public Setters
 
 - (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount negative:(BOOL)isNegative
 {
