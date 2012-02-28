@@ -321,7 +321,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -343,6 +343,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
