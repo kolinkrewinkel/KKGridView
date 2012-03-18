@@ -65,7 +65,7 @@
 
 - (void)removeUpdate:(KKGridViewUpdate *)update
 {
-    CFDictionaryRemoveValue(_availableUpdates, (__bridge_retained CFTypeRef)update.indexPath);
+    CFDictionaryRemoveValue(_availableUpdates, objc_unretainedPointer(update.indexPath));
     [_itemsToUpdate removeObject:update];
 }
 
