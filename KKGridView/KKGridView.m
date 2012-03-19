@@ -183,8 +183,6 @@ struct KKSectionMetrics {
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
     
-    self.delegate = self;
-    
     _selectionRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(_handleSelection:)];
     _selectionRecognizer.minimumPressDuration = 0.015;
     _selectionRecognizer.delegate = self;
@@ -198,12 +196,18 @@ struct KKSectionMetrics {
     self.cellPadding = CGSizeMake(4.f, 4.f);
     self.allowsMultipleSelection = NO;
     self.backgroundColor = [UIColor whiteColor];
+
+
+    [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
+    [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 #pragma mark - Cleanup
 
 - (void)dealloc
 {
+    [self removeObserver:self forKeyPath:@"contentOffset"];
+    [self removeObserver:self forKeyPath:@"tracking"];
     [self removeGestureRecognizer:_selectionRecognizer];
     [self _cleanupMetrics];
 }
@@ -1499,19 +1503,20 @@ struct KKSectionMetrics {
     return (gestureRecognizer == _selectionRecognizer || otherGestureRecognizer == _selectionRecognizer);
 }
 
+#pragma mark - KVO
 
-#pragma mark - UIScrollViewDelegate
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    [self _cancelHighlighting];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    _indexView.frame = (CGRect) {
-        {_indexView.frame.origin.x, scrollView.contentOffset.y},
-        _indexView.frame.size
-    };
+    if ([keyPath isEqualToString:@"contentOffset"]) {
+        _indexView.frame = (CGRect) {
+            {_indexView.frame.origin.x, self.contentOffset.y},
+            _indexView.frame.size
+        };
+    } else if ([keyPath isEqualToString:@"tracking"]) {
+        if (self.tracking && !self.dragging) {
+            [self _cancelHighlighting];
+        }
+    }
 }
 
 #pragma mark - Animation Helpers
