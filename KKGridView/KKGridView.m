@@ -1512,6 +1512,7 @@ struct KKSectionMetrics {
             {_indexView.frame.origin.x, self.contentOffset.y},
             _indexView.frame.size
         };
+        [self _cancelHighlighting];
     } else if ([keyPath isEqualToString:@"tracking"]) {
         if (self.tracking && !self.dragging) {
             [self _cancelHighlighting];
