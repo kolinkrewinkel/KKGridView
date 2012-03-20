@@ -604,7 +604,8 @@ struct KKSectionMetrics {
         KKGridViewCell *cell = pair.cell;
         
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-        cell.frame = (CGRect){.size = _cellSize};
+		if (!CGSizeEqualToSize(_cellSize, cell.frame.size))
+			cell.frame = (CGRect){.size = _cellSize};
         cell.hidden = YES;
         cell.alpha = 0.;
         
