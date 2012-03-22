@@ -271,9 +271,9 @@
             break;
         default: {
             if (!_badgeView) _badgeView = [[UIButton alloc] init];
-            if (![_badgeView superview]) [_contentView addSubview:_badgeView];
+            if (![_badgeView superview]) [self addSubview:_badgeView];
             
-            [_contentView bringSubviewToFront:_badgeView];
+            [self bringSubviewToFront:_badgeView];
             break;   
         }
     }
