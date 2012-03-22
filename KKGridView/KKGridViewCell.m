@@ -65,11 +65,12 @@
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
-        [self addSubview:_selectedBackgroundView];
+        
         
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
+        [self addSubview:_selectedBackgroundView];
         
         [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
@@ -213,9 +214,9 @@
     _backgroundView.frame = self.bounds;
     _selectedBackgroundView.frame = self.bounds;
     
-    [self sendSubviewToBack:_selectedBackgroundView];
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
+    [self bringSubviewToFront:_selectedBackgroundView];
     
     
     if (_selected || _highlighted) {
