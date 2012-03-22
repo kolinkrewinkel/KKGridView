@@ -31,6 +31,7 @@
 @synthesize selected = _selected;
 @synthesize highlighted = _highlighted;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
+@synthesize highlightAlpha = _highlightAlpha;
 
 
 #pragma mark - Class Methods
@@ -65,6 +66,7 @@
         _selectedBackgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _selectedBackgroundView.hidden = YES;
         _selectedBackgroundView.alpha = 0.f;
+        _highlightAlpha = 1.0f;
         
         
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
@@ -176,7 +178,7 @@
         
         [UIView animateWithDuration:duration delay:0 options:opts animations:^{
             _selected = selected;
-            _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
+            _selectedBackgroundView.alpha = selected ? self.highlightAlpha : 0.f;
         } completion:^(BOOL finished) {
             [self setNeedsLayout];
         }];
@@ -228,7 +230,7 @@
     
     _selectedBackgroundView.hidden = !_selected && !_highlighted;
     _backgroundView.hidden = _selected || _highlighted;
-    _selectedBackgroundView.alpha = (_selected || _highlighted) ? 1.f : 0.f;
+    _selectedBackgroundView.alpha = (_selected || _highlighted) ? self.highlightAlpha : 0.f;
     
     [self _layoutAccessories];
 }
