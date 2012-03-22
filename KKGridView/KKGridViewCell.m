@@ -73,6 +73,7 @@
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
         [self addSubview:_selectedBackgroundView];
+        [self bringSubviewToFront:_badgeView];
         
         [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
@@ -103,6 +104,7 @@
     [self addSubview:_selectedBackgroundView];
     
     [self bringSubviewToFront:_contentView];
+    [self bringSubviewToFront:_badgeView];
     
     [_contentView addObserver:self 
                    forKeyPath:@"backgroundColor" 
@@ -219,6 +221,7 @@
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
     [self bringSubviewToFront:_selectedBackgroundView];
+    [self bringSubviewToFront:_badgeView];
     
     
     if (_selected || _highlighted) {
