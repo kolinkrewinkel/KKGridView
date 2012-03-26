@@ -1397,6 +1397,11 @@ struct KKSectionMetrics {
     }
 }
 
+- (int)getSelectedItemCount
+{
+    return _selectedIndexPaths.count;
+}
+
 
 #pragma mark - Touch Handling
 
