@@ -83,6 +83,7 @@ typedef enum {
 
 - (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
 - (void)deselectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
+- (void)deselectAll: (BOOL)animated;
 
 - (KKIndexPath *)indexPathForSelectedCell;
 - (NSArray *)indexPathsForSelectedCells;
