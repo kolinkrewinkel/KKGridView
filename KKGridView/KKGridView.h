@@ -44,7 +44,6 @@ typedef enum {
 @property (nonatomic, strong) UIView *gridHeaderView;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
-@property (atomic, strong) NSMutableSet *selectedIndexPaths;
 
 #pragma mark - Data Source and Delegate
 @property (nonatomic, kk_weak) IBOutlet id <KKGridViewDataSource> dataSource;
