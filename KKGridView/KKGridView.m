@@ -39,7 +39,6 @@ struct KKSectionMetrics {
     NSMutableDictionary *_visibleCells;
     
     // Selection & Highlighting
-    NSMutableSet *_selectedIndexPaths;
     UILongPressGestureRecognizer *_selectionRecognizer;
     
     KKIndexPath *_highlightedIndexPath;
@@ -172,7 +171,7 @@ struct KKSectionMetrics {
 {
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
-    _selectedIndexPaths = [[NSMutableSet alloc] init];
+    self.selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
     
@@ -274,7 +273,7 @@ struct KKSectionMetrics {
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
-        [_selectedIndexPaths removeAllObjects];
+        [self.selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
             [self _layoutGridView];
         } completion:nil];
@@ -490,9 +489,9 @@ struct KKSectionMetrics {
             }
             
             
-            NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
+            NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[self.selectedIndexPaths count]];
             
-            for (KKIndexPath *keyPath in _selectedIndexPaths) {
+            for (KKIndexPath *keyPath in self.selectedIndexPaths) {
                 BOOL conditionMap[KKGridViewUpdateTypeSectionReload+1] = {
                     [KKGridViewUpdateTypeItemInsert] = keyPath.index >= indexPath.index,
                     [KKGridViewUpdateTypeItemDelete] = indexPath.index < keyPath.index && keyPath.index != 0
@@ -506,7 +505,7 @@ struct KKSectionMetrics {
                 }
             }
             
-            [_selectedIndexPaths setSet:replacementSet];
+            [self.selectedIndexPaths setSet:replacementSet];
             
             [self reloadContentSize];
             
@@ -515,7 +514,7 @@ struct KKSectionMetrics {
                 [difference removeObjectsInArray:visiblePaths];
                 for (KKIndexPath *keyPath in difference) {
                     KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
-                    cell.selected = [_selectedIndexPaths containsObject:keyPath];
+                    cell.selected = [self.selectedIndexPaths containsObject:keyPath];
                     
                     [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
                         updateCellFrame(cell,indexPath);
@@ -535,7 +534,7 @@ struct KKSectionMetrics {
             }];
         }
         
-        cell.selected = [_selectedIndexPaths containsObject:indexPath];
+        cell.selected = [self.selectedIndexPaths containsObject:indexPath];
         
         index++;
     }
@@ -890,9 +889,9 @@ struct KKSectionMetrics {
                                             negative:KKGridViewUpdateIsNegative[update.type]];
                 }
                 
-                NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
+                NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[self.selectedIndexPaths count]];
                 
-                for (KKIndexPath *keyPath in _selectedIndexPaths) {
+                for (KKIndexPath *keyPath in self.selectedIndexPaths) {
                     if (update.type == KKGridViewUpdateTypeItemInsert) {
                         if (indexPath.section == keyPath.section) {
                             [replacementSet addObject:[KKIndexPath indexPathForIndex:keyPath.index + 1 inSection:keyPath.section]];
@@ -911,7 +910,7 @@ struct KKSectionMetrics {
                     }
                 };
                 
-                [_selectedIndexPaths setSet:replacementSet];
+                [self.selectedIndexPaths setSet:replacementSet];
                 
                 [self reloadContentSize];
                 [_updateStack removeUpdate:update];
@@ -921,7 +920,7 @@ struct KKSectionMetrics {
                     [difference removeObjectsInArray:visiblePaths];
                     for (KKIndexPath *keyPath in difference) {
                         KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
-                        cell.selected = [_selectedIndexPaths containsObject:keyPath];
+                        cell.selected = [self.selectedIndexPaths containsObject:keyPath];
                         
                         [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
                             cell.frame = [self rectForCellAtIndexPath:indexPath];
@@ -1300,14 +1299,14 @@ struct KKSectionMetrics {
 
 - (KKIndexPath*)indexPathForSelectedCell {
     if (!_allowsMultipleSelection) {
-        return [_selectedIndexPaths anyObject];
+        return [self.selectedIndexPaths anyObject];
     } else {
         return nil;
     }
 }
 
 - (NSArray *)indexPathsForSelectedCells {
-    return [_selectedIndexPaths allObjects];
+    return [self.selectedIndexPaths allObjects];
 }
 
 #pragma mark - Internal Selection Methods
@@ -1339,19 +1338,19 @@ struct KKSectionMetrics {
     [self _cancelHighlighting];
     
     if (_allowsMultipleSelection) {
-        if ([_selectedIndexPaths containsObject:indexPath]) {
+        if ([self.selectedIndexPaths containsObject:indexPath]) {
             [self _deselectItemAtIndexPath:indexPath];
             return;
         } else {
-            [_selectedIndexPaths addObject:indexPath];
+            [self.selectedIndexPaths addObject:indexPath];
             cell.selected = YES;
         }
     } else {
-        for (KKIndexPath *path in _selectedIndexPaths) {
+        for (KKIndexPath *path in self.selectedIndexPaths) {
             [self _deselectItemAtIndexPath:path];
         }
         
-        [_selectedIndexPaths addObject:indexPath];
+        [self.selectedIndexPaths addObject:indexPath];
         cell.selected = YES;
     }
     
@@ -1363,7 +1362,7 @@ struct KKSectionMetrics {
 
 - (void)_deselectAll
 {
-    for (KKIndexPath* indexPath in _selectedIndexPaths)
+    for (KKIndexPath* indexPath in self.selectedIndexPaths)
     {
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         cell.selected = NO;
@@ -1374,12 +1373,12 @@ struct KKSectionMetrics {
         }
     }
     
-    [_selectedIndexPaths removeAllObjects];
+    [self.selectedIndexPaths removeAllObjects];
 }
 
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
-    if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem) {
+    if (self.selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem) {
         KKIndexPath *redirectedPath = [_gridDelegate gridView:self willDeselectItemAtIndexPath:indexPath];
         if (redirectedPath != nil && ![redirectedPath isEqual:indexPath]) {
             indexPath = redirectedPath ? redirectedPath : indexPath;
@@ -1387,8 +1386,8 @@ struct KKSectionMetrics {
     }
     
     KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-    if ([_selectedIndexPaths containsObject:indexPath]) {
-        [_selectedIndexPaths removeObject:indexPath];
+    if ([self.selectedIndexPaths containsObject:indexPath]) {
+        [self.selectedIndexPaths removeObject:indexPath];
         cell.selected = NO;
     }
     
@@ -1399,7 +1398,7 @@ struct KKSectionMetrics {
 
 - (int)getSelectedItemCount
 {
-    return _selectedIndexPaths.count;
+    return self.selectedIndexPaths.count;
 }
 
 
