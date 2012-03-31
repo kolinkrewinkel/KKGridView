@@ -1291,6 +1291,13 @@ struct KKSectionMetrics {
     }];
 }
 
+- (void)deselectAll: (BOOL)animated
+{
+    [KKGridView animateIf:animated delay:0.f options:0 block:^{
+        [self _deselectAll];
+    }];
+}
+
 - (KKIndexPath*)indexPathForSelectedCell {
     if (!_allowsMultipleSelection) {
         return [_selectedIndexPaths anyObject];
@@ -1353,6 +1360,23 @@ struct KKSectionMetrics {
     }
 }
 
+
+- (void)_deselectAll
+{
+    for (KKIndexPath* indexPath in _selectedIndexPaths)
+    {
+        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+        cell.selected = NO;
+        
+        if(_delegateRespondsTo.willDeselectItem)
+        {
+            [_gridDelegate gridView:self willDeselectItemAtIndexPath:indexPath];
+        }
+    }
+    
+    [_selectedIndexPaths removeAllObjects];
+}
+
 - (void)_deselectItemAtIndexPath:(KKIndexPath *)indexPath
 {
     if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem) {
@@ -1371,6 +1395,11 @@ struct KKSectionMetrics {
     if (_delegateRespondsTo.didDeselectItem) {
         [_gridDelegate gridView:self didDeselectItemAtIndexPath:indexPath];
     }
+}
+
+- (int)getSelectedItemCount
+{
+    return _selectedIndexPaths.count;
 }
 
 
