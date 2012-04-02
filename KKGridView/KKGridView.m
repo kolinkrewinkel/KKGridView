@@ -117,6 +117,7 @@ struct KKSectionMetrics {
 - (void)_highlightItemAtIndexPath:(KKIndexPath *)indexPath;
 - (void)_cancelHighlighting;
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer;
+- (void)_deselectAll;
 
 // Headers and Footer views
 - (UIView *)_viewForHeaderInSection:(NSUInteger)section;
