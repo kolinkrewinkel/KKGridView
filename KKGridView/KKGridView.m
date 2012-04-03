@@ -1433,12 +1433,14 @@ struct KKSectionMetrics {
     
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:locationInSelf];
     
-    if (_delegateRespondsTo.willSelectItem)
-        indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
-    
     if (indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
         [self _cancelHighlighting];
         return;
+    }
+    
+    else if (_delegateRespondsTo.willSelectItem)
+    {
+        indexPath = [_gridDelegate gridView:self willSelectItemAtIndexPath:indexPath];
     }
     
     if (state == UIGestureRecognizerStateBegan) {
