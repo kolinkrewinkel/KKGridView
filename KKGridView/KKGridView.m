@@ -129,6 +129,9 @@ struct KKSectionMetrics {
 // Custom Subviewinsertion
 - (void)_insertSubviewBelowScrollbar:(UIView *)view;
 
+// Memory
+- (void) _removeUnusedCells;
+
 // Animation Helpers
 + (void)animateIf:(BOOL)animated delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options block:(void(^)())block;
 @end
@@ -201,12 +204,16 @@ struct KKSectionMetrics {
 
     [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 }
 
 #pragma mark - Cleanup
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+
     [self removeObserver:self forKeyPath:@"contentOffset"];
     [self removeObserver:self forKeyPath:@"tracking"];
     [self removeGestureRecognizer:_selectionRecognizer];
@@ -607,8 +614,8 @@ struct KKSectionMetrics {
         KKGridViewCell *cell = pair.cell;
         
         [self _enqueueCell:cell withIdentifier:cell.reuseIdentifier];
-		if (!CGSizeEqualToSize(_cellSize, cell.frame.size))
-			cell.frame = (CGRect){.size = _cellSize};
+        if (!CGSizeEqualToSize(_cellSize, cell.frame.size))
+            cell.frame = (CGRect){.size = _cellSize};
         cell.hidden = YES;
         cell.alpha = 0.;
         
@@ -979,6 +986,7 @@ struct KKSectionMetrics {
     _markedForDisplay = YES;
     [self _layoutGridView];
     [self _performRemainingUpdatesModelOnly];
+    [self _removeUnusedCells];
 }
 
 - (void)moveItemAtIndexPath:(KKIndexPath *)indexPath toIndexPath:(KKIndexPath *)newIndexPath
@@ -1539,6 +1547,22 @@ struct KKSectionMetrics {
             [self _cancelHighlighting];
         }
     }
+}
+
+#pragma mark - Memory
+
+- (void) _removeUnusedCells
+{
+    [_reusableCells enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop) {
+        [object makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    }];
+    
+    [_reusableCells removeAllObjects];
+}
+
+- (void) applicationDidReceiveMemoryWarning:(NSNotification *)notification
+{
+    [self _removeUnusedCells];
 }
 
 #pragma mark - Animation Helpers
