@@ -49,6 +49,16 @@
     return [_indexPath isEqual:update.indexPath] && _sectionUpdate == update.sectionUpdate && _type == update.type && _animation == update.animation;
 }
 
+- (NSInteger)sign
+{
+    static BOOL const KKGridViewUpdateIsNegative[KKGridViewUpdateTypeSectionReload + 1] = {
+        [KKGridViewUpdateTypeItemDelete] = YES,
+        [KKGridViewUpdateTypeSectionDelete] = YES
+    };
+
+    return KKGridViewUpdateIsNegative[self.type] ? -1 : 1;
+}
+
 - (NSUInteger)hash
 {
     return _indexPath.hash * self.animation;

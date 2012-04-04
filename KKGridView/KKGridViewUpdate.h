@@ -19,11 +19,6 @@ typedef enum {
     KKGridViewUpdateTypeSectionReload
 } KKGridViewUpdateType;
 
-static BOOL const KKGridViewUpdateIsNegative[KKGridViewUpdateTypeSectionReload + 1] = {
-    [KKGridViewUpdateTypeItemDelete] = YES,
-    [KKGridViewUpdateTypeSectionDelete] = YES
-};
-
 @interface KKGridViewUpdate : NSObject
 
 @property (nonatomic) KKGridViewAnimation animation;
@@ -33,6 +28,8 @@ static BOOL const KKGridViewUpdateIsNegative[KKGridViewUpdateTypeSectionReload +
 @property (nonatomic) BOOL animating;
 @property (nonatomic) CFTimeInterval timestamp;
 @property (nonatomic, copy) KKIndexPath *destinationPath;
+
+- (NSInteger)sign;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;

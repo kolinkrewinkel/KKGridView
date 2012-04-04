@@ -104,7 +104,7 @@ struct KKSectionMetrics {
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier;
 
 // Model modifiers
-- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount negative:(BOOL)isNegative;
+- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSInteger)amount;
 
 // Internal getters relating to cells
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath;
@@ -475,8 +475,7 @@ struct KKSectionMetrics {
             if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
                 [self _incrementCellsAtIndexPath:indexPath 
                                      toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                        byAmount:1
-                                        negative:KKGridViewUpdateIsNegative[update.type]];
+                                        byAmount:update.sign];
             }
             
             else if (update.type == KKGridViewUpdateTypeItemMove) {
@@ -499,10 +498,8 @@ struct KKSectionMetrics {
                     [KKGridViewUpdateTypeItemDelete] = indexPath.index < keyPath.index && keyPath.index != 0
                 };
                 
-                NSInteger delta = KKGridViewUpdateIsNegative[update.type] ? -1 : 1;
-                
                 if (conditionMap[update.type] && indexPath.section == keyPath.section) {
-                    keyPath.index += delta;
+                    keyPath.index += update.sign;
                 }
                 
                 [replacementSet addObject:keyPath];
@@ -822,7 +819,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Model Modifiers
 
-- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSUInteger)amount negative:(BOOL)isNegative
+- (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSInteger)amount
 {
     NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
     [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
@@ -835,7 +832,7 @@ struct KKSectionMetrics {
             BOOL indexPathIsLessOrEqual = pathComparison == NSOrderedAscending || pathComparison == NSOrderedSame;
             BOOL lastPathIsGreatorOrEqual = lastPathComparison == NSOrderedDescending || lastPathComparison == NSOrderedSame;
             
-            if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && isNegative && pathComparison == NSOrderedSame) {
+            if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && amount < 0 && pathComparison == NSOrderedSame) {
                 set = NO;
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
                     cell.alpha = 0.f;
@@ -849,10 +846,8 @@ struct KKSectionMetrics {
         }
         
         if (set) {
-            NSInteger sign = isNegative ? -1 : 1;
-            
             if (keyPath.section == fromPath.section)
-                keyPath.index += sign * amountForPath;
+                keyPath.index += amountForPath;
             
             [replacement setObject:cell forKey:keyPath];
         }
@@ -884,15 +879,13 @@ struct KKSectionMetrics {
                 _needsAccessoryReload = YES;
                 
                 KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                BOOL updateIsNegative = KKGridViewUpdateIsNegative[update.type];
                 
                 NSArray *newVisiblePaths = [self visibleIndexPaths];
                 
                 if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
                     [self _incrementCellsAtIndexPath:indexPath 
                                          toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                            byAmount:1 
-                                            negative:updateIsNegative];
+                                            byAmount:update.sign];
                 }
                 
                 NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:_selectedIndexPaths.count];
@@ -900,8 +893,7 @@ struct KKSectionMetrics {
                 for (KKIndexPath *keyPath in _selectedIndexPaths) {
                     if (indexPath.section == keyPath.section)
                     {
-                        NSInteger delta = updateIsNegative ? -1 : 1;
-                        keyPath.index += delta;
+                        keyPath.index += update.sign;
                     }
                     
                     if (keyPath.index > 0)
