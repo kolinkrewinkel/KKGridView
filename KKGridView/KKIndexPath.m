@@ -119,8 +119,12 @@
 
 + (KKIndexPath *)zeroIndexPath {
 	static KKIndexPath *indexPath = nil;
-	if (!indexPath)
-		indexPath = [[KKIndexPath alloc] initWithIndex:0 section:0];
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        indexPath = [[self alloc] initWithIndex:0 section:0];
+    });
+    
 	return indexPath;
 }
 
