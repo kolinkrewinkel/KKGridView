@@ -227,16 +227,18 @@ struct KKSectionMetrics {
     if (dataSource != _dataSource)
     {
         _dataSource = dataSource;
-        _dataSourceRespondsTo.numberOfSections = [_dataSource respondsToSelector:@selector(numberOfSectionsInGridView:)];
-        _dataSourceRespondsTo.titleForHeader = [_dataSource respondsToSelector:@selector(gridView:titleForHeaderInSection:)];
-        _dataSourceRespondsTo.titleForFooter = [_dataSource respondsToSelector:@selector(gridView:titleForFooterInSection:)];
-        _dataSourceRespondsTo.heightForHeader = [_dataSource respondsToSelector:@selector(gridView:heightForHeaderInSection:)];
-        _dataSourceRespondsTo.heightForFooter = [_dataSource respondsToSelector:@selector(gridView:heightForFooterInSection:)];
-        _dataSourceRespondsTo.viewForHeader = [_dataSource respondsToSelector:@selector(gridView:viewForHeaderInSection:)];
-        _dataSourceRespondsTo.viewForFooter = [_dataSource respondsToSelector:@selector(gridView:viewForFooterInSection:)];
-        _dataSourceRespondsTo.viewForRow = [_dataSource respondsToSelector:@selector(gridView:viewForRow:inSection:)];
-        _dataSourceRespondsTo.sectionIndexTitles = [_dataSource respondsToSelector:@selector(sectionIndexTitlesForGridView:)];
-        _dataSourceRespondsTo.sectionForSectionIndexTitle = [_dataSource respondsToSelector:@selector(gridView:sectionForSectionIndexTitle:atIndex:)];
+#define RESPONDS_TO(sel) [_dataSource respondsToSelector:@selector(sel)]
+        _dataSourceRespondsTo.numberOfSections   = RESPONDS_TO(numberOfSectionsInGridView:);
+        _dataSourceRespondsTo.titleForHeader     = RESPONDS_TO(gridView:titleForHeaderInSection:);
+        _dataSourceRespondsTo.titleForFooter     = RESPONDS_TO(gridView:titleForFooterInSection:);
+        _dataSourceRespondsTo.heightForHeader    = RESPONDS_TO(gridView:heightForHeaderInSection:);
+        _dataSourceRespondsTo.heightForFooter    = RESPONDS_TO(gridView:heightForFooterInSection:);
+        _dataSourceRespondsTo.viewForHeader      = RESPONDS_TO(gridView:viewForHeaderInSection:);
+        _dataSourceRespondsTo.viewForFooter      = RESPONDS_TO(gridView:viewForFooterInSection:);
+        _dataSourceRespondsTo.viewForRow         = RESPONDS_TO(gridView:viewForRow:inSection:);
+        _dataSourceRespondsTo.sectionIndexTitles = RESPONDS_TO(sectionIndexTitlesForGridView:);
+        _dataSourceRespondsTo.sectionForSectionIndexTitle = RESPONDS_TO(gridView:sectionForSectionIndexTitle:atIndex:);
+#undef RESPONDS_TO
         [self reloadData];
     }
 }
@@ -246,11 +248,13 @@ struct KKSectionMetrics {
     if (gridDelegate != _gridDelegate)
     {
         _gridDelegate = gridDelegate;
-        _delegateRespondsTo.didSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:didSelectItemAtIndexPath:)];
-        _delegateRespondsTo.willSelectItem = [_gridDelegate respondsToSelector:@selector(gridView:willSelectItemAtIndexPath:)];
-        _delegateRespondsTo.didDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:didDeselectItemAtIndexPath:)];
-        _delegateRespondsTo.willDeselectItem = [_gridDelegate respondsToSelector:@selector(gridView:willDeselectItemAtIndexPath:)];
-        _delegateRespondsTo.willDisplayCell = [_gridDelegate respondsToSelector:@selector(gridView:willDisplayCell:atIndexPath:)];
+#define RESPONDS_TO(sel) [_gridDelegate respondsToSelector:@selector(sel)]
+        _delegateRespondsTo.didSelectItem    = RESPONDS_TO(gridView:didSelectItemAtIndexPath:);
+        _delegateRespondsTo.willSelectItem   = RESPONDS_TO(gridView:willSelectItemAtIndexPath:);
+        _delegateRespondsTo.didDeselectItem  = RESPONDS_TO(gridView:didDeselectItemAtIndexPath:);
+        _delegateRespondsTo.willDeselectItem = RESPONDS_TO(gridView:willDeselectItemAtIndexPath:);
+        _delegateRespondsTo.willDisplayCell  = RESPONDS_TO(gridView:willDisplayCell:atIndexPath:);
+#undef RESPONDS_TO
     }
 }
 
