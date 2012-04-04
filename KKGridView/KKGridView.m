@@ -1458,7 +1458,7 @@ struct KKSectionMetrics {
     }
 }
 
-- (int)getSelectedItemCount
+- (NSUInteger)selectedItemCount
 {
     return _selectedIndexPaths.count;
 }
