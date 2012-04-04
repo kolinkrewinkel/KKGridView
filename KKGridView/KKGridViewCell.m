@@ -62,9 +62,14 @@
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_backgroundView];
+
+        _highlightAlpha = 1.0f;
+
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
+        [self addSubview:_selectedBackgroundView];
+        [self bringSubviewToFront:_badgeView];
         
         [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
@@ -85,6 +90,9 @@
     
     [self addSubview:_backgroundView];
     [self addSubview:_contentView];
+    
+    [self bringSubviewToFront:_contentView];
+    [self bringSubviewToFront:_badgeView];
     
     [_contentView addObserver:self 
                    forKeyPath:@"backgroundColor" 
@@ -188,7 +196,7 @@
         
         [UIView animateWithDuration:duration delay:0 options:opts animations:^{
             self.selected = selected; // use property access to go through the setter
-            _selectedBackgroundView.alpha = selected ? 1.f : 0.f;
+            _selectedBackgroundView.alpha = selected ? _highlightAlpha : 0.f;
         } completion:^(BOOL finished) {
             [self setNeedsLayout];
         }];
@@ -231,8 +239,11 @@
     
 	if (_selectedBackgroundView)
 		[self sendSubviewToBack:_selectedBackgroundView];
+    
     [self sendSubviewToBack:_backgroundView];
     [self bringSubviewToFront:_contentView];
+    [self bringSubviewToFront:_selectedBackgroundView];
+    [self bringSubviewToFront:_badgeView];
     
     if (_selected || _highlighted) {
         _contentView.backgroundColor = [UIColor clearColor];
@@ -240,7 +251,7 @@
 
         _backgroundView.hidden = YES;
         _selectedBackgroundView.hidden = NO;
-        _selectedBackgroundView.alpha = 1.f;
+        _selectedBackgroundView.alpha = _highlightAlpha;
     } else {
         _contentView.backgroundColor = _userContentViewBackgroundColor ? _userContentViewBackgroundColor : [UIColor whiteColor];
         
@@ -288,9 +299,9 @@
             break;
         default: {
             if (!_badgeView) _badgeView = [[UIButton alloc] init];
-            if (![_badgeView superview]) [_contentView addSubview:_badgeView];
+            if (![_badgeView superview]) [self addSubview:_badgeView];
             
-            [_contentView bringSubviewToFront:_badgeView];
+            [self bringSubviewToFront:_badgeView];
             break;   
         }
     }
