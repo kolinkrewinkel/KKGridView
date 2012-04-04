@@ -31,6 +31,7 @@
 @synthesize selected = _selected;
 @synthesize highlighted = _highlighted;
 @synthesize selectedBackgroundView = _selectedBackgroundView;
+@synthesize highlightAlpha = _highlightAlpha;
 
 
 #pragma mark - Class Methods
@@ -61,7 +62,6 @@
         _backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         _backgroundView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_backgroundView];
-                
         _contentView = [[UIView alloc] initWithFrame:self.bounds];
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
