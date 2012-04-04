@@ -14,8 +14,6 @@
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKGridViewIndexView.h>
 
-#define KKGridViewDefaultAnimationStaggerInterval 0.025
-
 struct KKSectionMetrics {
     CGFloat footerHeight;
     CGFloat headerHeight;
