@@ -892,9 +892,7 @@ struct KKSectionMetrics {
                 
                 for (KKIndexPath *keyPath in _selectedIndexPaths) {
                     if (indexPath.section == keyPath.section)
-                    {
                         keyPath.index += update.sign;
-                    }
                     
                     if (keyPath.index > 0)
                         [replacementSet addObject:keyPath];

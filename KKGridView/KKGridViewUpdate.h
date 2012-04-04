@@ -19,6 +19,11 @@ typedef enum {
     KKGridViewUpdateTypeSectionReload
 } KKGridViewUpdateType;
 
+typedef enum {
+    KKGridViewUpdateSignNegative = -1,
+    KKGridViewUpdateSignPositive = 1
+} KKGridViewUpdateSign;
+
 @interface KKGridViewUpdate : NSObject
 
 @property (nonatomic) KKGridViewAnimation animation;
@@ -29,7 +34,7 @@ typedef enum {
 @property (nonatomic) CFTimeInterval timestamp;
 @property (nonatomic, copy) KKIndexPath *destinationPath;
 
-- (NSInteger)sign;
+- (KKGridViewUpdateSign)sign;
 
 - (id)initWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
 + (id)updateWithIndexPath:(KKIndexPath *)indexPath isSectionUpdate:(BOOL)sectionUpdate type:(KKGridViewUpdateType)type animation:(KKGridViewAnimation)animation;
