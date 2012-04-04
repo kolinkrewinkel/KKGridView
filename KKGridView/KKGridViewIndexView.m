@@ -11,8 +11,8 @@ static UIColor *backgroundColor = nil;
 static UIColor *fontColor = nil;
 static UIFont *font = nil;
 
-#define KKGridViewIndexViewPadding 7.0
-#define KKGridViewIndexViewMargin 7.0
+static CGFloat const KKGridViewIndexViewPadding = 7.0;
+static CGFloat const KKGridViewIndexViewMargin = 7.0;
 
 @interface KKGridViewIndexView () {
     NSUInteger _lastTrackingSection;
@@ -27,9 +27,12 @@ static UIFont *font = nil;
 
 + (void)initialize {
     if (self == [KKGridViewIndexView class]) {
-        backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.25];
-        fontColor = [UIColor colorWithWhite:0.0 alpha:0.75];
-        font = [UIFont boldSystemFontOfSize:12.0];
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.25];
+            fontColor = [UIColor colorWithWhite:0.0 alpha:0.75];
+            font = [UIFont boldSystemFontOfSize:12.0];
+        });
     }
 }
 
