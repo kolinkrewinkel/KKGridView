@@ -9,9 +9,12 @@
 #import <KKGridView/KKGridViewUpdateStack.h>
 #import <KKGridView/KKGridViewUpdate.h>
 
-@interface KKGridViewUpdateStack ()
+@interface KKGridViewUpdateStack () {
+    CFMutableDictionaryRef _availableUpdates;
+}
 
 - (void)_sortItems;
+- (BOOL)addUpdate:(KKGridViewUpdate *)update sortingAfterAdd:(BOOL) sortAfterAdd;
 
 @end
 
@@ -23,6 +26,7 @@
 {
     if ((self = [super init])) {
         _itemsToUpdate = [[NSMutableArray alloc] init];
+        _availableUpdates = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
     
     return self;
@@ -31,14 +35,21 @@
 - (void)addUpdates:(NSArray *)updates
 {
     for (KKGridViewUpdate *update in updates) {
-        [self addUpdate:update];
+        [self addUpdate:update sortingAfterAdd:NO];
     }
+    [self _sortItems];
 }
 
 - (BOOL)addUpdate:(KKGridViewUpdate *)update
 {
+    return [self addUpdate:update sortingAfterAdd:YES];
+}
+
+- (BOOL)addUpdate:(KKGridViewUpdate *)update sortingAfterAdd:(BOOL) sortAfterAdd
+{
     if (![_itemsToUpdate containsObject:update]) {
         [_itemsToUpdate addObject:update];
+        CFDictionaryAddValue(_availableUpdates, objc_unretainedPointer(update.indexPath), objc_unretainedPointer(update));
         [self _sortItems];
         return YES;
     }
@@ -54,6 +65,7 @@
 
 - (void)removeUpdate:(KKGridViewUpdate *)update
 {
+    CFDictionaryRemoveValue(_availableUpdates, objc_unretainedPointer(update.indexPath));
     [_itemsToUpdate removeObject:update];
 }
 
@@ -64,24 +76,15 @@
 
 - (KKGridViewUpdate *)updateForIndexPath:(KKIndexPath *)indexPath
 {   
-    NSPredicate *sameIndexPath = [NSPredicate predicateWithFormat:@"indexPath = %@", indexPath];
-    return [[_itemsToUpdate filteredArrayUsingPredicate:sameIndexPath] objectAtIndex:0];
+    return objc_unretainedObject(CFDictionaryGetValue(_availableUpdates, objc_unretainedPointer(indexPath)));
 }
 
 - (BOOL)hasUpdateForIndexPath:(KKIndexPath *)indexPath
 {
-    NSUInteger count = _itemsToUpdate.count;
+    KKGridViewUpdate *update = objc_unretainedObject(CFDictionaryGetValue(_availableUpdates, objc_unretainedPointer(indexPath)));
+    if (update && !update.animating)
+        return YES;
 
-    if (count == 0)
-        return NO;
-    
-    for (NSUInteger i = 0; i < count; i++) {
-        KKGridViewUpdate *update = [_itemsToUpdate objectAtIndex:i];
-        if (!update.animating && [update.indexPath isEqual:indexPath]) {
-            return YES;
-        }
-    }
-    
     return NO;
 }
 

@@ -22,12 +22,16 @@
 #define __kk_weak __unsafe_unretained
 #endif
 
-static inline bool KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
+#if !defined(KKInline)
+#define KKInline static __inline__ __attribute__((always_inline))
+#endif
+
+KKInline BOOL KKCGRectIntersectsRectVertically(CGRect rect1, CGRect rect2)
 {
     return (CGRectGetMinY(rect2) < CGRectGetMaxY(rect1)) && (CGRectGetMaxY(rect2) > CGRectGetMinY(rect1));
 }
 
-static inline bool KKCGRectIntersectsRectVerticallyWithPositiveNegativeMargin(CGRect rect1, CGRect rect2, CGFloat margin)
+KKInline BOOL KKCGRectIntersectsRectVerticallyWithPositiveNegativeMargin(CGRect rect1, CGRect rect2, CGFloat margin)
 {
     return (CGRectGetMinY(rect2) - margin < CGRectGetMaxY(rect1)) && (CGRectGetMaxY(rect2) + margin > CGRectGetMinY(rect1));
 }

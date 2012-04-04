@@ -22,9 +22,3 @@
 }
 
 @end
-
-@implementation KKGridViewFooter
-@end
-
-@implementation KKGridViewHeader
-@end

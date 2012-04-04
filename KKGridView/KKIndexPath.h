@@ -7,6 +7,7 @@
 //
 
 @interface KKIndexPath : NSObject <NSCopying>
++ (KKIndexPath *) zeroIndexPath;
 + (NSArray *) indexPathsWithNSIndexPaths:(NSArray *) indexPaths;
 
 - (id)initWithIndex:(NSUInteger)index section:(NSUInteger)section;
