@@ -86,6 +86,10 @@ struct KKSectionMetrics {
 - (void)_commonReload;
 - (void)_softReload;
 
+// Notifications
+- (void)_applicationDidReceiveMemoryWarning:(NSNotification *)notification;
+- (void)_applicationDidEnterBackgound:(NSNotification *)notification;
+
 // Torch-passers
 - (void)_respondToBoundsChange;
 
@@ -205,7 +209,8 @@ struct KKSectionMetrics {
     [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidReceiveMemoryWarning:) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationDidEnterBackgound:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 }
 
 #pragma mark - Cleanup
@@ -213,6 +218,8 @@ struct KKSectionMetrics {
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
 
     [self removeObserver:self forKeyPath:@"contentOffset"];
     [self removeObserver:self forKeyPath:@"tracking"];
@@ -1560,7 +1567,12 @@ struct KKSectionMetrics {
     [_reusableCells removeAllObjects];
 }
 
-- (void) applicationDidReceiveMemoryWarning:(NSNotification *)notification
+- (void) _applicationDidReceiveMemoryWarning:(NSNotification *)notification
+{
+    [self _removeUnusedCells];
+}
+
+- (void) _applicationDidEnterBackgound:(NSNotification *)notification 
 {
     [self _removeUnusedCells];
 }
