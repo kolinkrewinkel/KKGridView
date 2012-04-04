@@ -700,10 +700,8 @@ struct KKSectionMetrics {
         cell.hidden = NO;
         cell.alpha = 1.;
     } else {
-        if (_backgroundView)
-            [self insertSubview:cell atIndex:(_rowViews.count + 1)];
-        else
-            [self insertSubview:cell atIndex:_rowViews.count];
+        BOOL subviewIndex = _backgroundView ? _rowViews.count + 1 : _rowViews.count;
+        [self insertSubview:cell atIndex:subviewIndex];
     }
     
     switch (animation) {
@@ -784,7 +782,7 @@ struct KKSectionMetrics {
 - (KKIndexPath *)indexPathForItemAtPoint:(CGPoint)point
 {
     NSArray *indexes = [self indexPathsForItemsInRect:(CGRect){ point, {1.f, 1.f } }];
-    return ([indexes count] > 0) ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
+    return indexes.count > 0 ? [indexes objectAtIndex:0] : [KKIndexPath indexPathForIndex:NSNotFound inSection:NSNotFound];
 }
 
 - (CGRect)rectForCellAtIndexPath:(KKIndexPath *)indexPath
