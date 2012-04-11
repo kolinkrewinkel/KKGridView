@@ -1347,22 +1347,20 @@ struct KKSectionMetrics {
     }];
 }
 
-- (void)deselectAll: (BOOL)animated
+- (void)deselectAll:(BOOL)animated
 {
     [KKGridView animateIf:animated delay:0.f options:0 block:^{
         [self _deselectAll];
     }];
 }
 
-- (KKIndexPath*)indexPathForSelectedCell {
-    if (!_allowsMultipleSelection) {
-        return [_selectedIndexPaths anyObject];
-    } else {
-        return nil;
-    }
+- (KKIndexPath*)indexPathForSelectedCell
+{
+    return !_allowsMultipleSelection ? _selectedIndexPaths.anyObject : nil;
 }
 
-- (NSArray *)indexPathsForSelectedCells {
+- (NSArray *)indexPathsForSelectedCells
+{
     return [_selectedIndexPaths allObjects];
 }
 
@@ -1438,7 +1436,7 @@ struct KKSectionMetrics {
     if (_selectedIndexPaths.count > 0 && _delegateRespondsTo.willDeselectItem && indexPath.index != NSNotFound && indexPath.section != NSNotFound) {
         KKIndexPath *redirectedPath = [_gridDelegate gridView:self willDeselectItemAtIndexPath:indexPath];
         if (redirectedPath != nil && ![redirectedPath isEqual:indexPath]) {
-            indexPath = redirectedPath ? redirectedPath : indexPath;
+            indexPath = redirectedPath;
         }
     }
     
