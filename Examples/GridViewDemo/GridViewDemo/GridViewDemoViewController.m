@@ -8,6 +8,7 @@
 
 #import "GridViewDemoViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 #import <KKGridView/KKGridView.h>
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKIndexPath.h>
@@ -18,8 +19,8 @@ static const NSUInteger kNumSection = 40;
     ALAssetsLibrary *_assetsLibrary;
     NSMutableArray *_photoGroups;
     NSMutableArray *_assets;
-    NSDictionary *_thumbnailCache;
-    dispatch_queue _imageQueue;
+    NSCache *_thumbnailCache;
+    dispatch_queue_t _imageQueue;
 }
 
 @synthesize firstSectionCount = _firstSectionCount;
@@ -30,7 +31,11 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
+    self.title = @"Photos | GridViewDemo";
+    
+    //    Create the assets library object; retain it to deal with iOS's retardation.
     _assetsLibrary = [[ALAssetsLibrary alloc] init];
+    //    Enumerate through the user's photos.
     [_assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (!_photoGroups)
             _photoGroups = [[NSMutableArray alloc] init];
@@ -42,14 +47,36 @@ static const NSUInteger kNumSection = 40;
                 if (!_assets)
                     _assets = [[NSMutableArray alloc] init];
                 
+                //                More enumeration bullshit.
                 NSMutableArray *tempArray = [[NSMutableArray alloc] init];
                 [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                     if (result)
                         [tempArray addObject:result];
+                    else
+                        [_assets addObject:tempArray];
                 }];
-                [_assets addObject:tempArray];
             }
             [self.gridView reloadData];
+            _imageQueue = dispatch_queue_create("com.kolinkrewinkel.GridViewDemo", NULL);
+            
+            dispatch_sync(_imageQueue, ^(void) {
+                if (!_thumbnailCache)
+                    _thumbnailCache = [[NSCache alloc] init]; // Thanks @indragie.
+                
+                NSUInteger section = 0;
+                for (NSMutableArray *array in _assets) {
+                    NSUInteger index = 0;
+                    for (ALAsset *asset in array) {
+                        [_thumbnailCache setObject:[UIImage imageWithCGImage:[asset thumbnail]] forKey:asset]; // Store it!
+                        NSLog(@"%@", [_thumbnailCache objectForKey:asset]);
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self.gridView reloadItemsAtIndexPaths:[NSArray arrayWithObject:[KKIndexPath indexPathForIndex:index inSection:section]]];
+                        });
+                        index++;
+                    }
+                    section++;
+                }
+            });
         }
         
     } failureBlock:^(NSError *error) {
@@ -57,7 +84,6 @@ static const NSUInteger kNumSection = 40;
         [alert show];
     }];
     
-    self.title = @"Photos | GridViewDemo";
     
 }
 
@@ -76,7 +102,7 @@ static const NSUInteger kNumSection = 40;
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    cell.imageView.image = [UIImage imageWithCGImage:[[[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index] thumbnail]];
+    cell.imageView.image = [_thumbnailCache objectForKey:[[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index]];
     
     return cell; 
 }
