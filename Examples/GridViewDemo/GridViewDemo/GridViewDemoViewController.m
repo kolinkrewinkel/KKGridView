@@ -68,7 +68,6 @@ static const NSUInteger kNumSection = 40;
                     NSUInteger index = 0;
                     for (ALAsset *asset in array) {
                         [_thumbnailCache setObject:[UIImage imageWithCGImage:[asset thumbnail]] forKey:asset]; // Store it!
-                        NSLog(@"%@", [_thumbnailCache objectForKey:asset]);
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [self.gridView reloadItemsAtIndexPaths:[NSArray arrayWithObject:[KKIndexPath indexPathForIndex:index inSection:section]]];
                         });
@@ -80,6 +79,7 @@ static const NSUInteger kNumSection = 40;
         }
         
     } failureBlock:^(NSError *error) {
+//        I can't help you here, son.
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"LOLWAT" message:[NSString stringWithFormat:@"%@", [error localizedDescription]] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
     }];
@@ -102,7 +102,9 @@ static const NSUInteger kNumSection = 40;
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    cell.imageView.image = [_thumbnailCache objectForKey:[[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index]];
+    
+    ALAsset *asset = [[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index];
+    cell.imageView.image = [_thumbnailCache objectForKey:asset];
     
     return cell; 
 }
