@@ -14,7 +14,14 @@
 
 static const NSUInteger kNumSection = 40;
 
-@implementation GridViewDemoViewController
+@implementation GridViewDemoViewController {
+    ALAssetsLibrary *_assetsLibrary;
+    NSMutableArray *_photoGroups;
+    NSMutableArray *_assets;
+    NSDictionary *_thumbnailCache;
+    dispatch_queue _imageQueue;
+}
+
 @synthesize firstSectionCount = _firstSectionCount;
 
 #pragma mark - View lifecycle
@@ -23,70 +30,53 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
-    _firstSectionCount = 7;
+    _assetsLibrary = [[ALAssetsLibrary alloc] init];
+    [_assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        if (!_photoGroups)
+            _photoGroups = [[NSMutableArray alloc] init];
+        
+        if (group)
+            [_photoGroups addObject:group];
+        else {
+            for (ALAssetsGroup *group in _photoGroups) {
+                if (!_assets)
+                    _assets = [[NSMutableArray alloc] init];
+                
+                NSMutableArray *tempArray = [[NSMutableArray alloc] init];
+                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                    if (result)
+                        [tempArray addObject:result];
+                }];
+                [_assets addObject:tempArray];
+            }
+            [self.gridView reloadData];
+        }
+        
+    } failureBlock:^(NSError *error) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"LOLWAT" message:[NSString stringWithFormat:@"%@", [error localizedDescription]] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
+        [alert show];
+    }];
     
-    UISearchBar *searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0.f, 0.f, 320.f, 44.f)];
-    searchBar.barStyle = UIBarStyleBlackTranslucent;
-    searchBar.delegate = self;
-    searchBar.showsCancelButton = YES;
-    searchBar.userInteractionEnabled = YES;
-    self.gridView.gridHeaderView = searchBar;
+    self.title = @"Photos | GridViewDemo";
     
-    UIView *footerView = [[UIView alloc] initWithFrame:CGRectMake(0.f, 0.f, 20.f, 50.f)];
-    footerView.backgroundColor = [UIColor darkGrayColor];
-    self.gridView.gridFooterView = footerView;
-    
-    self.navigationController.toolbarHidden = NO;
-    self.navigationController.navigationBarHidden = YES;
-    self.navigationController.toolbar.tintColor = [UIColor darkGrayColor];
-    
-    UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    UIBarButtonItem *add = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addItems:)];
-    UIBarButtonItem *remove = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemTrash target:self action:@selector(removeItems:)];
-    UIBarButtonItem *multiple = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(toggleSelectionStyle:)];
-//    UIBarButtonItem *move = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(moveItems:)];
-    
-    self.toolbarItems = [NSArray arrayWithObjects:add, spacer, remove, spacer, spacer, multiple, nil];
 }
 
 #pragma mark - KKGridViewDataSource
 
 - (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
 {
-    return kNumSection;
+    return _photoGroups.count;
 }
 
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
-    switch (section) {
-        case 0:
-            return self.firstSectionCount;
-            break;
-        case 1:
-            return 15;
-            break;
-        case 2:
-            return 10;
-            break;
-        case 3:
-            return 5;
-            break;
-        default:
-            return (section % 2) ? 4 : 7;
-            break;
-    }
+    return [[_photoGroups objectAtIndex:section] numberOfAssets];
 }
 
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
-    if (indexPath.index % 2) {
-        cell.accessoryType = KKGridViewCellAccessoryTypeUnread;
-    } else {
-        cell.accessoryType = KKGridViewCellAccessoryTypeReadPartial;
-    }
-    cell.accessoryPosition = KKGridViewCellAccessoryPositionTopLeft;
-    cell.contentView.backgroundColor = [UIColor lightGrayColor];
+    cell.imageView.image = [UIImage imageWithCGImage:[[[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index] thumbnail]];
     
     return cell; 
 }
@@ -96,19 +86,9 @@ static const NSUInteger kNumSection = 40;
     return 25.f;
 }
 
-- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section
-{
-    return 25.f;
-}
-
 - (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
 {
-    return [NSString stringWithFormat:@"Header %i",section];
-}
-
-- (NSString *)gridView:(KKGridView *)gridView titleForFooterInSection:(NSUInteger)section
-{
-    return [NSString stringWithFormat:@"Footer %i",section];
+    return [[_photoGroups objectAtIndex:section] valueForProperty:ALAssetsGroupPropertyName];
 }
 
 - (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView {

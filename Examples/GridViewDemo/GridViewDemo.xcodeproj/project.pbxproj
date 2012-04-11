@@ -20,6 +20,7 @@
 		1A75378F148F070D00B8A777 /* KKGridViewIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A75378D148F070D00B8A777 /* KKGridViewIcon.png */; };
 		1A753790148F070D00B8A777 /* KKGridViewIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */; };
 		1A753798148F1B6300B8A777 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A753796148F1B6300B8A777 /* Default.png */; };
+		3330C714153536D90054B29A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3330C713153536D90054B29A /* AssetsLibrary.framework */; };
 		397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 397E3D271406642500C3DEA3 /* QuartzCore.framework */; };
 		5674016D14AACDF300A838F8 /* KKGridView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5674016C14AACDF300A838F8 /* KKGridView.bundle */; };
 		FC35C029149C70F100A56750 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FC35C028149C70F100A56750 /* Default@2x.png */; };
@@ -45,6 +46,7 @@
 		1A75378D148F070D00B8A777 /* KKGridViewIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = KKGridViewIcon.png; sourceTree = "<group>"; };
 		1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "KKGridViewIcon@2x.png"; sourceTree = "<group>"; };
 		1A753796148F1B6300B8A777 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		3330C713153536D90054B29A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5674016C14AACDF300A838F8 /* KKGridView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = KKGridView.bundle; path = ../../../../KKGridView/KKGridView.bundle; sourceTree = "<group>"; };
 		FC35C028149C70F100A56750 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -57,10 +59,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A72A97A1453B450002546F8 /* libKKGridView.a in Frameworks */,
+				3330C714153536D90054B29A /* AssetsLibrary.framework in Frameworks */,
+				1A530A3213DE962700E6C60B /* CoreGraphics.framework in Frameworks */,
+				1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */,
 				397E3D281406642500C3DEA3 /* QuartzCore.framework in Frameworks */,
 				1A530A2E13DE962700E6C60B /* UIKit.framework in Frameworks */,
-				1A530A3013DE962700E6C60B /* Foundation.framework in Frameworks */,
-				1A530A3213DE962700E6C60B /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				1A72A9791453B450002546F8 /* libKKGridView.a */,
+				3330C713153536D90054B29A /* AssetsLibrary.framework */,
 				1A530A3113DE962700E6C60B /* CoreGraphics.framework */,
 				1A530A2F13DE962700E6C60B /* Foundation.framework */,
 				397E3D271406642500C3DEA3 /* QuartzCore.framework */,

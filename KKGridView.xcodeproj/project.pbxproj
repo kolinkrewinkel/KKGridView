@@ -212,7 +212,7 @@
 		1A61BE0613DCAF1F00AB4243 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "kxk design";
 			};
 			buildConfigurationList = 1A61BE0913DCAF1F00AB4243 /* Build configuration list for PBXProject "KKGridView" */;
@@ -316,6 +316,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = "/../BuildProductsPath/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = (
@@ -341,6 +342,7 @@
 				CLANG_WARN_OBJCPP_ARC_ABI = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KKGridView/KKGridView-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INSTALL_PATH = "/../BuildProductsPath/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = (

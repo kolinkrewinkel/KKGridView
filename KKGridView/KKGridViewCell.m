@@ -25,6 +25,7 @@
 @synthesize accessoryType = _accessoryType;
 @synthesize backgroundView = _backgroundView;
 @synthesize contentView = _contentView;
+@synthesize imageView = _imageView;
 @synthesize editing = _editing;
 @synthesize indexPath = _indexPath;
 @synthesize reuseIdentifier = _reuseIdentifier;
@@ -69,7 +70,10 @@
         _contentView.backgroundColor = [UIColor whiteColor];
         [self addSubview:_contentView];
         [self addSubview:_selectedBackgroundView];
-        [self bringSubviewToFront:_badgeView];
+        
+        _imageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        _imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self addSubview:_imageView];
         
         [_contentView addObserver:self forKeyPath:@"backgroundColor" options:NSKeyValueObservingOptionNew context:NULL];
     }
