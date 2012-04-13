@@ -29,8 +29,33 @@ typedef enum {
     KKGridViewAnimationNone
 } KKGridViewAnimation;
 
-@protocol KKGridViewDataSource;
-@protocol KKGridViewDelegate;
+@class KKGridView;
+
+@protocol KKGridViewDataSource <NSObject>
+@required
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath;
+@optional
+- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
+- (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section;
+- (NSString *)gridView:(KKGridView *)gridView titleForFooterInSection:(NSUInteger)section;
+- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
+- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
+- (UIView *)gridView:(KKGridView *)gridView viewForRow:(NSUInteger)row inSection:(NSUInteger)section; // a row is compromised of however many cells fit in a column of a given section
+- (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView;
+- (NSInteger)gridView:(KKGridView *)gridView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index;
+@end
+
+@protocol KKGridViewDelegate <NSObject, UIScrollViewDelegate>
+@optional
+- (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (KKIndexPath *)gridView:(KKGridView *)gridView willDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
+@end
 
 @interface KKGridView : UIScrollView
 
@@ -47,7 +72,7 @@ typedef enum {
 
 #pragma mark - Data Source and Delegate
 @property (nonatomic, kk_weak) IBOutlet id <KKGridViewDataSource> dataSource;
-@property (nonatomic, kk_weak) IBOutlet id <KKGridViewDelegate> gridDelegate;
+@property (nonatomic, kk_weak) IBOutlet id <KKGridViewDelegate> delegate;
 
 #pragma mark - Getters
 
@@ -89,31 +114,4 @@ typedef enum {
 - (KKIndexPath *)indexPathForSelectedCell;
 - (NSArray *)indexPathsForSelectedCells;
 
-@end
-
-
-@protocol KKGridViewDataSource <NSObject>
-@required
-- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section;
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath;
-@optional
-- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView;
-- (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section;
-- (NSString *)gridView:(KKGridView *)gridView titleForFooterInSection:(NSUInteger)section;
-- (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
-- (CGFloat)gridView:(KKGridView *)gridView heightForFooterInSection:(NSUInteger)section;
-- (UIView *)gridView:(KKGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
-- (UIView *)gridView:(KKGridView *)gridView viewForFooterInSection:(NSUInteger)section;
-- (UIView *)gridView:(KKGridView *)gridView viewForRow:(NSUInteger)row inSection:(NSUInteger)section; // a row is compromised of however many cells fit in a column of a given section
-- (NSArray *)sectionIndexTitlesForGridView:(KKGridView *)gridView;
-- (NSInteger)gridView:(KKGridView *)gridView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index;
-@end
-
-@protocol KKGridViewDelegate <NSObject>
-@optional
-- (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath;
-- (void)gridView:(KKGridView *)gridView didDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
-- (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath;
-- (KKIndexPath *)gridView:(KKGridView *)gridView willDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
-- (void)gridView:(KKGridView *)gridView willDisplayCell:(KKGridViewCell *)cell atIndexPath:(KKIndexPath *)indexPath;
 @end
