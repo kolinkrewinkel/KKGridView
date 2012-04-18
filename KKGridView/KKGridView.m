@@ -1485,7 +1485,10 @@ struct KKSectionMetrics {
         return;
     
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:locationInSelf];
-    
+
+    // The index path may be invalid, for example if the touch point falls outside
+    // of the grid. In that case we abort further processing, as it only makes sense
+    // with a valid grid cell being selected.
     if (!indexPath || indexPath.index == NSNotFound || indexPath.section == NSNotFound) {
         [self _cancelHighlighting];
         return;
@@ -1493,6 +1496,12 @@ struct KKSectionMetrics {
     
     if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem)
         indexPath = [self.delegate gridView:self willSelectItemAtIndexPath:indexPath];
+
+    // The delegate may have returned a nil index path to cancel the selection.
+    if (!indexPath) {
+        [self _cancelHighlighting];
+        return;
+    }
 
     if (state == UIGestureRecognizerStateBegan) {
         [self _highlightItemAtIndexPath:indexPath];
