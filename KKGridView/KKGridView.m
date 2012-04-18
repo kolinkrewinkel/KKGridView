@@ -1494,7 +1494,7 @@ struct KKSectionMetrics {
         return;
     }
     
-    if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem)
+    if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem && ![self isDragging])
         indexPath = [self.delegate gridView:self willSelectItemAtIndexPath:indexPath];
 
     // The delegate may have returned a nil index path to cancel the selection.
