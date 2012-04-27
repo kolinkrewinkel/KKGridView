@@ -31,12 +31,17 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
-    self.title = @"Photos | GridViewDemo";
+    self.title = @"GridViewDemo / Photos";
+    
+    UIView *backgroundView = [[UIView alloc] init];
+    backgroundView.backgroundColor = [UIColor viewFlipsideBackgroundColor];
+    self.gridView.backgroundView = backgroundView;
     
     //    Create the assets library object; retain it to deal with iOS's retardation.
     _assetsLibrary = [[ALAssetsLibrary alloc] init];
     //    Enumerate through the user's photos.
     [_assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        
         if (!_photoGroups)
             _photoGroups = [[NSMutableArray alloc] init];
         
@@ -79,12 +84,10 @@ static const NSUInteger kNumSection = 40;
         }
         
     } failureBlock:^(NSError *error) {
-//        I can't help you here, son.
+        //        I can't help you here, son.
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"LOLWAT" message:[NSString stringWithFormat:@"%@", [error localizedDescription]] delegate:nil cancelButtonTitle:@"Dismiss" otherButtonTitles:nil];
         [alert show];
     }];
-    
-    
 }
 
 #pragma mark - KKGridViewDataSource
@@ -170,6 +173,8 @@ static const NSUInteger kNumSection = 40;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    //    Please have your app conform to this.
+    
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
         return YES;
     

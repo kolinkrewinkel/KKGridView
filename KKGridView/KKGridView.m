@@ -190,7 +190,7 @@ NSUInteger itemCount;
     
     //    Set basic UIScrollView properties
     self.alwaysBounceVertical = _layoutDirection ? KKGridViewLayoutDirectionVertical : YES; 
-    self.alwaysBounceHorizontal = _layoutDirection ? KKGridViewLayoutDirectionHorizontal : YES; 
+    self.alwaysBounceHorizontal = _layoutDirection != KKGridViewLayoutDirectionVertical; 
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
     
@@ -357,14 +357,15 @@ NSUInteger itemCount;
 
 - (void)setBackgroundView:(UIView *)backgroundView
 {
-    if (_backgroundView != backgroundView) {
-        [_backgroundView removeFromSuperview];
-        _backgroundView = backgroundView;
-        _backgroundView.frame = self.bounds;
-        
-        [self addSubview:_backgroundView];
-        [self sendSubviewToBack:_backgroundView];
-    }
+    if (backgroundView == _backgroundView)
+        return;
+    
+    [_backgroundView removeFromSuperview];
+    _backgroundView = backgroundView;
+    _backgroundView.frame = self.bounds;
+    
+    [self addSubview:_backgroundView];
+    [self sendSubviewToBack:_backgroundView];
 }
 
 #pragma mark - Root Layout Methods
