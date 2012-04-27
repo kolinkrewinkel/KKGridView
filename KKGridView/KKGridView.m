@@ -15,11 +15,11 @@
 #import <KKGridView/KKGridViewIndexView.h>
 
 struct KKSectionMetrics {
-CGFloat footerHeight;
-CGFloat headerHeight;
-CGFloat rowHeight;
-CGFloat sectionHeight;
-NSUInteger itemCount;
+    CGFloat footerHeight;
+    CGFloat headerHeight;
+    CGFloat rowHeight;
+    CGFloat sectionHeight;
+    NSUInteger itemCount;
 };
 
 @interface KKGridView () <UIGestureRecognizerDelegate,UIScrollViewDelegate> {
@@ -401,24 +401,49 @@ NSUInteger itemCount;
     
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
+    // If the user is providing titles, they want the default look.  GIVE IT.
+    static UIImage *headerBackgrounds[2] = {0};
+    
+    if (_dataSourceRespondsTo.titleForHeader || _dataSourceRespondsTo.titleForFooter) {
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            NSString *bundlePath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"KKGridView.bundle"];
+            NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+            UIImage *(^getBundleImage)(NSString *) = ^(NSString *n) {
+                return [UIImage imageWithContentsOfFile:[bundle pathForResource:n ofType:@"png"]];
+            };
+            
+            headerBackgrounds[0] = getBundleImage(@"UISectionListHeaderBackground");
+            headerBackgrounds[1] = getBundleImage(@"UISectionListHeaderBackgroundOpaque");
+        });
+    }
+    
     for (KKGridViewHeader *header in _headerViews) {
+        // Get basic metrics
         CGRect f = header.view.frame;
         f.size.width = visibleBounds.size.width;
         CGFloat sectionY = header->stickPoint;
         
-        if (sectionY <= offset && offset > 0.0f) {
+        if (sectionY <= offset && offset >= 0.0f) {
+            // Section header is sticky
             f.origin.y = offset;
+            
+            if (_dataSourceRespondsTo.titleForHeader)
+                header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[1]];
             
             KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
             if (sectionTwo != nil) {
+                // Create the section pushing effect
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
                 if ((offset + sectionTwoHeight) >= sectionTwoY) {
                     f.origin.y = sectionTwoY - sectionTwoHeight;
                 }
-            }
+            }            
         } else {
             f.origin.y = header->stickPoint;
+            if (_dataSourceRespondsTo.titleForHeader)
+                header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
         }
         header.view.frame = f;
     }
@@ -452,12 +477,17 @@ NSUInteger itemCount;
                 }
             }
             
+            if (_dataSourceRespondsTo.titleForFooter)
+                footer.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
             
             // move footer view to right below scroller
             [footer.view removeFromSuperview];
             [self _insertSubviewBelowScrollbar:footer.view];
             
         } else {
+            if (_dataSourceRespondsTo.titleForFooter)
+                footer.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
+            
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
             [self insertSubview:footer.view aboveSubview:_backgroundView];
@@ -1275,9 +1305,11 @@ NSUInteger itemCount;
     
     if (!headerView && _dataSourceRespondsTo.titleForHeader) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-        label.backgroundColor = [UIColor darkGrayColor];
-        label.textColor = [UIColor lightTextColor];
-        label.textAlignment = UITextAlignmentCenter;
+        label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"UISectionListBackground.png"]];
+        label.textColor = [UIColor whiteColor];
+        label.shadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.7f];
+        label.shadowOffset = CGSizeMake(0.f, 1.f);
+        label.textAlignment = UITextAlignmentLeft;
         label.text = [_dataSource gridView:self titleForHeaderInSection:section];
         headerView = label;
     }
