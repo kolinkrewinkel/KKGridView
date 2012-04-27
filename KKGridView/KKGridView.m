@@ -272,6 +272,7 @@ struct KKSectionMetrics {
 {
     CGRect oldFrame = self.frame;
     [super setFrame:frame];
+//    Check if an actual change is needed... repeated in corresponding bounds method.
     if (!CGSizeEqualToSize(frame.size, oldFrame.size)) {
         [self _respondToBoundsChange];
     }
@@ -296,7 +297,11 @@ struct KKSectionMetrics {
 
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
-    if (!allowsMultipleSelection && _allowsMultipleSelection == YES) {
+    if (allowsMultipleSelection == _allowsMultipleSelection)
+        return;
+    
+//    If multiple selection is being disabled, update.
+    if (!allowsMultipleSelection) {
         [_selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
             [self _layoutGridView];
@@ -307,11 +312,11 @@ struct KKSectionMetrics {
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
+//    Call for a total recalculation in the case a change as large as these (cell size as well) occurs.
     if (!CGSizeEqualToSize(_cellPadding, cellPadding)) {
         _cellPadding = cellPadding;
         
         [self _layoutModelCells];
-        
         [self reloadData];
     }
 }
@@ -322,7 +327,6 @@ struct KKSectionMetrics {
         _cellSize = cellSize;
         
         [self _layoutModelCells];
-        
         [self reloadData];
     }
 }
