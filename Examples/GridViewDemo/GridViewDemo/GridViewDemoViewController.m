@@ -34,7 +34,7 @@ static const NSUInteger kNumSection = 40;
     self.title = @"GridViewDemo / Photos";
     
     UIView *backgroundView = [[UIView alloc] init];
-    backgroundView.backgroundColor = [UIColor viewFlipsideBackgroundColor];
+    backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
     self.gridView.backgroundView = backgroundView;
     
     //    Create the assets library object; retain it to deal with iOS's retardation.
@@ -109,7 +109,7 @@ static const NSUInteger kNumSection = 40;
     ALAsset *asset = [[_assets objectAtIndex:indexPath.section] objectAtIndex:indexPath.index];
     cell.imageView.image = [_thumbnailCache objectForKey:asset];
     
-    return cell; 
+    return cell;
 }
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
