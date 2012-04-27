@@ -13,6 +13,7 @@
 #import <KKGridView/KKGridViewUpdateStack.h>
 #import <KKGridView/KKGridViewCell.h>
 #import <KKGridView/KKGridViewIndexView.h>
+#import <KKGridView/KKGridViewSectionLabel.h>
 
 struct KKSectionMetrics {
     CGFloat footerHeight;
@@ -389,7 +390,8 @@ struct KKSectionMetrics {
 #pragma mark - Private Layout Methods
 
 - (void)_layoutSectionViews
-{    
+{
+// TODO: Add checking to see if sticking status has actually changed for anything.
     CGRect visibleBounds = {
         self.contentOffset.x + self.contentInset.left,
         self.contentOffset.y + self.contentInset.top,
@@ -441,6 +443,7 @@ struct KKSectionMetrics {
                 }
             }            
         } else {
+            // Put header back to default position
             f.origin.y = header->stickPoint;
             if (_dataSourceRespondsTo.titleForHeader)
                 header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
@@ -1304,13 +1307,7 @@ struct KKSectionMetrics {
     }
     
     if (!headerView && _dataSourceRespondsTo.titleForHeader) {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-        label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"UISectionListBackground.png"]];
-        label.textColor = [UIColor whiteColor];
-        label.shadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.7f];
-        label.shadowOffset = CGSizeMake(0.f, 1.f);
-        label.textAlignment = UITextAlignmentLeft;
-        label.text = [_dataSource gridView:self titleForHeaderInSection:section];
+        KKGridViewSectionLabel *label = [[KKGridViewSectionLabel alloc] initWithString:[_dataSource gridView:self titleForHeaderInSection:section]];
         headerView = label;
     }
     

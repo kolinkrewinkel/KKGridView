@@ -114,7 +114,7 @@ static const NSUInteger kNumSection = 40;
 
 - (CGFloat)gridView:(KKGridView *)gridView heightForHeaderInSection:(NSUInteger)section
 {
-    return 25.f;
+    return 23.f;
 }
 
 - (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
