@@ -47,6 +47,7 @@
 		1A75378E148F070D00B8A777 /* KKGridViewIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "KKGridViewIcon@2x.png"; sourceTree = "<group>"; };
 		1A753796148F1B6300B8A777 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		3330C713153536D90054B29A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		339238B3154A52D600C8F90C /* GridViewDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GridViewDemo.entitlements; sourceTree = "<group>"; };
 		397E3D271406642500C3DEA3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		5674016C14AACDF300A838F8 /* KKGridView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = KKGridView.bundle; path = ../../../../KKGridView/KKGridView.bundle; sourceTree = "<group>"; };
 		FC35C028149C70F100A56750 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -105,6 +106,7 @@
 		1A530A3313DE962700E6C60B /* GridViewDemo */ = {
 			isa = PBXGroup;
 			children = (
+				339238B3154A52D600C8F90C /* GridViewDemo.entitlements */,
 				1A530A3C13DE962700E6C60B /* GridViewDemoAppDelegate.h */,
 				1A530A3D13DE962700E6C60B /* GridViewDemoAppDelegate.m */,
 				1A530A4213DE962700E6C60B /* GridViewDemoViewController.h */,
@@ -167,7 +169,7 @@
 		1A530A2013DE962700E6C60B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "kxk design";
 			};
 			buildConfigurationList = 1A530A2313DE962700E6C60B /* Build configuration list for PBXProject "GridViewDemo" */;
@@ -298,9 +300,11 @@
 					armv6,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = GridViewDemo/GridViewDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = (
@@ -322,9 +326,11 @@
 					armv6,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_ENTITLEMENTS = GridViewDemo/GridViewDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GridViewDemo/GridViewDemo-Prefix.pch";
+				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "GridViewDemo/GridViewDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = (
