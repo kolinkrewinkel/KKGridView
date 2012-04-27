@@ -379,7 +379,7 @@ struct KKSectionMetrics {
 
 - (void)_layoutGridView
 {
-    [self _layoutVisibleCells];
+    [self _layoutVisibleCells];   
     [self _layoutSectionViews];
     [self _layoutExtremities];
     _markedForDisplay = NO;
@@ -391,6 +391,30 @@ struct KKSectionMetrics {
 
 - (void)_layoutSectionViews
 {
+    // Reposition all the things!... if necessary
+    if (_needsAccessoryReload) {
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+            [self reloadContentSize];
+            
+            for (NSUInteger section = 0; section < _metrics.count; section++) {
+                struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
+                
+                KKGridViewHeader *header = nil;
+                if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
+                    CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
+                    [self _configureSectionView:header inSection:section withStickPoint:headerPosition height:sectionMetrics.headerHeight];
+                }
+                
+                KKGridViewFooter *footer = nil;
+                if (_footerViews.count > section && (footer = [_footerViews objectAtIndex:section])) {
+                    CGFloat footerHeight = sectionMetrics.footerHeight;
+                    CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
+                    [self _configureSectionView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
+                }
+            }
+        } completion:nil];
+    }
+    
 // TODO: Add checking to see if sticking status has actually changed for anything.
     CGRect visibleBounds = {
         self.contentOffset.x + self.contentInset.left,
@@ -547,18 +571,6 @@ struct KKSectionMetrics {
                                         byAmount:update.sign];
             }
             
-            else if (update.type == KKGridViewUpdateTypeItemMove) {
-                //                KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-                //                [UIView animateWithDuration:KKGridViewDefaultAnimationDuration
-                //                                 animations:^{ updateCellFrame(cell, update.indexPath); }];
-                //                [self _incrementCellsAtIndexPath:update.destinationPath
-                //                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                //                                        byAmount:1
-                //                                        negative:KKGridViewUpdateIsNegative[update.type]];
-                //                [_updateStack removeUpdate:update];
-            }
-            
-            
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
             
             for (KKIndexPath *keyPath in _selectedIndexPaths) {
@@ -607,30 +619,8 @@ struct KKSectionMetrics {
         
         index++;
     }
+
     [self _cleanupCells];
-    
-    if (_needsAccessoryReload) {
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
-            [self reloadContentSize];
-            
-            for (NSUInteger section = 0; section < _metrics.count; section++) {
-                struct KKSectionMetrics sectionMetrics = _metrics.sections[section];
-                
-                KKGridViewHeader *header = nil;
-                if (_headerViews.count > section && (header = [_headerViews objectAtIndex:section])) {
-                    CGFloat headerPosition = [self _sectionHeightsCombinedUpToSection:section] + _gridHeaderView.frame.size.height;
-                    [self _configureSectionView:header inSection:section withStickPoint:headerPosition height:sectionMetrics.headerHeight];
-                }
-                
-                KKGridViewFooter *footer = nil;
-                if (_footerViews.count > section && (footer = [_footerViews objectAtIndex:section])) {
-                    CGFloat footerHeight = sectionMetrics.footerHeight;
-                    CGFloat footerPosition = [self _sectionHeightsCombinedUpToSection:section+1] + _gridHeaderView.frame.size.height - footerHeight;
-                    [self _configureSectionView:footer inSection:section withStickPoint:footerPosition height:footerHeight];
-                }
-            }
-        } completion:nil];
-    }
 }
 
 - (void)_cleanupCells
