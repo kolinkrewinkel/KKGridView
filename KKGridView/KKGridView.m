@@ -136,13 +136,17 @@ struct KKSectionMetrics {
 
 @synthesize dataSource = _dataSource;
 @synthesize gridDelegate = _gridDelegate;
+
 @synthesize allowsMultipleSelection = _allowsMultipleSelection;
-@synthesize cellPadding = _cellPadding;
-@synthesize cellSize = _cellSize;
+@synthesize backgroundView = _backgroundView;
+@synthesize layoutDirection = _layoutDirection;
+
 @synthesize gridFooterView = _gridFooterView;
 @synthesize gridHeaderView = _gridHeaderView;
+
+@synthesize cellPadding = _cellPadding;
+@synthesize cellSize = _cellSize;
 @synthesize numberOfColumns = _numberOfColumns;
-@synthesize backgroundView = _backgroundView;
 
 @dynamic numberOfSections;
 
@@ -171,6 +175,8 @@ struct KKSectionMetrics {
     return self;
 }
 
+// damn right I didn't include nib support
+
 - (void)_sharedInitialization
 {
 //    CONTAINMENT! GET ME SOME CONTAINMENT UNITS NOW!
@@ -179,8 +185,12 @@ struct KKSectionMetrics {
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-//    Set basic UIScrollView properties
-    self.alwaysBounceVertical = YES;
+//    Manual authority override, bitch
+    _layoutDirection = KKGridViewLayoutDirectionVertical;
+    
+    //    Set basic UIScrollView properties
+    self.alwaysBounceVertical = _layoutDirection ? KKGridViewLayoutDirectionVertical : YES; 
+    self.alwaysBounceHorizontal = _layoutDirection ? KKGridViewLayoutDirectionHorizontal : YES; 
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
     

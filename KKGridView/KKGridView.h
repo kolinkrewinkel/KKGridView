@@ -33,7 +33,7 @@ typedef enum {
     KKGridViewScrollPositionMiddle,   
     KKGridViewScrollPositionBottom
 } KKGridViewScrollPosition;
- g
+
 @protocol KKGridViewDataSource;
 @protocol KKGridViewDelegate;
 
