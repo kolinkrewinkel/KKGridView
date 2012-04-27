@@ -26,11 +26,12 @@
     return self;
 }
 
-#pragma mark - Metric Overrides
+#pragma mark - Drawing
 
-- (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
+- (void)drawTextInRect:(CGRect)rect
 {
-    return CGRectMake(10.f, 0.f, bounds.size.width - 10.f, bounds.size.height);
+    UIEdgeInsets insets = UIEdgeInsetsMake(0.f, 12.f, 0.f, 0.f);
+    return [super drawTextInRect:UIEdgeInsetsInsetRect(rect, insets)];
 }
 
 @end
