@@ -11,13 +11,6 @@
 #import <KKGridView/Definitions.h>
 
 typedef enum {
-    KKGridViewScrollPositionNone,        
-    KKGridViewScrollPositionTop,    
-    KKGridViewScrollPositionMiddle,   
-    KKGridViewScrollPositionBottom
-} KKGridViewScrollPosition;
-
-typedef enum {
     KKGridViewAnimationFade,
     KKGridViewAnimationResize,
     KKGridViewAnimationSlideLeft,
@@ -29,6 +22,18 @@ typedef enum {
     KKGridViewAnimationNone
 } KKGridViewAnimation;
 
+typedef enum {
+    KKGridViewLayoutDirectionVertical,
+    KKGridViewLayoutDirectionHorizontal
+} KKGridViewLayoutDirection;
+
+typedef enum {
+    KKGridViewScrollPositionNone,        
+    KKGridViewScrollPositionTop,    
+    KKGridViewScrollPositionMiddle,   
+    KKGridViewScrollPositionBottom
+} KKGridViewScrollPosition;
+ g
 @protocol KKGridViewDataSource;
 @protocol KKGridViewDelegate;
 
@@ -42,6 +47,7 @@ typedef enum {
 @property (nonatomic) CGSize cellSize;
 @property (nonatomic, strong) UIView *gridFooterView;
 @property (nonatomic, strong) UIView *gridHeaderView;
+@property (nonatomic) KKGridViewLayoutDirection layoutDirection;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
 

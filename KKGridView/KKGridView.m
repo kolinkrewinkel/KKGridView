@@ -173,12 +173,13 @@ struct KKSectionMetrics {
 
 - (void)_sharedInitialization
 {
+//    CONTAINMENT! GET ME SOME CONTAINMENT UNITS NOW!
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-    
+//    Set basic UIScrollView properties
     self.alwaysBounceVertical = YES;
     self.delaysContentTouches = YES;
     self.canCancelContentTouches = YES;
