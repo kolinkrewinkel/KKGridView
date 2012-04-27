@@ -1325,11 +1325,7 @@ struct KKSectionMetrics {
     }
     
     if (!footerView && _dataSourceRespondsTo.titleForFooter) {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
-        label.backgroundColor = [UIColor colorWithRed:0.772f green:0.788f blue:0.816f alpha:1.f];
-        label.textAlignment = UITextAlignmentCenter;
-        label.textColor = [UIColor darkGrayColor];
-        label.text = [_dataSource gridView:self titleForFooterInSection:section];
+        KKGridViewSectionLabel *label = [[KKGridViewSectionLabel alloc] initWithString:[_dataSource gridView:self titleForFooterInSection:section]];
         footerView = label;
     }
     
