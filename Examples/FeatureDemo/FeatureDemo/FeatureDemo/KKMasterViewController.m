@@ -89,11 +89,20 @@
 
 - (void)_dispatchActionForIndexPath:(NSIndexPath *)indexPath
 {
+    KKGridView *gridView = self.detailViewController.gridView;
+    
     switch (indexPath.row) {
-        case 5:
-            self.detailViewController.gridView.allowsMultipleSelection = !self.detailViewController.gridView.allowsMultipleSelection;
-            break;
+        case 0: {
+            NSMutableSet *set = [[NSMutableSet alloc] init];
             
+            for (NSIndexPath *indexPath in [gridView visibleIndexPaths]) {
+                [set addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
+            }
+
+            break;
+        } case 5:
+            gridView.allowsMultipleSelection = gridView.allowsMultipleSelection;
+            break;
         default:
             break;
     }
