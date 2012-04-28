@@ -19,7 +19,7 @@
     _gridView = [[KKGridView alloc] initWithFrame:self.view.bounds];
     _gridView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     _gridView.dataSource = self;
-    _gridView.gridDelegate = self;
+    _gridView.delegate = self;
     self.view = _gridView;
 }
 
