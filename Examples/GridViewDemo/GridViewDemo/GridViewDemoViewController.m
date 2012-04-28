@@ -31,7 +31,7 @@ static const NSUInteger kNumSection = 40;
 {
     [super loadView];
     
-    self.title = @"GridViewDemo / Photos";
+    self.title = @"GridViewDemo - Photos";
     
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
