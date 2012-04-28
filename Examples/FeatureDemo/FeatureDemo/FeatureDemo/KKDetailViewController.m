@@ -7,36 +7,76 @@
 //
 
 #import "KKDetailViewController.h"
+#import "KKDemoCell.h"
 
-@interface KKDetailViewController ()
+@interface KKDetailViewController () {
+    NSMutableArray *_fillerData;
+}
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
 @end
 
 @implementation KKDetailViewController
 
+#pragma mark - Initialization
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    self.title = NSLocalizedString(@"Detail", @"Detail");
+
+    UIView *backgroundView = [[UIView alloc] init];
+    backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
+    self.gridView.backgroundView = backgroundView;
+    
+    _fillerData = [[NSMutableArray alloc] init];
+    for (NSUInteger i = 0; i < 20; i++) {
+        NSMutableArray *array = [[NSMutableArray alloc] init];
+        for (NSUInteger j = 0; j < 20; j++) {
+            [array addObject:[NSString stringWithFormat:@"%u", j]];
+        }
+
+        [_fillerData addObject:array];
+    }
+
+    [self.gridView reloadData];
 }
+
+#pragma mark - KKGridView
+
+- (NSUInteger)numberOfSectionsInGridView:(KKGridView *)gridView
+{
+    return _fillerData.count;
+}
+
+- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
+{
+    return [[_fillerData objectAtIndex:section] count];
+}
+
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
+{    
+    KKDemoCell *cell = [KKDemoCell cellForGridView:gridView];
+    cell.contentView.backgroundColor = [UIColor lightGrayColor];
+    cell.label.text = [NSString stringWithFormat:@"%u", indexPath.index];
+
+    return cell;
+}
+
+#pragma mark - Cleanup
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
 }
 
+#pragma mark - UIViewController
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.title = NSLocalizedString(@"Detail", @"Detail");
-    }
-    return self;
 }
 							
 #pragma mark - Split view
