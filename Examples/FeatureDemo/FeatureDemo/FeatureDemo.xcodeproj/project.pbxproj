@@ -18,6 +18,7 @@
 		33B325A7154C98DA00CB9597 /* KKDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 33B325A6154C98DA00CB9597 /* KKDetailViewController.m */; };
 		33B325AA154C98DA00CB9597 /* KKMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33B325A8154C98DA00CB9597 /* KKMasterViewController.xib */; };
 		33B325AD154C98DA00CB9597 /* KKDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33B325AB154C98DA00CB9597 /* KKDetailViewController.xib */; };
+		33B325B4154CA66300CB9597 /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B325B3154CA66300CB9597 /* libKKGridView.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		33B325A6154C98DA00CB9597 /* KKDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KKDetailViewController.m; sourceTree = "<group>"; };
 		33B325A9154C98DA00CB9597 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/KKMasterViewController.xib; sourceTree = "<group>"; };
 		33B325AC154C98DA00CB9597 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/KKDetailViewController.xib; sourceTree = "<group>"; };
+		33B325B3154CA66300CB9597 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libKKGridView.a; path = "../../../build/Release-iphoneos/libKKGridView.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +50,7 @@
 				33B3258F154C98DA00CB9597 /* UIKit.framework in Frameworks */,
 				33B32591154C98DA00CB9597 /* Foundation.framework in Frameworks */,
 				33B32593154C98DA00CB9597 /* CoreGraphics.framework in Frameworks */,
+				33B325B4154CA66300CB9597 /* libKKGridView.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +77,7 @@
 		33B3258D154C98DA00CB9597 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				33B325B3154CA66300CB9597 /* libKKGridView.a */,
 				33B3258E154C98DA00CB9597 /* UIKit.framework */,
 				33B32590154C98DA00CB9597 /* Foundation.framework */,
 				33B32592154C98DA00CB9597 /* CoreGraphics.framework */,

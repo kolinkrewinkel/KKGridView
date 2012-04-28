@@ -14,4 +14,6 @@
 
 @property (strong, nonatomic) KKDetailViewController *detailViewController;
 
+- (void)_dispatchActionForIndexPath:(NSIndexPath *)indexPath;
+
 @end
