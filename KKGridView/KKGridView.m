@@ -809,7 +809,7 @@ struct KKSectionMetrics {
 - (NSArray *)indexPathsForItemsInRect:(CGRect)rect
 {
     NSArray *visiblePaths = [self visibleIndexPaths];
-    NSMutableArray *indexes = [[NSMutableArray alloc] initWithCapacity:12];
+    NSMutableArray *indexes = [[NSMutableArray alloc] initWithCapacity:visiblePaths.count];
     
     for (KKIndexPath *indexPath in visiblePaths) {
         CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
