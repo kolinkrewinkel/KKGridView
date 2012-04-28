@@ -218,6 +218,7 @@ struct KKSectionMetrics {
 
 - (void)dealloc
 {
+    [super setDelegate:nil];
     [self removeObserver:self forKeyPath:@"contentOffset"];
     [self removeObserver:self forKeyPath:@"tracking"];
     [self removeGestureRecognizer:_selectionRecognizer];

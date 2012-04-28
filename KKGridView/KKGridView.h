@@ -78,7 +78,7 @@ typedef enum {
 
 #pragma mark - Data Source and Delegate
 @property (nonatomic, kk_weak) IBOutlet id <KKGridViewDataSource> dataSource;
-@property (nonatomic, kk_weak) IBOutlet id <KKGridViewDelegate> delegate;
+@property (nonatomic, assign)  IBOutlet id <KKGridViewDelegate> delegate;
 
 #pragma mark - Getters
 
