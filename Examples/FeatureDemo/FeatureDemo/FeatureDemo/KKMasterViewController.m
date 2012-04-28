@@ -32,6 +32,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _objects = [[NSMutableArray alloc] initWithArray:@[@"Add Items", @"Remove Items", @"Add Section", @"Remove Section", @"Move Items", @"Multiple Selection"]];
 }
 
 #pragma mark - Cleanup
@@ -66,15 +67,36 @@
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
+    if (indexPath.row == 5) {
+        cell.accessoryType = self.detailViewController.gridView.allowsMultipleSelection ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    }
+
+    cell.textLabel.text = [_objects objectAtIndex:indexPath.row];
 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self _dispatchActionForIndexPath:indexPath];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+#pragma mark - Grid View
+
+- (void)_dispatchActionForIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.row) {
+        case 5:
+            self.detailViewController.gridView.allowsMultipleSelection = !self.detailViewController.gridView.allowsMultipleSelection;
+            break;
+            
+        default:
+            break;
+    }
 }
 
 @end

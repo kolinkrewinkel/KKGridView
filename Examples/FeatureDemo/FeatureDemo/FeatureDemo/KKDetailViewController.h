@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <KKGridView/KKGridViewController.h>
 
-@interface KKDetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface KKDetailViewController : KKGridViewController <UISplitViewControllerDelegate>
 
-@property (strong, nonatomic) id detailItem;
 
-@property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 @end
