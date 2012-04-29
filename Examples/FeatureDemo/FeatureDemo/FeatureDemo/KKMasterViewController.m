@@ -94,16 +94,24 @@
     switch (indexPath.row) {
         case 0: {
             NSMutableSet *set = [[NSMutableSet alloc] init];
-            
             for (NSIndexPath *indexPath in [gridView visibleIndexPaths]) {
                 [set addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
             }
 
+            NSArray *sections = [set allObjects];
+            NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+
+            for (NSString *section in sections) {
+                [indexPaths addObject:[KKIndexPath indexPathForIndex:0 inSection:[section integerValue]]];
+            }
+
+            [gridView insertItemsAtIndexPaths:indexPaths withAnimation:KKGridViewAnimationExplode];
+
             break;
-        } case 5:
-            gridView.allowsMultipleSelection = gridView.allowsMultipleSelection;
+        } case 5: {
+            gridView.allowsMultipleSelection = !gridView.allowsMultipleSelection;
             break;
-        default:
+        } default:
             break;
     }
 }
