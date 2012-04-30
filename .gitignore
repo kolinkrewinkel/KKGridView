@@ -8,3 +8,4 @@ build/
 .DS_Store
 Examples/GridViewDemo/GridViewDemo.xcodeproj/project.xcworkspace/contents.xcworkspacedata
 *.xcuserdatad
+Examples/FeatureDemo/FeatureDemo/FeatureDemo.xcodeproj/project.xcworkspace/contents.xcworkspacedata
