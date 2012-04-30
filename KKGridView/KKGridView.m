@@ -122,7 +122,6 @@ struct KKSectionMetrics {
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer;
 - (void)_deselectAll;
 
-// Headers and Footer views
 - (UIView *)_viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)_viewForFooterInSection:(NSUInteger)section;
 
@@ -155,8 +154,6 @@ struct KKSectionMetrics {
 
 #pragma mark - Initialization Methods
 
-// Calls back to its bro, initWithFrame, with a zero.
-
 - (id)init
 {
     return [self initWithFrame:CGRectZero];
@@ -174,8 +171,6 @@ struct KKSectionMetrics {
     return self;
 }
 
-// Same as its -super counterpart, but with our injection.
-
 - (id)initWithFrame:(CGRect)frame
 {
     if ((self = [super initWithFrame:frame])) {
@@ -189,13 +184,11 @@ struct KKSectionMetrics {
 
 - (void)_sharedInitialization
 {
-    //    CONTAINMENT! GET ME SOME CONTAINMENT UNITS NOW!
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-    // Manual authority override, bitch
     _layoutDirection = KKGridViewLayoutDirectionVertical;
     
     // Set basic UIScrollView properties
@@ -218,7 +211,6 @@ struct KKSectionMetrics {
     self.allowsMultipleSelection = NO;
     self.backgroundColor = [UIColor whiteColor];
 
-    // KVO
     [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 }
@@ -237,14 +229,12 @@ struct KKSectionMetrics {
 
 #pragma mark - Setters
 
-// Enables or disables multiple selection.. makes sure grid state is valid
-
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     if (allowsMultipleSelection == _allowsMultipleSelection)
         return;
     
-    //    If multiple selection is being disabled, update.
+    // If multiple selection is being disabled, update.
     if (!allowsMultipleSelection) {
         [_selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
@@ -269,8 +259,6 @@ struct KKSectionMetrics {
     [self sendSubviewToBack:_backgroundView];
 }
 
-// Standard override of setBounds so we can do our updates
-
 - (void)setBounds:(CGRect)bounds
 {
     CGRect oldBounds = self.bounds;
@@ -280,7 +268,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Adjusts via CGSize what cell padding is applied to each side
+// Adjusts cell padding is applied to each side
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
@@ -293,7 +281,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Via CGSize, adjust the point-size of each cell.  Defaults to 75x75.
+// Adjust the point-size of each cell.  Defaults to 75x75.
 
 - (void)setCellSize:(CGSize)cellSize
 {
@@ -315,8 +303,6 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
-
-// Sets data source of grid
 
 - (void)setDataSource:(id<KKGridViewDataSource>)dataSource
 {
@@ -356,8 +342,6 @@ struct KKSectionMetrics {
     }
 }
 
-// Standard override of setFrame so we can do our updates
-
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;
@@ -367,8 +351,6 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
-
-// Set global grid footer
 
 - (void)setGridFooterView:(UIView *)gridFooterView
 {
@@ -381,8 +363,6 @@ struct KKSectionMetrics {
     [self addSubview:gridFooterView];
     [self setNeedsLayout];
 }
-
-// Set global grid header
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
 {
@@ -405,16 +385,12 @@ struct KKSectionMetrics {
     _batchUpdating = YES;
 }
 
-// SAY NO!
-
 - (void)endUpdates
 {
     _batchUpdating = NO;
 }
 
 #pragma mark - Root Layout Methods
-
-// Inherited from CALayer-> UIView, allows to inject our own ever-present re-layout methods.
 
 - (void)layoutSubviews
 {
@@ -456,8 +432,6 @@ struct KKSectionMetrics {
     }
 }
 
-// Update grid view in response to a change in size
-
 - (void)_respondToBoundsChange
 {
     [self reloadData];
@@ -491,7 +465,7 @@ struct KKSectionMetrics {
     headerOrFooter->section = section;
 }
 
-// Position them for each notch in the scrollview.. called a lot, could use optimization probably.
+// Position them for each notch in the scrollview. called a lot, could use optimization probably.
 
 - (void)_layoutSectionViews
 {
@@ -520,7 +494,7 @@ struct KKSectionMetrics {
     }
     
     // TODO: Add checking to see if sticking status has actually changed for anything.
-    CGRect visibleBounds = {
+    CGRect const visibleBounds = {
         self.contentOffset.x + self.contentInset.left,
         self.contentOffset.y + self.contentInset.top,
         self.bounds.size.width - self.contentInset.right,
@@ -531,7 +505,7 @@ struct KKSectionMetrics {
     
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
-    // If the user is providing titles, they want the default look.  GIVE IT.
+    // If the user is providing titles, they want the default look.
     static UIImage *headerBackgrounds[2] = {0};
     
     if (_dataSourceRespondsTo.titleForHeader || _dataSourceRespondsTo.titleForFooter) {
@@ -550,13 +524,13 @@ struct KKSectionMetrics {
     
     for (KKGridViewHeader *header in _headerViews) {
         // Get basic metrics
-        CGRect f = header.view.frame;
-        f.size.width = visibleBounds.size.width;
+        CGRect headerFrame = header.view.frame;
+        headerFrame.size.width = visibleBounds.size.width;
         CGFloat sectionY = header->stickPoint;
         
         if (sectionY <= offset && offset >= 0.0f) {
             // Section header is sticky
-            f.origin.y = offset;
+            headerFrame.origin.y = offset;
             
             if (_dataSourceRespondsTo.titleForHeader)
                 header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[1]];
@@ -567,16 +541,17 @@ struct KKSectionMetrics {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
                 if ((offset + sectionTwoHeight) >= sectionTwoY) {
-                    f.origin.y = sectionTwoY - sectionTwoHeight;
+                    headerFrame.origin.y = sectionTwoY - sectionTwoHeight;
                 }
             }            
         } else {
             // Put header back to default position
-            f.origin.y = header->stickPoint;
+            headerFrame.origin.y = header->stickPoint;
             if (_dataSourceRespondsTo.titleForHeader)
                 header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
         }
-        header.view.frame = f;
+        
+        header.view.frame = headerFrame;
     }
     
     offset = self.contentOffset.y;
@@ -635,7 +610,7 @@ struct KKSectionMetrics {
 
 - (void)_cleanupCells
 {
-    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
+    CGRect const visibleBounds = { self.contentOffset, self.bounds.size };
     
     typedef struct {
         __unsafe_unretained KKGridViewCell *cell;
@@ -667,7 +642,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Primary cell frame methods..
+// Primary cell layout methods..
 
 - (void)_layoutVisibleCells
 {    
@@ -712,7 +687,7 @@ struct KKSectionMetrics {
     [self _cleanupCells];
 }
 
-// Layout all cells in the entire model.. use for updates when a cell wouldn't be on screen mid-update
+// Layout all cells in the entire model. use for updates when a cell wouldn't be on screen mid-update
 
 - (void)_layoutModelCells
 {
@@ -725,7 +700,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Updates
 
-// Old expedited code from -layoutVisibleCells, handles individual index path updates each run-loop.
+// handles individual index path updates each run-loop.
 
 - (KKGridViewAnimation)_handleUpdateForIndexPath:(KKIndexPath *)indexPath visibleIndexPaths:(NSArray *)visibleIndexPaths
 {
@@ -798,8 +773,6 @@ struct KKSectionMetrics {
     }
     return height;
 }
-
-// Does the same thing as above method, but specifically down to a cell row in a section.  Adds individual cell heights reiteratively.
 
 - (CGFloat)_sectionHeightsCombinedUpToRow:(NSUInteger)row inSection:(NSUInteger)section
 {
@@ -969,7 +942,7 @@ struct KKSectionMetrics {
 
 - (NSArray *)visibleIndexPaths
 {
-    const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
+    CGRect const visibleBounds = {self.contentOffset, self.bounds.size};
     NSMutableArray *indexPaths = [[NSMutableArray alloc] initWithCapacity:12];
     
     KKIndexPath *indexPath = [KKIndexPath zeroIndexPath];
@@ -1158,7 +1131,8 @@ struct KKSectionMetrics {
                 
                 if (_backgroundView)
                     [self insertSubview:rowBackground.view aboveSubview:_backgroundView];
-                else [self insertSubview:rowBackground.view atIndex:0];
+                else
+                    [self insertSubview:rowBackground.view atIndex:0];
             }
         }
     }
@@ -1221,8 +1195,7 @@ struct KKSectionMetrics {
     [self _commonReload];
     // cells are saved in _reusableCells container to re-use them later on
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
-        [set addObject:cell];
+        [[self _reusableCellSetForIdentifier:cell.reuseIdentifier] addObject:cell];
         cell.hidden = YES;
         cell.alpha = 0.f;
     }
@@ -1250,8 +1223,10 @@ struct KKSectionMetrics {
         _markedForDisplay = YES;
     }
     
-    CGSize newContentSize = CGSizeMake(self.bounds.size.width, 
-                                       _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
+    CGSize newContentSize = {
+        self.bounds.size.width,
+        _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height
+    };
     
     for (NSUInteger i = 0; i < _metrics.count; ++i) {
         CGFloat heightForSection = 0.f;
