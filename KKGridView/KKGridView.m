@@ -677,13 +677,14 @@ struct KKSectionMetrics {
     void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
-    
+
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
         
-        if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating)
+        if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
+        }
 
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         if (!cell) {
@@ -692,6 +693,11 @@ struct KKSectionMetrics {
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             
         } else if (_markedForDisplay) {
+            [cell removeFromSuperview];
+            [_visibleCells removeObjectForKey:indexPath];
+            cell = nil;
+            cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
+
             [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
                 updateCellFrame(cell, indexPath);
             }];
@@ -723,7 +729,6 @@ struct KKSectionMetrics {
 
 - (KKGridViewAnimation)_handleUpdateForIndexPath:(KKIndexPath *)indexPath visibleIndexPaths:(NSArray *)visibleIndexPaths
 {
-    
     _needsAccessoryReload = YES;
     _markedForDisplay = YES;
     _staggerForInsertion = YES;
@@ -734,9 +739,9 @@ struct KKSectionMetrics {
     NSArray *newVisiblePaths = [self visibleIndexPaths];
     
     if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
-                [self _incrementCellsAtIndexPath:indexPath
-                                             toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                                byAmount:update.sign];
+        [self _incrementCellsAtIndexPath:indexPath
+                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+                                        byAmount:update.sign];
     }
     
     NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
@@ -756,6 +761,7 @@ struct KKSectionMetrics {
     
     [_selectedIndexPaths setSet:replacementSet];
     [self reloadContentSize];
+
     
     if (![newVisiblePaths isEqual:visibleIndexPaths]) {
         
@@ -857,9 +863,8 @@ struct KKSectionMetrics {
 
 - (void)_enqueueCell:(KKGridViewCell *)cell withIdentifier:(NSString *)identifier
 {
-    NSMutableSet *set = [self _reusableCellSetForIdentifier:identifier];
-    [set addObject:cell];
-}
+    [[self _reusableCellSetForIdentifier:identifier] addObject:cell];
+} 
 
 - (KKGridViewCell *)_loadCellAtVisibleIndexPath:(KKIndexPath *)indexPath
 {
@@ -957,7 +962,6 @@ struct KKSectionMetrics {
     
     KKGridViewCell *reusableCell = [reusableCellsForIdentifier anyObject];
     [reusableCellsForIdentifier removeObject:reusableCell];
-    
     [reusableCell prepareForReuse];
     
     return reusableCell;
@@ -1023,6 +1027,7 @@ struct KKSectionMetrics {
             [replacement setObject:cell forKey:keyPath];
         }
     }];
+
     [_visibleCells setDictionary:replacement];
 }
 
@@ -1030,7 +1035,7 @@ struct KKSectionMetrics {
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
-    // We're only going to stage these, since we're delaying the updates.
+// We're only going to stage these, since we're delaying the updates.
     if (_batchUpdating) {
 
 
@@ -1224,7 +1229,7 @@ struct KKSectionMetrics {
         NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
         [set addObject:cell];
         cell.hidden = YES;
-        cell.alpha = 0.;
+        cell.alpha = 0.f;
     }
     
     [_visibleCells removeAllObjects];

@@ -81,9 +81,8 @@
 
 - (BOOL)isEqual:(KKIndexPath *)indexPath
 {
-    if (indexPath == self) {
+    if (indexPath == self)
         return YES;
-    }
 
     return (indexPath->_index == _index && indexPath->_section == _section);
 }
