@@ -237,6 +237,8 @@ struct KKSectionMetrics {
 
 #pragma mark - Setters
 
+// Enables or disables multiple selection.. makes sure grid state is valid
+
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     if (allowsMultipleSelection == _allowsMultipleSelection)
@@ -252,6 +254,8 @@ struct KKSectionMetrics {
     _allowsMultipleSelection = allowsMultipleSelection;
 }
 
+// Sets a background view akin to UITableView (stays in place)
+
 - (void)setBackgroundView:(UIView *)backgroundView
 {
     if (backgroundView == _backgroundView)
@@ -265,6 +269,8 @@ struct KKSectionMetrics {
     [self sendSubviewToBack:_backgroundView];
 }
 
+// Standard override of setBounds so we can do our updates
+
 - (void)setBounds:(CGRect)bounds
 {
     CGRect oldBounds = self.bounds;
@@ -273,6 +279,8 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
+
+// Adjusts via CGSize what cell padding is applied to each side
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
@@ -285,6 +293,8 @@ struct KKSectionMetrics {
     }
 }
 
+// Via CGSize, adjust the point-size of each cell.  Defaults to 75x75.
+
 - (void)setCellSize:(CGSize)cellSize
 {
     if (!CGSizeEqualToSize(_cellSize, cellSize)) {
@@ -295,6 +305,8 @@ struct KKSectionMetrics {
     }
 }
 
+// Override of content inset property; applies by changing grid's interpretation of bounds, calls reload.. experimental according to @keichan34, who implemented it.
+
 - (void)setContentInset:(UIEdgeInsets)contentInset
 {
     UIEdgeInsets oldInsets = self.contentInset;
@@ -303,6 +315,8 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
+
+// Sets data source of grid
 
 - (void)setDataSource:(id<KKGridViewDataSource>)dataSource
 {
@@ -325,6 +339,8 @@ struct KKSectionMetrics {
     }
 }
 
+// Sets delegate of gridview, inherits from UIScrollViewDelegate for the moment.
+
 - (void)setDelegate:(id<KKGridViewDelegate>)delegate
 {
     if (delegate != self.delegate)
@@ -340,6 +356,8 @@ struct KKSectionMetrics {
     }
 }
 
+// Standard override of setFrame so we can do our updates
+
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;
@@ -349,6 +367,8 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
+
+// Set global grid footer
 
 - (void)setGridFooterView:(UIView *)gridFooterView
 {
@@ -361,6 +381,8 @@ struct KKSectionMetrics {
     [self addSubview:gridFooterView];
     [self setNeedsLayout];
 }
+
+// Set global grid header
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
 {
