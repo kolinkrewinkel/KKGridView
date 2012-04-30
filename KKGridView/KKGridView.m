@@ -520,7 +520,7 @@ struct KKSectionMetrics {
     }
     
     // TODO: Add checking to see if sticking status has actually changed for anything.
-    CGRect visibleBounds = {
+    CGRect const visibleBounds = {
         self.contentOffset.x + self.contentInset.left,
         self.contentOffset.y + self.contentInset.top,
         self.bounds.size.width - self.contentInset.right,
@@ -550,13 +550,13 @@ struct KKSectionMetrics {
     
     for (KKGridViewHeader *header in _headerViews) {
         // Get basic metrics
-        CGRect f = header.view.frame;
-        f.size.width = visibleBounds.size.width;
+        CGRect headerFrame = header.view.frame;
+        headerFrame.size.width = visibleBounds.size.width;
         CGFloat sectionY = header->stickPoint;
         
         if (sectionY <= offset && offset >= 0.0f) {
             // Section header is sticky
-            f.origin.y = offset;
+            headerFrame.origin.y = offset;
             
             if (_dataSourceRespondsTo.titleForHeader)
                 header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[1]];
@@ -567,16 +567,17 @@ struct KKSectionMetrics {
                 CGFloat sectionTwoHeight = sectionTwo.view.frame.size.height;
                 CGFloat sectionTwoY = sectionTwo->stickPoint;
                 if ((offset + sectionTwoHeight) >= sectionTwoY) {
-                    f.origin.y = sectionTwoY - sectionTwoHeight;
+                    headerFrame.origin.y = sectionTwoY - sectionTwoHeight;
                 }
             }            
         } else {
             // Put header back to default position
-            f.origin.y = header->stickPoint;
+            headerFrame.origin.y = header->stickPoint;
             if (_dataSourceRespondsTo.titleForHeader)
                 header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
         }
-        header.view.frame = f;
+        
+        header.view.frame = headerFrame;
     }
     
     offset = self.contentOffset.y;
@@ -635,7 +636,7 @@ struct KKSectionMetrics {
 
 - (void)_cleanupCells
 {
-    const CGRect visibleBounds = { self.contentOffset, self.bounds.size };
+    CGRect const visibleBounds = { self.contentOffset, self.bounds.size };
     
     typedef struct {
         __unsafe_unretained KKGridViewCell *cell;
@@ -969,7 +970,7 @@ struct KKSectionMetrics {
 
 - (NSArray *)visibleIndexPaths
 {
-    const CGRect visibleBounds = {self.contentOffset, self.bounds.size};
+    CGRect const visibleBounds = {self.contentOffset, self.bounds.size};
     NSMutableArray *indexPaths = [[NSMutableArray alloc] initWithCapacity:12];
     
     KKIndexPath *indexPath = [KKIndexPath zeroIndexPath];
@@ -1163,7 +1164,8 @@ struct KKSectionMetrics {
                 
                 if (_backgroundView)
                     [self insertSubview:rowBackground.view aboveSubview:_backgroundView];
-                else [self insertSubview:rowBackground.view atIndex:0];
+                else
+                    [self insertSubview:rowBackground.view atIndex:0];
             }
         }
     }
@@ -1226,8 +1228,7 @@ struct KKSectionMetrics {
     [self _commonReload];
     // cells are saved in _reusableCells container to re-use them later on
     for (KKGridViewCell *cell in [_visibleCells allValues]) {
-        NSMutableSet *set = [self _reusableCellSetForIdentifier:cell.reuseIdentifier];
-        [set addObject:cell];
+        [[self _reusableCellSetForIdentifier:cell.reuseIdentifier] addObject:cell];
         cell.hidden = YES;
         cell.alpha = 0.f;
     }
@@ -1255,8 +1256,10 @@ struct KKSectionMetrics {
         _markedForDisplay = YES;
     }
     
-    CGSize newContentSize = CGSizeMake(self.bounds.size.width, 
-                                       _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height);
+    CGSize newContentSize = {
+        self.bounds.size.width,
+        _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height
+    };
     
     for (NSUInteger i = 0; i < _metrics.count; ++i) {
         CGFloat heightForSection = 0.f;
