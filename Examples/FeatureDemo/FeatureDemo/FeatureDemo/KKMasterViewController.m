@@ -113,9 +113,11 @@
 
             for (NSString *section in sections) {
                 [indexPaths addObject:[KKIndexPath indexPathForIndex:0 inSection:[section integerValue]]];
+                NSMutableArray *array = [self.detailViewController.fillerData objectAtIndex:[section integerValue]];
+                [array addObject:[NSString stringWithFormat:@"%u", [array count]]];
             }
 
-            
+
             [gridView insertItemsAtIndexPaths:indexPaths withAnimation:KKGridViewAnimationExplode];
 
             break;
