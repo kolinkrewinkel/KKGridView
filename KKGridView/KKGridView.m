@@ -234,6 +234,73 @@ struct KKSectionMetrics {
 
 #pragma mark - Setters
 
+- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
+{
+    if (allowsMultipleSelection == _allowsMultipleSelection)
+        return;
+    
+    //    If multiple selection is being disabled, update.
+    if (!allowsMultipleSelection) {
+        [_selectedIndexPaths removeAllObjects];
+        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
+            [self _layoutGridView];
+        } completion:nil];
+    }
+    _allowsMultipleSelection = allowsMultipleSelection;
+}
+
+- (void)setBackgroundView:(UIView *)backgroundView
+{
+    if (backgroundView == _backgroundView)
+        return;
+    
+    [_backgroundView removeFromSuperview];
+    _backgroundView = backgroundView;
+    _backgroundView.frame = self.bounds;
+    
+    [self addSubview:_backgroundView];
+    [self sendSubviewToBack:_backgroundView];
+}
+
+- (void)setBounds:(CGRect)bounds
+{
+    CGRect oldBounds = self.bounds;
+    [super setBounds:bounds];
+    if (!CGSizeEqualToSize(bounds.size, oldBounds.size)) {
+        [self _respondToBoundsChange];
+    }
+}
+
+- (void)setCellPadding:(CGSize)cellPadding
+{
+    //    Call for a total recalculation in the case a change as large as these (cell size as well) occurs.
+    if (!CGSizeEqualToSize(_cellPadding, cellPadding)) {
+        _cellPadding = cellPadding;
+        
+        [self _layoutModelCells];
+        [self reloadData];
+    }
+}
+
+- (void)setCellSize:(CGSize)cellSize
+{
+    if (!CGSizeEqualToSize(_cellSize, cellSize)) {
+        _cellSize = cellSize;
+        
+        [self _layoutModelCells];
+        [self reloadData];
+    }
+}
+
+- (void)setContentInset:(UIEdgeInsets)contentInset
+{
+    UIEdgeInsets oldInsets = self.contentInset;
+    [super setContentInset:contentInset];
+    if (!UIEdgeInsetsEqualToEdgeInsets(oldInsets, contentInset)) {
+        [self _respondToBoundsChange];
+    }
+}
+
 - (void)setDataSource:(id<KKGridViewDataSource>)dataSource
 {
     if (dataSource != _dataSource)
@@ -280,71 +347,6 @@ struct KKSectionMetrics {
     }
 }
 
-- (void)setBounds:(CGRect)bounds
-{
-    CGRect oldBounds = self.bounds;
-    [super setBounds:bounds];
-    if (!CGSizeEqualToSize(bounds.size, oldBounds.size)) {
-        [self _respondToBoundsChange];
-    }
-}
-
-- (void)setContentInset:(UIEdgeInsets)contentInset {
-    UIEdgeInsets oldInsets = self.contentInset;
-    [super setContentInset:contentInset];
-    if (!UIEdgeInsetsEqualToEdgeInsets(oldInsets, contentInset)) {
-        [self _respondToBoundsChange];
-    }
-}
-
-- (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
-{
-    if (allowsMultipleSelection == _allowsMultipleSelection)
-        return;
-    
-    //    If multiple selection is being disabled, update.
-    if (!allowsMultipleSelection) {
-        [_selectedIndexPaths removeAllObjects];
-        [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
-            [self _layoutGridView];
-        } completion:nil];
-    }
-    _allowsMultipleSelection = allowsMultipleSelection;
-}
-
-- (void)setCellPadding:(CGSize)cellPadding
-{
-    //    Call for a total recalculation in the case a change as large as these (cell size as well) occurs.
-    if (!CGSizeEqualToSize(_cellPadding, cellPadding)) {
-        _cellPadding = cellPadding;
-        
-        [self _layoutModelCells];
-        [self reloadData];
-    }
-}
-
-- (void)setCellSize:(CGSize)cellSize
-{
-    if (!CGSizeEqualToSize(_cellSize, cellSize)) {
-        _cellSize = cellSize;
-        
-        [self _layoutModelCells];
-        [self reloadData];
-    }
-}
-
-- (void)setGridHeaderView:(UIView *)gridHeaderView
-{
-    if (gridHeaderView == _gridHeaderView)
-        return;
-    
-    [_gridHeaderView removeFromSuperview];
-    _gridHeaderView = gridHeaderView;
-    
-    [self addSubview:gridHeaderView];
-    [self setNeedsLayout];
-}
-
 - (void)setGridFooterView:(UIView *)gridFooterView
 {
     if (gridFooterView == _gridFooterView)
@@ -357,17 +359,16 @@ struct KKSectionMetrics {
     [self setNeedsLayout];
 }
 
-- (void)setBackgroundView:(UIView *)backgroundView
+- (void)setGridHeaderView:(UIView *)gridHeaderView
 {
-    if (backgroundView == _backgroundView)
+    if (gridHeaderView == _gridHeaderView)
         return;
     
-    [_backgroundView removeFromSuperview];
-    _backgroundView = backgroundView;
-    _backgroundView.frame = self.bounds;
+    [_gridHeaderView removeFromSuperview];
+    _gridHeaderView = gridHeaderView;
     
-    [self addSubview:_backgroundView];
-    [self sendSubviewToBack:_backgroundView];
+    [self addSubview:gridHeaderView];
+    [self setNeedsLayout];
 }
 
 #pragma mark - Batch Editing
