@@ -96,7 +96,12 @@ typedef enum {
 - (void)reloadContentSize;
 - (void)reloadData;
 
-#pragma mark - Items
+#pragma mark - Editing
+
+- (void)beginUpdates;
+- (void)endUpdates;
+
+#pragma mark Individual Items
 
 - (void)reloadItemsAtIndexPaths:(NSArray *)indexPaths;
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation;

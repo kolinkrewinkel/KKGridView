@@ -370,6 +370,18 @@ struct KKSectionMetrics {
     [self sendSubviewToBack:_backgroundView];
 }
 
+#pragma mark - Batch Editing
+
+- (void)beginUpdates
+{
+    
+}
+
+- (void)endUpdates
+{
+    
+}
+
 #pragma mark - Root Layout Methods
 
 - (void)layoutSubviews
