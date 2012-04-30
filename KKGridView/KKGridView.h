@@ -75,6 +75,7 @@ typedef enum {
 @property (nonatomic) KKGridViewLayoutDirection layoutDirection;
 @property (nonatomic, readonly) NSUInteger numberOfColumns;
 @property (nonatomic, readonly) NSUInteger numberOfSections;
+@property (nonatomic, readonly) BOOL batchUpdating;
 
 #pragma mark - Data Source and Delegate
 @property (nonatomic, kk_weak) IBOutlet id <KKGridViewDataSource> dataSource;

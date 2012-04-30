@@ -135,6 +135,7 @@ struct KKSectionMetrics {
 
 @implementation KKGridView
 
+@synthesize batchUpdating = _batchUpdating;
 @synthesize dataSource = _dataSource;
 @dynamic delegate;
 
