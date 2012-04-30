@@ -551,9 +551,7 @@ struct KKSectionMetrics {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
 
-    for (KKIndexPath *indexPath in _updateStack.itemsToUpdate) {
-        
-    }
+    if ([_updateStack nextUpdateFromIndexPath:[visiblePaths objectAtIndex:0] fallbackPath:[KKIndexPath ]])
 
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates

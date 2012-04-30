@@ -7,18 +7,29 @@
 //
 
 @interface KKIndexPath : NSObject <NSCopying>
-+ (KKIndexPath *)zeroIndexPath;
-+ (NSArray *)indexPathsWithNSIndexPaths:(NSArray *)indexPaths;
+
+#pragma mark - Initializers
 
 - (id)initWithIndex:(NSUInteger)index section:(NSUInteger)section;
 + (id)indexPathForIndex:(NSUInteger)index inSection:(NSUInteger)section;
 
+#pragma mark - NSIndexPath
+
++ (NSArray *)indexPathsWithNSIndexPaths:(NSArray *)indexPaths;
 - (id)initWithNSIndexPath:(NSIndexPath *)indexPath;
 + (id)indexPathWithNSIndexPath:(NSIndexPath *)indexPath;
-
 - (NSIndexPath *)NSIndexPath;
 
+#pragma mark - NSComparisonResult
+
 - (NSComparisonResult)compare:(id)other;
+
+#pragma mark - Convenience
+
++ (KKIndexPath *)nonexistantIndexPath;
++ (KKIndexPath *)zeroIndexPath;
+
+#pragma mark - Properties
 
 @property (nonatomic, readwrite) NSUInteger section;
 @property (nonatomic, readwrite) NSUInteger index;
