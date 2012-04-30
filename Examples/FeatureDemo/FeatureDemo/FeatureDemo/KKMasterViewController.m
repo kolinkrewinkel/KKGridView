@@ -28,7 +28,7 @@
     }
     return self;
 }
-							
+
 
 
 #pragma mark - Cleanup
@@ -43,7 +43,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    _objects = [[NSMutableArray alloc] initWithArray:@[@"Add Items", @"Remove Items", @"Add Section", @"Remove Section", @"Move Items", @"Multiple Selection", @"Background View"]];
+    _objects = [[NSMutableArray alloc] initWithArray:@[@"Add Items", @"Remove Items", @"Add Section", @"Remove Section", @"Move Items", @"Multiple Selection", @"Background View", @"Begin Updates"]];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -77,14 +77,18 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
+    
+    cell.textLabel.text = [_objects objectAtIndex:indexPath.row];
+    
     if (indexPath.row == 5) {
         cell.accessoryType = self.detailViewController.gridView.allowsMultipleSelection ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     } else if (indexPath.row == 6) {
         cell.accessoryType = self.detailViewController.gridView.backgroundView ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    } else if (indexPath.row == 7) {
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.text = self.detailViewController.gridView.batchUpdating ? @"End Updates" : @"Begin Updates";
     }
-
-    cell.textLabel.text = [_objects objectAtIndex:indexPath.row];
-
+    
     return cell;
 }
 
@@ -107,19 +111,19 @@
             for (NSIndexPath *indexPath in [gridView visibleIndexPaths]) {
                 [set addObject:[NSNumber numberWithUnsignedInteger:indexPath.section]];
             }
-
+            
             NSArray *sections = [set allObjects];
             NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-
+            
             for (NSString *section in sections) {
                 [indexPaths addObject:[KKIndexPath indexPathForIndex:0 inSection:[section integerValue]]];
                 NSMutableArray *array = [self.detailViewController.fillerData objectAtIndex:[section integerValue]];
                 [array addObject:[NSString stringWithFormat:@"%u", [array count]]];
             }
-
-
+            
+            
             [gridView insertItemsAtIndexPaths:indexPaths withAnimation:KKGridViewAnimationExplode];
-
+            
             break;
         } case 5: {
             gridView.allowsMultipleSelection = !gridView.allowsMultipleSelection;
@@ -132,9 +136,18 @@
             }
             
             gridView.backgroundView = gridView.backgroundView ? nil : backgroundView;
+            
+            break;
+        } case 7: {
+
+            if (!gridView.batchUpdating)
+                [gridView beginUpdates];
+            else
+                [gridView endUpdates];
 
             break;
-        } default:
+        }
+        default:
             break;
     }
 }
