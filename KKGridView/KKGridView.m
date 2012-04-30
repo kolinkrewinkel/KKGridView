@@ -400,6 +400,8 @@ struct KKSectionMetrics {
 
 #pragma mark - Private Layout Methods
 
+// Manage global grid header and footer views
+
 - (void)_layoutExtremities
 {
     if (_gridHeaderView != nil) {
@@ -417,11 +419,15 @@ struct KKSectionMetrics {
     }
 }
 
+// Update grid view in response to a change in size
+
 - (void)_respondToBoundsChange
 {
     [self reloadData];
     [self setNeedsLayout];
 }
+
+// Handle updates in the model so they don't happen as the user scrolls by.. it'll make sense if you comment its code out.
 
 - (void)_performRemainingUpdatesModelOnly
 {
