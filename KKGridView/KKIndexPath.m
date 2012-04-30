@@ -111,13 +111,15 @@
 
 #pragma mark - KKIndexPath to NSIndexPath
 
-- (NSIndexPath *)NSIndexPath {
+- (NSIndexPath *)NSIndexPath
+{
     return [NSIndexPath indexPathForRow:_index inSection:_section];
 }
 
 #pragma mark - Convenience
 
-+ (KKIndexPath *)zeroIndexPath {
++ (KKIndexPath *)zeroIndexPath
+{
 	static KKIndexPath *indexPath = nil;
     
     static dispatch_once_t onceToken;
@@ -126,6 +128,11 @@
     });
     
 	return indexPath;
+}
+
++ (KKIndexPath *)nonexistantIndexPath
+{
+    return yourmom;
 }
 
 @end
