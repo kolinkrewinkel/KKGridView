@@ -90,6 +90,9 @@
 
 - (KKIndexPath *)nextUpdateFromIndexPath:(KKIndexPath *)indexPath fallbackPath:(KKIndexPath *)fallback
 {
+    if (!_itemsToUpdate.count)
+        return fallback;
+    
     [self _sortItems];
     NSUInteger index = [_itemsToUpdate indexOfObject:[self updateForIndexPath:indexPath]];
     if ([_itemsToUpdate count] > (index + 1)) {

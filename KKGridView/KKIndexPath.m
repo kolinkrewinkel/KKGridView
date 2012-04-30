@@ -132,7 +132,14 @@
 
 + (KKIndexPath *)nonexistantIndexPath
 {
-    return yourmom;
+	static KKIndexPath *indexPath = nil;
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        indexPath = [[self alloc] initWithIndex:NSUIntegerMax section:NSUIntegerMax];
+    });
+    
+	return indexPath;
 }
 
 @end
