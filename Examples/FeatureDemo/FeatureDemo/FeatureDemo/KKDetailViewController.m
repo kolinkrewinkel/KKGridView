@@ -58,7 +58,7 @@
 
 - (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
 {
-    return [NSString stringWithFormat:@"%u", section];
+    return [NSString stringWithFormat:@"%u", section + 1];
 }
 
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath

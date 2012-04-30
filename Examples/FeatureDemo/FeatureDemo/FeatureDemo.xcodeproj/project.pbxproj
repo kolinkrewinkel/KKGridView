@@ -20,6 +20,7 @@
 		33B325AD154C98DA00CB9597 /* KKDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33B325AB154C98DA00CB9597 /* KKDetailViewController.xib */; };
 		33B325B4154CA66300CB9597 /* libKKGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33B325B3154CA66300CB9597 /* libKKGridView.a */; };
 		33B325BB154CB0C200CB9597 /* KKDemoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 33B325BA154CB0C200CB9597 /* KKDemoCell.m */; };
+		33B325BD154E540700CB9597 /* KKGridView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 33B325BC154E540700CB9597 /* KKGridView.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		33B325B3154CA66300CB9597 /* libKKGridView.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libKKGridView.a; path = "../../../build/Release-iphoneos/libKKGridView.a"; sourceTree = "<group>"; };
 		33B325B9154CB0C200CB9597 /* KKDemoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KKDemoCell.h; sourceTree = "<group>"; };
 		33B325BA154CB0C200CB9597 /* KKDemoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KKDemoCell.m; sourceTree = "<group>"; };
+		33B325BC154E540700CB9597 /* KKGridView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = KKGridView.bundle; path = ../../../../KKGridView/KKGridView.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 				33B325BA154CB0C200CB9597 /* KKDemoCell.m */,
 				33B325A8154C98DA00CB9597 /* KKMasterViewController.xib */,
 				33B325AB154C98DA00CB9597 /* KKDetailViewController.xib */,
+				33B325BC154E540700CB9597 /* KKGridView.bundle */,
 				33B32595154C98DA00CB9597 /* Supporting Files */,
 			);
 			path = FeatureDemo;
@@ -174,6 +177,7 @@
 				33B325A1154C98DA00CB9597 /* FeatureDemo.entitlements in Resources */,
 				33B325AA154C98DA00CB9597 /* KKMasterViewController.xib in Resources */,
 				33B325AD154C98DA00CB9597 /* KKDetailViewController.xib in Resources */,
+				33B325BD154E540700CB9597 /* KKGridView.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
