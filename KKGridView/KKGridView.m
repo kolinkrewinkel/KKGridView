@@ -1035,11 +1035,6 @@ struct KKSectionMetrics {
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
-// We're only going to stage these, since we're delaying the updates.
-    if (_batchUpdating) {
-
-
-    }
     [self _reloadMetrics];
     
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)])
