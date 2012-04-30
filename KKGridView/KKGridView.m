@@ -166,7 +166,7 @@ struct KKSectionMetrics {
     if ((self = [super initWithCoder:aDecoder])) {
         [self _sharedInitialization];
     }
-
+    
     // Doesn't yet support NSCoder
     return self;
 }
@@ -210,7 +210,7 @@ struct KKSectionMetrics {
     self.cellPadding = CGSizeMake(4.f, 4.f);
     self.allowsMultipleSelection = NO;
     self.backgroundColor = [UIColor whiteColor];
-
+    
     [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 }
@@ -652,7 +652,7 @@ struct KKSectionMetrics {
     void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
-
+    
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
@@ -660,7 +660,7 @@ struct KKSectionMetrics {
         if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
         }
-
+        
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         if (!cell) {
             
@@ -672,17 +672,17 @@ struct KKSectionMetrics {
             [_visibleCells removeObjectForKey:indexPath];
             cell = nil;
             cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-
+            
             [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
                 updateCellFrame(cell, indexPath);
             }];
         }
-
+        
         // Highlight cells updated in the model.
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
         index++;
     }
-
+    
     // Remove offscreen cells (recycle them)
     [self _cleanupCells];
 }
@@ -715,8 +715,8 @@ struct KKSectionMetrics {
     
     if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
         [self _incrementCellsAtIndexPath:indexPath
-                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                        byAmount:update.sign];
+                             toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+                                byAmount:update.sign];
     }
     
     NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
@@ -736,17 +736,17 @@ struct KKSectionMetrics {
     
     [_selectedIndexPaths setSet:replacementSet];
     [self reloadContentSize];
-
+    
     
     if (![newVisiblePaths isEqual:visibleIndexPaths]) {
         
         NSMutableArray *difference = [[[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
         [difference removeObjectsInArray:visibleIndexPaths];
-
+        
         void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
             cell.frame = [self rectForCellAtIndexPath:indexPath]; 
         };
-
+        
         for (KKIndexPath *keyPath in difference) {
             KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
             cell.selected = [_selectedIndexPaths containsObject:keyPath];
@@ -756,7 +756,7 @@ struct KKSectionMetrics {
             }];
         }
     }
-
+    
     return animation;
 }
 
@@ -886,7 +886,7 @@ struct KKSectionMetrics {
         CGRect cellRect = [self rectForCellAtIndexPath:indexPath];
         if (CGRectIntersectsRect(rect, cellRect))
             [indexes addObject:indexPath];
-
+        
     }
     
     return indexes;
@@ -910,17 +910,17 @@ struct KKSectionMetrics {
             point.y += _metrics.sections[section].sectionHeight;
         }
     }
-
+    
     if (indexPath.section < _metrics.count) {
         point.y += _metrics.sections[indexPath.section].headerHeight;
     }
-
+    
     NSInteger row = indexPath.index / _numberOfColumns;
     NSInteger column = indexPath.index - (row * _numberOfColumns);
     
     point.y += (row * (_cellSize.height + _cellPadding.height));
     point.x += (column * (_cellSize.width + _cellPadding.width));
-
+    
     return CGRectIntegral((CGRect){point, _cellSize});
 }
 
@@ -1000,7 +1000,7 @@ struct KKSectionMetrics {
             [replacement setObject:cell forKey:keyPath];
         }
     }];
-
+    
     [_visibleCells setDictionary:replacement];
 }
 
@@ -1008,14 +1008,14 @@ struct KKSectionMetrics {
 
 - (void)insertItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
 {
-    [self _reloadMetrics];
     
     for (KKIndexPath *indexPath in [indexPaths sortedArrayUsingSelector:@selector(compare:)])
         [_updateStack addUpdate:[KKGridViewUpdate updateWithIndexPath:indexPath isSectionUpdate:NO type:KKGridViewUpdateTypeItemInsert animation:animation]];
     
-    _staggerForInsertion = YES;
-    _markedForDisplay = YES;
-    [self _layoutGridView];
+    if (!_batchUpdating) {
+        [self _reloadMetrics];
+        [self _layoutGridView];
+    }
 }
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
@@ -1098,7 +1098,7 @@ struct KKSectionMetrics {
             [self addSubview:header.view];
         }
     }
-
+    
     if (_dataSourceRespondsTo.viewForRow) {
         clearViewsInArray(_rowViews);
         if (!_rowViews)
@@ -1528,7 +1528,7 @@ struct KKSectionMetrics {
         return;
     
     KKIndexPath *indexPath = [self indexPathForItemAtPoint:locationInSelf];
-
+    
     // The index path may be invalid, for example if the touch point falls outside
     // of the grid. In that case we abort further processing, as it only makes sense
     // with a valid grid cell being selected.
@@ -1539,13 +1539,13 @@ struct KKSectionMetrics {
     
     if (state == UIGestureRecognizerStateEnded && _delegateRespondsTo.willSelectItem && ![self isDragging])
         indexPath = [self.delegate gridView:self willSelectItemAtIndexPath:indexPath];
-
+    
     // The delegate may have returned a nil index path to cancel the selection.
     if (!indexPath) {
         [self _cancelHighlighting];
         return;
     }
-
+    
     if (state == UIGestureRecognizerStateBegan) {
         [self _highlightItemAtIndexPath:indexPath];
     }
