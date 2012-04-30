@@ -115,7 +115,6 @@ typedef enum {
 //- (void)deleteSections:(NSIndexSet *)sections withItemAnimation:(KKGridViewAnimation)animation;
 //- (void)reloadSections:(NSIndexSet *)sections withAnimation:(KKGridViewAnimation)animation;
 
-
 #pragma mark - Selection
 
 - (void)selectItemsAtIndexPaths:(NSArray *)indexPaths animated:(BOOL)animated;
