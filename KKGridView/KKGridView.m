@@ -550,10 +550,13 @@ struct KKSectionMetrics {
     void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
         cell.frame = [self rectForCellAtIndexPath:indexPath]; 
     };
-    
-    
+
+    for (KKIndexPath *indexPath in _updateStack.itemsToUpdate) {
+        
+    }
+
     for (KKIndexPath *indexPath in visiblePaths) {
-        //      Updates
+        // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
         if ([_updateStack hasUpdateForIndexPath:indexPath]) {
             _needsAccessoryReload = YES;
@@ -564,11 +567,11 @@ struct KKSectionMetrics {
             animation = update.animation;
             
             NSArray *newVisiblePaths = [self visibleIndexPaths];
-            
+
             if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
-                [self _incrementCellsAtIndexPath:indexPath 
-                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                        byAmount:update.sign];
+//                [self _incrementCellsAtIndexPath:indexPath 
+//                                     toIndexPath:[self _lastIndexPathForSection:indexPath.section]
+//                                        byAmount:update.sign];
             }
             
             NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:[_selectedIndexPaths count]];
@@ -839,17 +842,17 @@ struct KKSectionMetrics {
             point.y += _metrics.sections[section].sectionHeight;
         }
     }
-    
+
     if (indexPath.section < _metrics.count) {
         point.y += _metrics.sections[indexPath.section].headerHeight;
     }
-    
+
     NSInteger row = indexPath.index / _numberOfColumns;
     NSInteger column = indexPath.index - (row * _numberOfColumns);
     
     point.y += (row * (_cellSize.height + _cellPadding.height));
     point.x += (column * (_cellSize.width + _cellPadding.width));
-    
+
     return CGRectIntegral((CGRect){point, _cellSize});
 }
 
