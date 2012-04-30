@@ -400,6 +400,53 @@ struct KKSectionMetrics {
 
 #pragma mark - Private Layout Methods
 
+- (void)_layoutExtremities
+{
+    if (_gridHeaderView != nil) {
+        CGSize headerSize = _gridHeaderView.frame.size;
+        headerSize.width = self.bounds.size.width;
+        _gridHeaderView.frame = (CGRect) { .size = headerSize };
+    }
+    
+    // layout gridFooterView
+    if (_gridFooterView != nil) {
+        CGRect footerRect = _gridFooterView.frame;
+        footerRect.origin = (CGPoint) { .y = self.contentSize.height - footerRect.size.height };
+        footerRect.size.width = self.bounds.size.width;
+        _gridFooterView.frame = footerRect;
+    }
+}
+
+- (void)_respondToBoundsChange
+{
+    [self reloadData];
+    [self setNeedsLayout];
+}
+
+- (void)_performRemainingUpdatesModelOnly
+{
+    NSArray *filteredArray = [_updateStack.itemsToUpdate filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"animating == NO"]];
+    if (filteredArray.count > 0) {
+        [_updateStack.itemsToUpdate removeObjectsInArray:filteredArray];
+        CGFloat yPosition = self.contentOffset.y;
+        [self _softReload];
+        self.contentOffset = CGPointMake(0.f, self.contentOffset.y > yPosition ? self.contentOffset.y - yPosition : self.contentOffset.y + (self.contentOffset.y - yPosition));
+    }
+}
+
+#pragma mark Section Views
+
+// Frame assignments for header and footer views.
+
+- (void)_configureSectionView:(KKGridViewSectionInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
+{
+    headerOrFooter.view.frame = CGRectMake(0.f, stickPoint, self.bounds.size.width, height);
+    headerOrFooter->stickPoint = stickPoint;
+    headerOrFooter->section = section;
+}
+
+// Position them for each notch in the scrollview.. called a lot, could use optimization probably.
+
 - (void)_layoutSectionViews
 {
     // Reposition all the things!... if necessary
@@ -426,7 +473,7 @@ struct KKSectionMetrics {
         } completion:nil];
     }
     
-// TODO: Add checking to see if sticking status has actually changed for anything.
+    // TODO: Add checking to see if sticking status has actually changed for anything.
     CGRect visibleBounds = {
         self.contentOffset.x + self.contentInset.left,
         self.contentOffset.y + self.contentInset.top,
@@ -536,58 +583,9 @@ struct KKSectionMetrics {
     }
 }
 
-- (void)_layoutExtremities
-{
-    if (_gridHeaderView != nil) {
-        CGSize headerSize = _gridHeaderView.frame.size;
-        headerSize.width = self.bounds.size.width;
-        _gridHeaderView.frame = (CGRect) { .size = headerSize };
-    }
-    
-    // layout gridFooterView
-    if (_gridFooterView != nil) {
-        CGRect footerRect = _gridFooterView.frame;
-        footerRect.origin = (CGPoint) { .y = self.contentSize.height - footerRect.size.height };
-        footerRect.size.width = self.bounds.size.width;
-        _gridFooterView.frame = footerRect;
-    }
-}
+#pragma mark Cells
 
-- (void)_layoutVisibleCells
-{    
-    NSArray *visiblePaths = [self visibleIndexPaths];
-    NSUInteger index = 0;
-
-    void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
-        cell.frame = [self rectForCellAtIndexPath:indexPath]; 
-    };
-    
-    for (KKIndexPath *indexPath in visiblePaths) {
-        // Updates
-        KKGridViewAnimation animation = KKGridViewAnimationNone;
-
-        if ([_updateStack hasUpdateForIndexPath:indexPath]) {
-            animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
-        }
-        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
-        if (!cell) {
-            cell = [self _loadCellAtVisibleIndexPath:indexPath];
-            [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
-        }
-        
-        else if (_markedForDisplay) {
-            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
-                updateCellFrame(cell, indexPath);
-            }];
-        }
-        
-        cell.selected = [_selectedIndexPaths containsObject:indexPath];
-        
-        index++;
-    }
-
-    [self _cleanupCells];
-}
+// Remove garbage cells.
 
 - (void)_cleanupCells
 {
@@ -623,11 +621,45 @@ struct KKSectionMetrics {
     }
 }
 
-- (void)_respondToBoundsChange
-{
-    [self reloadData];
-    [self setNeedsLayout];
+// Primary cell frame methods..
+
+- (void)_layoutVisibleCells
+{    
+    NSArray *visiblePaths = [self visibleIndexPaths];
+    NSUInteger index = 0;
+    
+    void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
+        cell.frame = [self rectForCellAtIndexPath:indexPath]; 
+    };
+    
+    for (KKIndexPath *indexPath in visiblePaths) {
+        // Updates
+        KKGridViewAnimation animation = KKGridViewAnimationNone;
+        
+        if ([_updateStack hasUpdateForIndexPath:indexPath]) {
+            animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
+        }
+        KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
+        if (!cell) {
+            cell = [self _loadCellAtVisibleIndexPath:indexPath];
+            [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
+        }
+        
+        else if (_markedForDisplay) {
+            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
+                updateCellFrame(cell, indexPath);
+            }];
+        }
+        
+        cell.selected = [_selectedIndexPaths containsObject:indexPath];
+        
+        index++;
+    }
+    
+    [self _cleanupCells];
 }
+
+// Layout all cells in the entire model.. use for updates when a cell wouldn't be on screen mid-update
 
 - (void)_layoutModelCells
 {
@@ -636,24 +668,6 @@ struct KKSectionMetrics {
             cell.frame = [self rectForCellAtIndexPath:keyPath]; 
         }];
     }];
-}
-
-- (void)_performRemainingUpdatesModelOnly
-{
-    NSArray *filteredArray = [_updateStack.itemsToUpdate filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"animating == NO"]];
-    if (filteredArray.count > 0) {
-        [_updateStack.itemsToUpdate removeObjectsInArray:filteredArray];
-        CGFloat yPosition = self.contentOffset.y;
-        [self _softReload];
-        self.contentOffset = CGPointMake(0.f, self.contentOffset.y > yPosition ? self.contentOffset.y - yPosition : self.contentOffset.y + (self.contentOffset.y - yPosition));
-    }
-}
-
-- (void)_configureSectionView:(KKGridViewSectionInfo *)headerOrFooter inSection:(NSUInteger)section withStickPoint:(CGFloat)stickPoint height:(CGFloat)height
-{
-    headerOrFooter.view.frame = CGRectMake(0.f, stickPoint, self.bounds.size.width, height);
-    headerOrFooter->stickPoint = stickPoint;
-    headerOrFooter->section = section;
 }
 
 #pragma mark - Updates
@@ -1112,7 +1126,7 @@ struct KKSectionMetrics {
             [self addSubview:header.view];
         }
     }
-    
+
     if (_dataSourceRespondsTo.viewForRow) {
         clearViewsInArray(_rowViews);
         if (!_rowViews)
