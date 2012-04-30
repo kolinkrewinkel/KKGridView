@@ -155,10 +155,14 @@ struct KKSectionMetrics {
 
 #pragma mark - Initialization Methods
 
+// Calls back to its bro, initWithFrame, with a zero.
+
 - (id)init
 {
     return [self initWithFrame:CGRectZero];
 }
+
+// Unimplemented, not sure if it ever will be.
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -170,6 +174,8 @@ struct KKSectionMetrics {
     return self;
 }
 
+// Same as its -super counterpart, but with our injection.
+
 - (id)initWithFrame:(CGRect)frame
 {
     if ((self = [super initWithFrame:frame])) {
@@ -178,6 +184,8 @@ struct KKSectionMetrics {
     
     return self;
 }
+
+// Basic setup for the grid.
 
 - (void)_sharedInitialization
 {
@@ -772,7 +780,6 @@ struct KKSectionMetrics {
     }
     return height;
 }
-
 
 #pragma mark - Cell Management
 
