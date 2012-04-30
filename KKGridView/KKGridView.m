@@ -122,7 +122,6 @@ struct KKSectionMetrics {
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer;
 - (void)_deselectAll;
 
-// Headers and Footer views
 - (UIView *)_viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)_viewForFooterInSection:(NSUInteger)section;
 
@@ -155,8 +154,6 @@ struct KKSectionMetrics {
 
 #pragma mark - Initialization Methods
 
-// Calls back to its bro, initWithFrame, with a zero.
-
 - (id)init
 {
     return [self initWithFrame:CGRectZero];
@@ -174,8 +171,6 @@ struct KKSectionMetrics {
     return self;
 }
 
-// Same as its -super counterpart, but with our injection.
-
 - (id)initWithFrame:(CGRect)frame
 {
     if ((self = [super initWithFrame:frame])) {
@@ -189,13 +184,11 @@ struct KKSectionMetrics {
 
 - (void)_sharedInitialization
 {
-    //    CONTAINMENT! GET ME SOME CONTAINMENT UNITS NOW!
     _reusableCells = [[NSMutableDictionary alloc] init];
     _visibleCells = [[NSMutableDictionary alloc] init];
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-    // Manual authority override, bitch
     _layoutDirection = KKGridViewLayoutDirectionVertical;
     
     // Set basic UIScrollView properties
@@ -218,7 +211,6 @@ struct KKSectionMetrics {
     self.allowsMultipleSelection = NO;
     self.backgroundColor = [UIColor whiteColor];
 
-    // KVO
     [self addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:NULL];
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 }
@@ -237,14 +229,12 @@ struct KKSectionMetrics {
 
 #pragma mark - Setters
 
-// Enables or disables multiple selection.. makes sure grid state is valid
-
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
 {
     if (allowsMultipleSelection == _allowsMultipleSelection)
         return;
     
-    //    If multiple selection is being disabled, update.
+    // If multiple selection is being disabled, update.
     if (!allowsMultipleSelection) {
         [_selectedIndexPaths removeAllObjects];
         [UIView animateWithDuration:KKGridViewDefaultAnimationDuration delay:0 options:(UIViewAnimationOptionAllowAnimatedContent | UIViewAnimationOptionBeginFromCurrentState) animations:^{
@@ -269,8 +259,6 @@ struct KKSectionMetrics {
     [self sendSubviewToBack:_backgroundView];
 }
 
-// Standard override of setBounds so we can do our updates
-
 - (void)setBounds:(CGRect)bounds
 {
     CGRect oldBounds = self.bounds;
@@ -280,7 +268,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Adjusts via CGSize what cell padding is applied to each side
+// Adjusts cell padding is applied to each side
 
 - (void)setCellPadding:(CGSize)cellPadding
 {
@@ -293,7 +281,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Via CGSize, adjust the point-size of each cell.  Defaults to 75x75.
+// Adjust the point-size of each cell.  Defaults to 75x75.
 
 - (void)setCellSize:(CGSize)cellSize
 {
@@ -315,8 +303,6 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
-
-// Sets data source of grid
 
 - (void)setDataSource:(id<KKGridViewDataSource>)dataSource
 {
@@ -356,8 +342,6 @@ struct KKSectionMetrics {
     }
 }
 
-// Standard override of setFrame so we can do our updates
-
 - (void)setFrame:(CGRect)frame
 {
     CGRect oldFrame = self.frame;
@@ -367,8 +351,6 @@ struct KKSectionMetrics {
         [self _respondToBoundsChange];
     }
 }
-
-// Set global grid footer
 
 - (void)setGridFooterView:(UIView *)gridFooterView
 {
@@ -381,8 +363,6 @@ struct KKSectionMetrics {
     [self addSubview:gridFooterView];
     [self setNeedsLayout];
 }
-
-// Set global grid header
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
 {
@@ -405,16 +385,12 @@ struct KKSectionMetrics {
     _batchUpdating = YES;
 }
 
-// SAY NO!
-
 - (void)endUpdates
 {
     _batchUpdating = NO;
 }
 
 #pragma mark - Root Layout Methods
-
-// Inherited from CALayer-> UIView, allows to inject our own ever-present re-layout methods.
 
 - (void)layoutSubviews
 {
@@ -455,8 +431,6 @@ struct KKSectionMetrics {
         _gridFooterView.frame = footerRect;
     }
 }
-
-// Update grid view in response to a change in size
 
 - (void)_respondToBoundsChange
 {
@@ -799,8 +773,6 @@ struct KKSectionMetrics {
     }
     return height;
 }
-
-// Does the same thing as above method, but specifically down to a cell row in a section.  Adds individual cell heights reiteratively.
 
 - (CGFloat)_sectionHeightsCombinedUpToRow:(NSUInteger)row inSection:(NSUInteger)section
 {
