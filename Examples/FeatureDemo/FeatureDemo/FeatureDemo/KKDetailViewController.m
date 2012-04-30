@@ -25,12 +25,12 @@
 {
     [super viewDidLoad];
 
-    self.title = NSLocalizedString(@"Detail", @"Detail");
-
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
     self.gridView.backgroundView = backgroundView;
-    
+    self.gridView.cellPadding = CGSizeMake(11.f, 5.f);
+    self.title = NSLocalizedString(@"Detail", @"Detail");
+
     _fillerData = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < 20; i++) {
         NSMutableArray *array = [[NSMutableArray alloc] init];
@@ -54,6 +54,11 @@
 - (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
     return [[_fillerData objectAtIndex:section] count];
+}
+
+- (NSString *)gridView:(KKGridView *)gridView titleForHeaderInSection:(NSUInteger)section
+{
+    return [NSString stringWithFormat:@"%u", section];
 }
 
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath

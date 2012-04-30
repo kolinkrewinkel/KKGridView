@@ -429,6 +429,7 @@ struct KKSectionMetrics {
     [self _layoutVisibleCells];   
     [self _layoutSectionViews];
     [self _layoutExtremities];
+    [self _performRemainingUpdatesModelOnly];
     _markedForDisplay = NO;
     _staggerForInsertion = NO;
     _needsAccessoryReload = NO;
@@ -467,6 +468,9 @@ struct KKSectionMetrics {
 
 - (void)_performRemainingUpdatesModelOnly
 {
+    if (_updateStack.itemsToUpdate.count == 0)
+        return;
+    
     NSArray *filteredArray = [_updateStack.itemsToUpdate filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"animating == NO"]];
     if (filteredArray.count > 0) {
         [_updateStack.itemsToUpdate removeObjectsInArray:filteredArray];
@@ -678,7 +682,7 @@ struct KKSectionMetrics {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
         
-        if ([_updateStack hasUpdateForIndexPath:indexPath]) {
+        if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
         }
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -1033,64 +1037,6 @@ struct KKSectionMetrics {
     _staggerForInsertion = YES;
     _markedForDisplay = YES;
     [self _layoutGridView];
-    NSArray *unaffected = [_updateStack.itemsToUpdate filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"animating == NO"]];
-    NSArray *visiblePaths = [self visibleIndexPaths];
-    if (unaffected.count > 0) {
-        for (KKGridViewUpdate *update in unaffected) {
-            // Updates
-            KKIndexPath *indexPath = update.indexPath;
-            if ([_updateStack hasUpdateForIndexPath:indexPath]) {
-                _markedForDisplay = YES;
-                _staggerForInsertion = YES;
-                _needsAccessoryReload = YES;
-                
-                KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
-                
-                NSArray *newVisiblePaths = [self visibleIndexPaths];
-                
-                if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
-                    [self _incrementCellsAtIndexPath:indexPath 
-                                         toIndexPath:[self _lastIndexPathForSection:indexPath.section]
-                                            byAmount:update.sign];
-                }
-                
-                NSMutableSet *replacementSet = [[NSMutableSet alloc] initWithCapacity:_selectedIndexPaths.count];
-                
-                for (KKIndexPath *keyPath in _selectedIndexPaths) {
-                    if (indexPath.section == keyPath.section)
-                        keyPath.index += update.sign;
-                    
-                    if (keyPath.index > 0)
-                        [replacementSet addObject:keyPath];
-                };
-                
-                [_selectedIndexPaths setSet:replacementSet];
-                
-                [self reloadContentSize];
-                [_updateStack removeUpdate:update];
-                
-                if (![newVisiblePaths isEqual:visiblePaths]) {
-                    NSMutableArray *difference = [[[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
-                    [difference removeObjectsInArray:visiblePaths];
-                    for (KKIndexPath *keyPath in difference) {
-                        KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
-                        cell.selected = [_selectedIndexPaths containsObject:keyPath];
-                        
-                        [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
-                            cell.frame = [self rectForCellAtIndexPath:indexPath];
-                        }];
-                    }
-                }
-            }
-        }
-        [self _cleanupCells];
-        
-        [self _layoutGridView];
-        
-    }
-    [self _performRemainingUpdatesModelOnly];
-    
-    [self _commonReload];
 }
 
 - (void)deleteItemsAtIndexPaths:(NSArray *)indexPaths withAnimation:(KKGridViewAnimation)animation
