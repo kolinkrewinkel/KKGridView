@@ -29,11 +29,7 @@
     return self;
 }
 							
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    _objects = [[NSMutableArray alloc] initWithArray:@[@"Add Items", @"Remove Items", @"Add Section", @"Remove Section", @"Move Items", @"Multiple Selection"]];
-}
+
 
 #pragma mark - Cleanup
 
@@ -43,6 +39,18 @@
 }
 
 #pragma mark - UIViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    _objects = [[NSMutableArray alloc] initWithArray:@[@"Add Items", @"Remove Items", @"Add Section", @"Remove Section", @"Move Items", @"Multiple Selection", @"Background View"]];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    [self.tableView reloadData];
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -71,6 +79,8 @@
     }
     if (indexPath.row == 5) {
         cell.accessoryType = self.detailViewController.gridView.allowsMultipleSelection ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+    } else if (indexPath.row == 6) {
+        cell.accessoryType = self.detailViewController.gridView.backgroundView ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
     }
 
     cell.textLabel.text = [_objects objectAtIndex:indexPath.row];
@@ -111,6 +121,16 @@
             break;
         } case 5: {
             gridView.allowsMultipleSelection = !gridView.allowsMultipleSelection;
+            break;
+        } case 6: {
+            UIView *backgroundView = nil;
+            if (!gridView.backgroundView) {
+                backgroundView = [[UIView alloc] init];
+                backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
+            }
+            
+            gridView.backgroundView = gridView.backgroundView ? nil : backgroundView;
+
             break;
         } default:
             break;

@@ -28,6 +28,7 @@
     UIView *backgroundView = [[UIView alloc] init];
     backgroundView.backgroundColor = [UIColor scrollViewTexturedBackgroundColor];
     self.gridView.backgroundView = backgroundView;
+    
     self.gridView.cellPadding = CGSizeMake(11.f, 5.f);
     self.title = NSLocalizedString(@"Detail", @"Detail");
 
