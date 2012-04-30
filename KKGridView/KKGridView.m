@@ -684,6 +684,8 @@ struct KKSectionMetrics {
 
 #pragma mark - Updates
 
+// Old expedited code from -layoutVisibleCells, handles individual index path updates each run-loop.
+
 - (KKGridViewAnimation)_handleUpdateForIndexPath:(KKIndexPath *)indexPath visibleIndexPaths:(NSArray *)visibleIndexPaths
 {
     
@@ -742,8 +744,10 @@ struct KKSectionMetrics {
     return animation;
 }
 
-
 #pragma mark - Metric Calculation
+
+// Follow the math, young padawan!
+// Reiteratively adds precalculated section heights up to x section.
 
 - (CGFloat)_sectionHeightsCombinedUpToSection:(NSUInteger)section
 {
@@ -753,6 +757,8 @@ struct KKSectionMetrics {
     }
     return height;
 }
+
+// Does the same thing as above method, but specifically down to a cell row in a section.  Adds individual cell heights reiteratively.
 
 - (CGFloat)_sectionHeightsCombinedUpToRow:(NSUInteger)row inSection:(NSUInteger)section
 {
