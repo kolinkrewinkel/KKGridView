@@ -1292,8 +1292,8 @@ struct KKSectionMetrics {
         BOOL willDrawFooter = _dataSourceRespondsTo.viewForFooter || _dataSourceRespondsTo.titleForFooter;
         
         struct KKSectionMetrics sectionMetrics = { 
-            .footerHeight = willDrawFooter ? 25.0 : 0.0,
-            .headerHeight = willDrawHeader ? 25.0 : 0.0,
+            .footerHeight = willDrawFooter ? 24.0 : 0.0,
+            .headerHeight = willDrawHeader ? 24.0 : 0.0,
             .sectionHeight = 0.f,
             .itemCount = [_dataSource gridView:self numberOfItemsInSection:index]
         };
