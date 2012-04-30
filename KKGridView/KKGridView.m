@@ -682,26 +682,27 @@ struct KKSectionMetrics {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
         
-        if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
+        if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating)
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
-        }
+
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
         if (!cell) {
+            
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
-        }
-        
-        else if (_markedForDisplay) {
+            
+        } else if (_markedForDisplay) {
             [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
                 updateCellFrame(cell, indexPath);
             }];
         }
-        
+
+        // Highlight cells updated in the model.
         cell.selected = [_selectedIndexPaths containsObject:indexPath];
-        
         index++;
     }
-    
+
+    // Remove offscreen cells (recycle them)
     [self _cleanupCells];
 }
 
