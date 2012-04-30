@@ -179,8 +179,6 @@ struct KKSectionMetrics {
     return self;
 }
 
-// damn right I didn't include nib support
-
 - (void)_sharedInitialization
 {
     //    CONTAINMENT! GET ME SOME CONTAINMENT UNITS NOW!
@@ -217,21 +215,16 @@ struct KKSectionMetrics {
     [self addObserver:self forKeyPath:@"tracking" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
-#pragma mark - Cleanup
-
-- (void)dealloc
-{
-    [self removeObserver:self forKeyPath:@"contentOffset"];
-    [self removeObserver:self forKeyPath:@"tracking"];
-    [self removeGestureRecognizer:_selectionRecognizer];
-    [self _cleanupMetrics];
-}
-
 #pragma mark - Getters
 
 - (NSUInteger)numberOfSections
 {
     return _metrics.count > 0 ? _metrics.count : 1;
+}
+
+- (NSUInteger)selectedItemCount
+{
+    return _selectedIndexPaths.count;
 }
 
 #pragma mark - Setters
@@ -1519,12 +1512,6 @@ struct KKSectionMetrics {
     }
 }
 
-- (NSUInteger)selectedItemCount
-{
-    return _selectedIndexPaths.count;
-}
-
-
 #pragma mark - Touch Handling
 
 - (void)_handleSelection:(UILongPressGestureRecognizer *)recognizer
@@ -1622,6 +1609,16 @@ struct KKSectionMetrics {
 + (void)animateIf:(BOOL)animated delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options block:(void(^)())block
 {
     [self animateIf:animated duration:KKGridViewDefaultAnimationDuration delay:delay options:options block:block];
+}
+
+#pragma mark - Cleanup
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"contentOffset"];
+    [self removeObserver:self forKeyPath:@"tracking"];
+    [self removeGestureRecognizer:_selectionRecognizer];
+    [self _cleanupMetrics];
 }
 
 @end
