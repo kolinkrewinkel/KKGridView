@@ -30,7 +30,7 @@
     self.gridView.backgroundView = backgroundView;
     
     self.gridView.cellPadding = CGSizeMake(11.f, 5.f);
-    self.title = NSLocalizedString(@"Detail", @"Detail");
+    self.title = @"KKGridView";
 
     _fillerData = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < 20; i++) {
