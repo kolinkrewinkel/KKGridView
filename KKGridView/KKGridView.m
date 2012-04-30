@@ -375,6 +375,8 @@ struct KKSectionMetrics {
     _batchUpdating = YES;
 }
 
+// SAY NO!
+
 - (void)endUpdates
 {
     _batchUpdating = NO;
@@ -382,11 +384,15 @@ struct KKSectionMetrics {
 
 #pragma mark - Root Layout Methods
 
+// Inherited from CALayer-> UIView, allows to inject our own ever-present re-layout methods.
+
 - (void)layoutSubviews
 {
     [self _layoutGridView];
     [super layoutSubviews];
 }
+
+// Ringmaster for the gridview, calls all the other grimy methods to keep everything up-to-date and positioned correctly.
 
 - (void)_layoutGridView
 {
