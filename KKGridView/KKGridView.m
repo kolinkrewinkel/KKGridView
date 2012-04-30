@@ -465,7 +465,7 @@ struct KKSectionMetrics {
     headerOrFooter->section = section;
 }
 
-// Position them for each notch in the scrollview.. called a lot, could use optimization probably.
+// Position them for each notch in the scrollview. called a lot, could use optimization probably.
 
 - (void)_layoutSectionViews
 {
@@ -505,7 +505,7 @@ struct KKSectionMetrics {
     
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
-    // If the user is providing titles, they want the default look.  GIVE IT.
+    // If the user is providing titles, they want the default look.
     static UIImage *headerBackgrounds[2] = {0};
     
     if (_dataSourceRespondsTo.titleForHeader || _dataSourceRespondsTo.titleForFooter) {
@@ -642,7 +642,7 @@ struct KKSectionMetrics {
     }
 }
 
-// Primary cell frame methods..
+// Primary cell layout methods..
 
 - (void)_layoutVisibleCells
 {    
@@ -687,7 +687,7 @@ struct KKSectionMetrics {
     [self _cleanupCells];
 }
 
-// Layout all cells in the entire model.. use for updates when a cell wouldn't be on screen mid-update
+// Layout all cells in the entire model. use for updates when a cell wouldn't be on screen mid-update
 
 - (void)_layoutModelCells
 {
@@ -700,7 +700,7 @@ struct KKSectionMetrics {
 
 #pragma mark - Updates
 
-// Old expedited code from -layoutVisibleCells, handles individual index path updates each run-loop.
+// handles individual index path updates each run-loop.
 
 - (KKGridViewAnimation)_handleUpdateForIndexPath:(KKIndexPath *)indexPath visibleIndexPaths:(NSArray *)visibleIndexPaths
 {
