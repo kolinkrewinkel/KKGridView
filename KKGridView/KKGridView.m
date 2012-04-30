@@ -186,10 +186,10 @@ struct KKSectionMetrics {
     _selectedIndexPaths = [[NSMutableSet alloc] init];
     _updateStack = [[KKGridViewUpdateStack alloc] init];
     
-    //    Manual authority override, bitch
+    // Manual authority override, bitch
     _layoutDirection = KKGridViewLayoutDirectionVertical;
     
-    //    Set basic UIScrollView properties
+    // Set basic UIScrollView properties
     self.alwaysBounceVertical = _layoutDirection ? KKGridViewLayoutDirectionVertical : YES; 
     self.alwaysBounceHorizontal = _layoutDirection != KKGridViewLayoutDirectionVertical; 
     self.delaysContentTouches = YES;
@@ -202,7 +202,7 @@ struct KKSectionMetrics {
     [self addGestureRecognizer:_selectionRecognizer];
     
     
-    //    Set up defaults
+    // Set up defaults
     self.cellSize = CGSizeMake(75.f, 75.f);
     self.scrollsToTop = YES;
     self.cellPadding = CGSizeMake(4.f, 4.f);
@@ -552,9 +552,9 @@ struct KKSectionMetrics {
     };
 
     
-    if ([_updateStack nextUpdateFromIndexPath:[visiblePaths objectAtIndex:0] fallbackPath:[KKIndexPath nonexistantIndexPath]] != [KKIndexPath nonexistantIndexPath]) {
-        [_visibleCells removeAllObjects];
-    }
+//    if ([_updateStack nextUpdateFromIndexPath:[visiblePaths objectAtIndex:0] fallbackPath:[KKIndexPath nonexistantIndexPath]] != [KKIndexPath nonexistantIndexPath]) {
+//        [self _cleanupCells];
+//    }
 
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates

@@ -9,15 +9,15 @@
 #import "KKDetailViewController.h"
 #import "KKDemoCell.h"
 
-@interface KKDetailViewController () {
-    NSMutableArray *_fillerData;
-}
+@interface KKDetailViewController ()
 
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 
 @end
 
 @implementation KKDetailViewController
+
+@synthesize fillerData = _fillerData;
 
 #pragma mark - Initialization
 

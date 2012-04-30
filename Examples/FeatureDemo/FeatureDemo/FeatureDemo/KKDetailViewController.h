@@ -11,5 +11,5 @@
 
 @interface KKDetailViewController : KKGridViewController <UISplitViewControllerDelegate>
 
-
+@property (nonatomic, strong) NSMutableArray *fillerData;
 @end

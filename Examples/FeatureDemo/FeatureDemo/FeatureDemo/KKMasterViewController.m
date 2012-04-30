@@ -105,6 +105,7 @@
                 [indexPaths addObject:[KKIndexPath indexPathForIndex:0 inSection:[section integerValue]]];
             }
 
+            
             [gridView insertItemsAtIndexPaths:indexPaths withAnimation:KKGridViewAnimationExplode];
 
             break;
