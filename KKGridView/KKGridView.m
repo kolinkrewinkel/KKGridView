@@ -970,9 +970,12 @@ struct KKSectionMetrics {
 - (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSInteger)amount
 {
     NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *cell, BOOL *stop) {
+    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *originalCell, BOOL *stop) {
         BOOL set = YES;
         NSUInteger amountForPath = amount;
+        KKIndexPath *originalIndexPath = [keyPath copy];
+        KKGridViewCell *newCell = originalCell;
+
         if (keyPath.section == fromPath.section) {
             NSComparisonResult pathComparison = [fromPath compare:keyPath];
             NSComparisonResult lastPathComparison = [[self _lastIndexPathForSection:fromPath.section] compare:keyPath];
@@ -982,10 +985,15 @@ struct KKSectionMetrics {
             
             if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && amount < 0 && pathComparison == NSOrderedSame) {
                 set = NO;
+
+                [newCell removeFromSuperview];
+                newCell = nil;
+                newCell = [_dataSource gridView:self cellForItemAtIndexPath:keyPath];
+
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
-                    cell.alpha = 0.f;
+                    newCell.alpha = 0.f;
                 } completion:^(BOOL finished) {
-                    cell.hidden = YES;
+                    newCell.hidden = YES;
                 }];
             }
             if (!indexPathIsLessOrEqual || !lastPathIsGreatorOrEqual) {
@@ -997,7 +1005,7 @@ struct KKSectionMetrics {
             if (keyPath.section == fromPath.section)
                 keyPath.index += amountForPath;
             
-            [replacement setObject:cell forKey:keyPath];
+            [replacement setObject:newCell forKey:originalIndexPath];
         }
     }];
     

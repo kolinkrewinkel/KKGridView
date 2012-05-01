@@ -65,8 +65,10 @@
 - (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {    
     KKDemoCell *cell = [KKDemoCell cellForGridView:gridView];
-    cell.contentView.backgroundColor = [UIColor lightGrayColor];
     cell.label.text = [NSString stringWithFormat:@"%u", indexPath.index];
+
+    CGFloat percentage = (CGFloat)indexPath.index / (CGFloat)[[_fillerData objectAtIndex:indexPath.section] count];
+    cell.contentView.backgroundColor = [UIColor colorWithWhite:percentage alpha:1.f];
 
     return cell;
 }
