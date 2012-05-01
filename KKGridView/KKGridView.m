@@ -656,9 +656,11 @@ struct KKSectionMetrics {
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
+        BOOL updating = NO;
         
         if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
+            updating = YES;
         }
         
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -667,15 +669,10 @@ struct KKSectionMetrics {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             
-        } else if (_markedForDisplay) {
-            [cell removeFromSuperview];
-            [_visibleCells removeObjectForKey:indexPath];
-            cell = nil;
-            cell = [_dataSource gridView:self cellForItemAtIndexPath:indexPath];
-            
-            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
-                updateCellFrame(cell, indexPath);
-            }];
+        } else if (_markedForDisplay || updating) {
+//            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
+//                updateCellFrame(cell, indexPath);
+//            }];
         }
         
         // Highlight cells updated in the model.
@@ -711,8 +708,6 @@ struct KKSectionMetrics {
     KKGridViewUpdate *update = [_updateStack updateForIndexPath:indexPath];
     KKGridViewAnimation animation = update.animation;
     
-    NSArray *newVisiblePaths = [self visibleIndexPaths];
-    
     if (update.type == KKGridViewUpdateTypeItemInsert || update.type == KKGridViewUpdateTypeItemDelete) {
         [self _incrementCellsAtIndexPath:indexPath
                              toIndexPath:[self _lastIndexPathForSection:indexPath.section]
@@ -735,27 +730,6 @@ struct KKSectionMetrics {
     }
     
     [_selectedIndexPaths setSet:replacementSet];
-    [self reloadContentSize];
-    
-    
-    if (![newVisiblePaths isEqual:visibleIndexPaths]) {
-        
-        NSMutableArray *difference = [[[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)] mutableCopy];
-        [difference removeObjectsInArray:visibleIndexPaths];
-        
-        void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
-            cell.frame = [self rectForCellAtIndexPath:indexPath]; 
-        };
-        
-        for (KKIndexPath *keyPath in difference) {
-            KKGridViewCell *cell = [_visibleCells objectForKey:keyPath];
-            cell.selected = [_selectedIndexPaths containsObject:keyPath];
-            
-            [KKGridView animateIf:_staggerForInsertion delay:0.0015 options:UIViewAnimationOptionCurveEaseInOut block:^{
-                updateCellFrame(cell,indexPath);
-            }];
-        }
-    }
     
     return animation;
 }
@@ -801,6 +775,13 @@ struct KKSectionMetrics {
     }
     
     switch (animation) {
+        case KKGridViewAnimationNone: {
+            break;
+        }
+        case KKGridViewAnimationFade: {
+            cell.alpha = 0.f;
+            break;
+        }
         case KKGridViewAnimationExplode: {
             cell.transform = CGAffineTransformMakeScale(0.01f, 0.01f);
             cell.alpha = 0.f;
@@ -819,6 +800,15 @@ struct KKSectionMetrics {
     }
     
     switch (animation) {
+        case KKGridViewAnimationFade: {
+            [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
+                cell.alpha = 1.f;
+            } completion:^(BOOL finished) {
+                if ([_updateStack hasUpdateForIndexPath:indexPath])
+                    [_updateStack removeUpdateForIndexPath:indexPath];
+            }];
+            break;
+        }
         case KKGridViewAnimationExplode: {
             [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
                 cell.transform = CGAffineTransformMakeScale(1.f, 1.f);
@@ -920,6 +910,10 @@ struct KKSectionMetrics {
     
     point.y += (row * (_cellSize.height + _cellPadding.height));
     point.x += (column * (_cellSize.width + _cellPadding.width));
+
+    if (indexPath.section == 1) {
+        NSLog(@"%@", NSStringFromCGRect(CGRectIntegral((CGRect){point, _cellSize})));
+    }
     
     return CGRectIntegral((CGRect){point, _cellSize});
 }
@@ -970,12 +964,15 @@ struct KKSectionMetrics {
 - (void)_incrementCellsAtIndexPath:(KKIndexPath *)fromPath toIndexPath:(KKIndexPath *)toPath byAmount:(NSInteger)amount
 {
     NSMutableDictionary *replacement = [[NSMutableDictionary alloc] init];
-    [_visibleCells enumerateKeysAndObjectsUsingBlock:^(KKIndexPath *keyPath, KKGridViewCell *originalCell, BOOL *stop) {
-        BOOL set = YES;
-        NSUInteger amountForPath = amount;
+    NSArray *allVisibleIndexPaths = [[_visibleCells allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    
+    for (KKIndexPath *keyPath in allVisibleIndexPaths) {
+        KKGridViewCell *originalCell = [_visibleCells objectForKey:keyPath];
+        NSLog(@"%@", keyPath);
         KKIndexPath *originalIndexPath = [keyPath copy];
-        KKGridViewCell *newCell = originalCell;
-
+        
+        NSUInteger amountForPath = amount;
+        
         if (keyPath.section == fromPath.section) {
             NSComparisonResult pathComparison = [fromPath compare:keyPath];
             NSComparisonResult lastPathComparison = [[self _lastIndexPathForSection:fromPath.section] compare:keyPath];
@@ -984,31 +981,40 @@ struct KKSectionMetrics {
             BOOL lastPathIsGreatorOrEqual = lastPathComparison == NSOrderedDescending || lastPathComparison == NSOrderedSame;
             
             if (indexPathIsLessOrEqual && lastPathIsGreatorOrEqual && amount < 0 && pathComparison == NSOrderedSame) {
-                set = NO;
-
-                [newCell removeFromSuperview];
-                newCell = nil;
-                newCell = [_dataSource gridView:self cellForItemAtIndexPath:keyPath];
-
+                
                 [UIView animateWithDuration:KKGridViewDefaultAnimationDuration animations:^{
-                    newCell.alpha = 0.f;
+                    originalCell.alpha = 0.f;
                 } completion:^(BOOL finished) {
-                    newCell.hidden = YES;
+                    originalCell.hidden = YES;
                 }];
             }
             if (!indexPathIsLessOrEqual || !lastPathIsGreatorOrEqual) {
                 amountForPath = 0;
             }
+        } else if (keyPath.section > toPath.section) {
+            amountForPath = 0;
         }
         
-        if (set) {
-            if (keyPath.section == fromPath.section)
-                keyPath.index += amountForPath;
-            
-            [replacement setObject:newCell forKey:originalIndexPath];
+        keyPath.index+= amount;
+        
+        if ([keyPath isEqual:originalIndexPath]) {
+            [replacement setObject:originalCell forKey:keyPath];
+        } else {
+            KKGridViewCell *cell = [_dataSource gridView:self cellForItemAtIndexPath:keyPath];
+            cell.frame = originalCell.frame;
+            [self _displayCell:cell atIndexPath:originalIndexPath withAnimation:KKGridViewAnimationFade];
+
+            [originalCell removeFromSuperview];
+
+            [replacement setObject:cell forKey:keyPath];
+
+            [UIView animateWithDuration:0.5f animations:^{
+                cell.frame = [self rectForCellAtIndexPath:keyPath];
+            }];
         }
-    }];
-    
+    }
+
+
     [_visibleCells setDictionary:replacement];
 }
 
