@@ -137,7 +137,7 @@ same way as `NSIndexPath`, only `-row` is replaced with
 subclassed.*
 
 ~~~~objc
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForRowAtIndexPath:(KKIndexPath *)indexPath
+- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
   KKGridViewCell *cell = [KKGridViewCell cellForGridView:gridView];
   cell.backgroundColor = [UIColor lightGrayColor];
