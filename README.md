@@ -5,6 +5,7 @@
 ###Deprecated
 In iOS 6, Apple has now created a first-party solution to what KKGridView tries to solve.  See Session 219 from WWDC 2012 for more information.
 
+###Overview
 High-performance iOS grid view (MIT license). **Requirements**: you
 need to build `KKGridView` with a compiler that supports *Automatic
 Reference Counting*. We know this stings at first, but we strongly
