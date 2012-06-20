@@ -2,6 +2,9 @@
 <img style="position: relative; width: 768px; height: 200px; margin: 0;" src="http://f.cl.ly/items/1c230w0U2d3H3I021338/KKGridViewBanner.png" alt="KKGridView"/>
 </div>
 
+###Deprecated
+In iOS 6, Apple has now created a first-party solution to what KKGridView tries to solve.  See Session 219 from WWDC 2012 for more information.
+
 High-performance iOS grid view (MIT license). **Requirements**: you
 need to build `KKGridView` with a compiler that supports *Automatic
 Reference Counting*. We know this stings at first, but we strongly
