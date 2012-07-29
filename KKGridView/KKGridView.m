@@ -227,6 +227,25 @@ struct KKSectionMetrics {
     return _selectedIndexPaths.count;
 }
 
+- (BOOL)isDragging
+{
+    BOOL recursiveDragging = [super isDragging];
+    if (recursiveDragging == NO) {
+        UIView *superview = self.superview;
+        while (superview) {
+            if ([superview isKindOfClass:[UIScrollView class]]) {
+                UIScrollView *scrollView = (UIScrollView *)superview;
+                if (scrollView.isDragging) {
+                    recursiveDragging = YES;
+                    break;
+                }
+            }
+            superview = superview.superview;
+        }
+    }
+    return recursiveDragging;
+}
+
 #pragma mark - Setters
 
 - (void)setAllowsMultipleSelection:(BOOL)allowsMultipleSelection
