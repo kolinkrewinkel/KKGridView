@@ -649,18 +649,12 @@ struct KKSectionMetrics {
     NSArray *visiblePaths = [self visibleIndexPaths];
     NSUInteger index = 0;
     
-    void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
-        cell.frame = [self rectForCellAtIndexPath:indexPath]; 
-    };
-    
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
-        BOOL updating = NO;
         
         if ([_updateStack hasUpdateForIndexPath:indexPath] && !_batchUpdating) {
             animation = [self _handleUpdateForIndexPath:indexPath visibleIndexPaths:visiblePaths];
-            updating = YES;
         }
         
         KKGridViewCell *cell = [_visibleCells objectForKey:indexPath];
@@ -669,10 +663,6 @@ struct KKSectionMetrics {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             
-        } else if (_markedForDisplay || updating) {
-//            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
-//                updateCellFrame(cell, indexPath);
-//            }];
         }
         
         // Highlight cells updated in the model.
@@ -971,8 +961,6 @@ struct KKSectionMetrics {
         NSLog(@"%@", keyPath);
         KKIndexPath *originalIndexPath = [keyPath copy];
         
-        NSUInteger amountForPath = amount;
-        
         if (keyPath.section == fromPath.section) {
             NSComparisonResult pathComparison = [fromPath compare:keyPath];
             NSComparisonResult lastPathComparison = [[self _lastIndexPathForSection:fromPath.section] compare:keyPath];
@@ -988,11 +976,6 @@ struct KKSectionMetrics {
                     originalCell.hidden = YES;
                 }];
             }
-            if (!indexPathIsLessOrEqual || !lastPathIsGreatorOrEqual) {
-                amountForPath = 0;
-            }
-        } else if (keyPath.section > toPath.section) {
-            amountForPath = 0;
         }
         
         keyPath.index+= amount;
