@@ -506,7 +506,7 @@ struct KKSectionMetrics {
     CGFloat offset = self.contentOffset.y + self.contentInset.top;
     
     // If the user is providing titles, they want the default look.
-    static UIImage *headerBackgrounds[2] = {0};
+    static UIColor *headerBackgrounds[2] = {0};
     
     if (_dataSourceRespondsTo.titleForHeader || _dataSourceRespondsTo.titleForFooter) {
         static dispatch_once_t onceToken;
@@ -517,8 +517,8 @@ struct KKSectionMetrics {
                 return [UIImage imageWithContentsOfFile:[bundle pathForResource:n ofType:@"png"]];
             };
             
-            headerBackgrounds[0] = getBundleImage(@"UISectionListHeaderBackground");
-            headerBackgrounds[1] = getBundleImage(@"UISectionListHeaderBackgroundOpaque");
+            headerBackgrounds[0] = [UIColor colorWithPatternImage:getBundleImage(@"UISectionListHeaderBackground")];
+            headerBackgrounds[1] = [UIColor colorWithPatternImage:getBundleImage(@"UISectionListHeaderBackgroundOpaque")];
         });
     }
     
@@ -533,7 +533,7 @@ struct KKSectionMetrics {
             headerFrame.origin.y = offset;
             
             if (_dataSourceRespondsTo.titleForHeader)
-                header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[1]];
+                header.view.backgroundColor = headerBackgrounds[1];
             
             KKGridViewHeader *sectionTwo = [_headerViews count] > header->section + 1 ? [_headerViews objectAtIndex:header->section + 1] : nil;
             if (sectionTwo != nil) {
@@ -548,7 +548,7 @@ struct KKSectionMetrics {
             // Put header back to default position
             headerFrame.origin.y = header->stickPoint;
             if (_dataSourceRespondsTo.titleForHeader)
-                header.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
+                header.view.backgroundColor = headerBackgrounds[0];
         }
         
         header.view.frame = headerFrame;
@@ -584,7 +584,7 @@ struct KKSectionMetrics {
             }
             
             if (_dataSourceRespondsTo.titleForFooter)
-                footer.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
+                footer.view.backgroundColor = headerBackgrounds[0];
             
             // move footer view to right below scroller
             [footer.view removeFromSuperview];
@@ -592,7 +592,7 @@ struct KKSectionMetrics {
             
         } else {
             if (_dataSourceRespondsTo.titleForFooter)
-                footer.view.backgroundColor = [UIColor colorWithPatternImage:headerBackgrounds[0]];
+                footer.view.backgroundColor = headerBackgrounds[0];
             
             // footer isn't sticky anymore, set originTop to saved position
             f.origin.y = footer->stickPoint;
