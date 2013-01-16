@@ -350,7 +350,7 @@ struct KKSectionMetrics {
         _delegateRespondsTo.didDeselectItem  = RESPONDS_TO(gridView:didDeselectItemAtIndexPath:);
         _delegateRespondsTo.willDeselectItem = RESPONDS_TO(gridView:willDeselectItemAtIndexPath:);
         _delegateRespondsTo.willDisplayCell  = RESPONDS_TO(gridView:willDisplayCell:atIndexPath:);
-        _delegateRespondsTo.didDoubleTapOnItem = RESPONDS_TO(gridView:didDoubleTapOnItemAtIndexPath:withCell:);
+        _delegateRespondsTo.didDoubleTapOnItem = RESPONDS_TO(gridView:didDoubleTapAtIndexPath:onCell:);
 #undef RESPONDS_TO
     }
 }
