@@ -43,10 +43,10 @@ struct KKSectionMetrics {
     NSMutableSet *_selectedIndexPaths;
     UILongPressGestureRecognizer *_selectionRecognizer;
     
-    //Double Tap
-    UITapGestureRecognizer *_doubleTapRecognizer;
-    
     KKIndexPath *_highlightedIndexPath;
+    
+    //Double tap
+    UITapGestureRecognizer *_doubleTapRecognizer;
     
     // Relating to updates/layout changes
     BOOL _markedForDisplay; // Relayout or not
@@ -1655,7 +1655,6 @@ struct KKSectionMetrics {
     [self removeObserver:self forKeyPath:@"contentOffset"];
     [self removeObserver:self forKeyPath:@"tracking"];
     [self removeGestureRecognizer:_selectionRecognizer];
-    [self removeGestureRecognizer:_doubleTapRecognizer];
     [self _cleanupMetrics];
 }
 

@@ -28,9 +28,9 @@ typedef enum {
 } KKGridViewLayoutDirection;
 
 typedef enum {
-    KKGridViewScrollPositionNone,        
-    KKGridViewScrollPositionTop,    
-    KKGridViewScrollPositionMiddle,   
+    KKGridViewScrollPositionNone,
+    KKGridViewScrollPositionTop,
+    KKGridViewScrollPositionMiddle,
     KKGridViewScrollPositionBottom
 } KKGridViewScrollPosition;
 
