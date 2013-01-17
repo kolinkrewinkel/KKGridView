@@ -1655,6 +1655,7 @@ struct KKSectionMetrics {
     [self removeObserver:self forKeyPath:@"contentOffset"];
     [self removeObserver:self forKeyPath:@"tracking"];
     [self removeGestureRecognizer:_selectionRecognizer];
+    [self removeGestureRecognizer:_doubleTapRecognizer];
     [self _cleanupMetrics];
 }
 
