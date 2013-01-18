@@ -163,8 +163,15 @@
         if (!_selectedBackgroundView.superview)
             [self addSubview:_selectedBackgroundView];
 
-        if (!_selectedBackgroundView.backgroundColor)
-            _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+        if (!_selectedBackgroundView.backgroundColor) {
+            
+            if (self.ishighlightedBackgroundEnabled) {
+                _selectedBackgroundView.backgroundColor = [UIColor colorWithPatternImage:[self _defaultBlueBackgroundRendition]];
+            } else {
+                _selectedBackgroundView.backgroundColor = [UIColor clearColor];
+            }
+            
+        }
 
         _selectedBackgroundView.hidden = NO;
         _selectedBackgroundView.alpha = 1.f;
