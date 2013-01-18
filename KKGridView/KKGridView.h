@@ -28,9 +28,9 @@ typedef enum {
 } KKGridViewLayoutDirection;
 
 typedef enum {
-    KKGridViewScrollPositionNone,        
-    KKGridViewScrollPositionTop,    
-    KKGridViewScrollPositionMiddle,   
+    KKGridViewScrollPositionNone,
+    KKGridViewScrollPositionTop,
+    KKGridViewScrollPositionMiddle,
     KKGridViewScrollPositionBottom
 } KKGridViewScrollPosition;
 
@@ -56,6 +56,7 @@ typedef enum {
 @protocol KKGridViewDelegate <NSObject, UIScrollViewDelegate>
 @optional
 - (void)gridView:(KKGridView *)gridView didSelectItemAtIndexPath:(KKIndexPath *)indexPath;
+- (void)gridView:(KKGridView *)gridView didDoubleTapAtIndexPath:(KKIndexPath *)indexPath onCell:(KKGridViewCell*) cell;
 - (void)gridView:(KKGridView *)gridView didDeselectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (KKIndexPath *)gridView:(KKGridView *)gridView willSelectItemAtIndexPath:(KKIndexPath *)indexPath;
 - (KKIndexPath *)gridView:(KKGridView *)gridView willDeselectItemAtIndexPath:(KKIndexPath *)indexPath;

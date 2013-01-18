@@ -63,6 +63,7 @@ typedef enum {
 @property (nonatomic) KKGridViewCellAccessoryType accessoryType; // Default is none.
 @property (nonatomic) KKGridViewCellAccessoryPosition accessoryPosition; // Default is quadrant 1.
 @property (nonatomic) float highlightAlpha; // Default is 1.0f
+@property (nonatomic, getter = ishighlightedBackgroundEnabled) BOOL  highlightedBackgroundEnabled;
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated;
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated;
