@@ -25,12 +25,12 @@
 
 #pragma mark - KKGridViewDataSource
 
-- (NSUInteger)gridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
+- (NSUInteger)KKgridView:(KKGridView *)gridView numberOfItemsInSection:(NSUInteger)section
 {
     return 0;
 }
 
-- (KKGridViewCell *)gridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
+- (KKGridViewCell *)KKgridView:(KKGridView *)gridView cellForItemAtIndexPath:(KKIndexPath *)indexPath
 {
     return [KKGridViewCell cellForGridView:gridView];
 }
