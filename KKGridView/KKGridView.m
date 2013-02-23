@@ -649,10 +649,6 @@ struct KKSectionMetrics {
     NSArray *visiblePaths = [self visibleIndexPaths];
     NSUInteger index = 0;
     
-    void (^updateCellFrame)(id,id) = ^(KKGridViewCell *cell, KKIndexPath *indexPath) {
-        cell.frame = [self rectForCellAtIndexPath:indexPath];
-    };
-    
     for (KKIndexPath *indexPath in visiblePaths) {
         // Updates
         KKGridViewAnimation animation = KKGridViewAnimationNone;
@@ -669,10 +665,6 @@ struct KKSectionMetrics {
             cell = [self _loadCellAtVisibleIndexPath:indexPath];
             [self _displayCell:cell atIndexPath:indexPath withAnimation:animation];
             
-        } else if (_markedForDisplay || updating) {
-//            [KKGridView animateIf:_staggerForInsertion delay:(index + 1) * 0.0015 options:UIViewAnimationOptionBeginFromCurrentState block:^{
-//                updateCellFrame(cell, indexPath);
-//            }];
         }
         
         // Highlight cells updated in the model.
