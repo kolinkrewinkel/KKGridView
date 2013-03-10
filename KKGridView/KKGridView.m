@@ -1231,14 +1231,14 @@ struct KKSectionMetrics {
     [self _reloadMetrics];
     
     NSUInteger oldColumns = _numberOfColumns;
-    _numberOfColumns = self.bounds.size.width / (_cellSize.width + _cellPadding.width);
+    _numberOfColumns = (self.bounds.size.width - self.contentInset.left - self.contentInset.right) / (_cellSize.width + _cellPadding.width);
     
     if (oldColumns != _numberOfColumns) {
         _markedForDisplay = YES;
     }
     
     CGSize newContentSize = {
-        self.bounds.size.width,
+        self.bounds.size.width - self.contentInset.left - self.contentInset.right,
         _gridHeaderView.frame.size.height + _gridFooterView.frame.size.height
     };
     
