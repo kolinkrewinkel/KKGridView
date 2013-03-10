@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
                  'Matthias Tretter'  => 'matthias.tretter@gmail.com',
                  'Peter Steinberger' => 'me@petersteinberger.com' }
 
-  s.source   = { :git => 'https://github.com/xzeror/KKGridView.git', :tag => '0.6.8.2' }
+  s.source   = { :git => 'https://github.com/xzeror/KKGridView.git', :commit => 'f98073114c7deeea825411b2a2f2380b8b069f36' }
 
   s.source_files = 'KKGridView'
   s.clean_paths  = 'Examples', 'KKGridView.xcodeproj', 'Resources'
