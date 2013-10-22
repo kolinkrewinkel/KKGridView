@@ -361,7 +361,7 @@ struct KKSectionMetrics {
     _gridFooterView = gridFooterView;
     
     [self addSubview:gridFooterView];
-    [self setNeedsLayout];
+    [self _respondToBoundsChange];
 }
 
 - (void)setGridHeaderView:(UIView *)gridHeaderView
@@ -373,7 +373,7 @@ struct KKSectionMetrics {
     _gridHeaderView = gridHeaderView;
     
     [self addSubview:gridHeaderView];
-    [self setNeedsLayout];
+    [self _respondToBoundsChange];
 }
 
 #pragma mark - Batch Editing
