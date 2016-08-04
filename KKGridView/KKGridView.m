@@ -628,7 +628,7 @@ struct KKSectionMetrics {
         }
     }
     
-    for (NSUInteger i = 0; i < cellCount; ++i) {
+    for (NSUInteger i = 0; i < cellCount; i++) {
         cell_info_t pair = cellsToRemove[i];
         KKGridViewCell *cell = pair.cell;
         
